@@ -1,0 +1,20 @@
+body {
+  margin: 0;
+  background: #0a0a0a;
+  color: white;
+  font-family: 'Inter', sans-serif;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.icon-red {
+  color: #ff0000;
+  font-size: 40px;
+  text-shadow: 0 0 10px rgba(255,0,0,0.4);
+}
