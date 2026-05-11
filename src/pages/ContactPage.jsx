@@ -1,7 +1,7 @@
-export default function FightsPage() {
+export default function ContactPage() {
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center">
-      <h1 className="text-5xl font-bold uppercase">FightsPage</h1>
+      <h1 className="text-5xl font-bold uppercase">Contact Page</h1>
     </div>
   );
 }

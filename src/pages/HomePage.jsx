@@ -288,8 +288,13 @@ export default function HomePage() {
               </div>
               <div className="text-center md:text-left order-2 md:order-3">
                 <p className="text-red-600 text-[10px] sm:text-xs uppercase tracking-widest mb-2 sm:mb-3">The Countdown Begins</p>
-                <div className="grid grid-cols-4 gap-2 sm:gap-3 max-w-[260px] sm:max-w-[280px] md:max-w-[320px] mx-auto md:mx-0">
-                  <CountdownBox value={timeLeft.days} label="Days" />
+                <div
+  className="grid grid-cols-4 mx-auto md:mx-0"
+  style={{
+    gap: "clamp(6px, 1vw, 14px)",
+    width: "min(100%, 360px)",
+  }}
+>  <CountdownBox value={timeLeft.days} label="Days" />
                   <CountdownBox value={timeLeft.hours} label="Hrs" />
                   <CountdownBox value={timeLeft.minutes} label="Mins" />
                   <CountdownBox value={timeLeft.seconds} label="Secs" />
@@ -372,12 +377,32 @@ const fighters = [
 ];
 
 const sponsorLogos = ["/p1.png", "/p2.png", "/p3.png", "/p4.png", "/p5.png", "/p6.png"];
-
 function CountdownBox({ value, label }) {
   return (
-    <div className="border border-gray-700 bg-black py-2 sm:py-3 rounded-sm min-w-[55px] sm:min-w-[65px] md:min-w-[75px]">
-      <p className="text-sm sm:text-base md:text-lg font-bold text-white">{value}</p>
-      <p className="text-[8px] sm:text-[9px] md:text-[10px] text-gray-400 uppercase mt-0.5 tracking-wider">{label}</p>
+    <div
+      className="border border-gray-700 bg-black rounded-sm flex flex-col items-center justify-center"
+      style={{
+        minHeight: "clamp(60px, 8vw, 95px)",
+        padding: "clamp(8px, 1vw, 14px)",
+      }}
+    >
+      <p
+        className="font-bold text-white leading-none"
+        style={{
+          fontSize: "clamp(16px, 2vw, 32px)",
+        }}
+      >
+        {value}
+      </p>
+
+      <p
+        className="text-gray-400 uppercase tracking-wider mt-1"
+        style={{
+          fontSize: "clamp(8px, 0.8vw, 11px)",
+        }}
+      >
+        {label}
+      </p>
     </div>
   );
 }
