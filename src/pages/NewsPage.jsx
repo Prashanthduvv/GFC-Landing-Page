@@ -1,1441 +1,447 @@
-"use client";
-import { useEffect, useState } from "react";
-import {
-  FaTicketAlt,
-  FaShieldAlt,
-  FaLock,
-  FaUsers,
-  
-  FaChartLine,
-  FaStar,
-  FaCheckCircle,
-  FaInstagram,
-  FaYoutube,
-  FaFacebookF,
-  FaGlobe,
-  FaTrophy,
-  FaPlayCircle,
-  FaComments,
-  FaWhatsapp,
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  FaCalendarAlt, FaUser, FaTag, FaSearch, FaFilter, FaTimes,
+  FaArrowRight, FaHeart, FaEnvelope, FaBell, FaShare, FaLink,
+  FaFacebook, FaTwitter, FaWhatsapp, FaEye,FaClock 
 } from "react-icons/fa";
 
-import { useNavigate } from "react-router-dom";
-
-import {
-  
-  FaBookOpen,
-  
- FaQuoteLeft,
- FaTimes,
-  FaUserFriends,
-
-
-} from "react-icons/fa";
-
-const testimonials = [
-  {
-    image: "/images/1.png",
-    quote:
-      "I wanted to be part of this before the world noticed it.",
-    author: "Early GFC Community Member",
+// ================= NEWS DATA =================
+const newsItems = [
+  { 
+    id: 1, 
+    title: "GFC Global 1: Origin Announced", 
+    date: "March 15, 2026", 
+    author: "GFC Media", 
+    category: "Events", 
+    image: "/images/c1.png", 
+    excerpt: "India's biggest combat sports event is coming to New Delhi this June. Get ready for history in the making.",
+    content: "Full article content here...",
+    readTime: "3 min read",
+    views: 15420
   },
-
-  {
-    image: "/images/2.png",
-    quote:
-      "This feels bigger than just events. It feels like a movement.",
-    author: "Founding Supporter",
+  { 
+    id: 2, 
+    title: "Arjun Malik Signs Exclusive Deal", 
+    date: "March 10, 2026", 
+    author: "GFC Media", 
+    category: "Fighters", 
+    image: "/images/f1.png", 
+    excerpt: "Undefeated welterweight prospect joins GFC roster in a landmark signing.",
+    content: "Full article content here...",
+    readTime: "2 min read",
+    views: 8920
   },
-
-  {
-    image: "/images/1.png",
-    quote:
-      "The energy and vision behind GFC feels completely different.",
-    author: "Fight Enthusiast",
+  { 
+    id: 3, 
+    title: "Founding Community Applications Open", 
+    date: "March 5, 2026", 
+    author: "GFC Media", 
+    category: "Community", 
+    image: "/images/c3.png", 
+    excerpt: "Be part of history - limited founding memberships now available for early supporters.",
+    content: "Full article content here...",
+    readTime: "4 min read",
+    views: 12500
+  },
+  { 
+    id: 4, 
+    title: "GFC Announces Broadcast Partner", 
+    date: "February 28, 2026", 
+    author: "GFC Media", 
+    category: "Partners", 
+    image: "/images/c4.png", 
+    excerpt: "Global reach for India's premier combat sports platform through new partnership.",
+    content: "Full article content here...",
+    readTime: "2 min read",
+    views: 5600
+  },
+  { 
+    id: 5, 
+    title: "Meera Iyer: The Rise of a Champion", 
+    date: "February 20, 2026", 
+    author: "GFC Media", 
+    category: "Fighters", 
+    image: "/images/f2.png", 
+    excerpt: "Exclusive interview with strawweight sensation Meera Iyer ahead of her debut.",
+    content: "Full article content here...",
+    readTime: "5 min read",
+    views: 10300
+  },
+  { 
+    id: 6, 
+    title: "GFC Global 1 Fight Card Revealed", 
+    date: "February 15, 2026", 
+    author: "GFC Media", 
+    category: "Events", 
+    image: "/images/c1.png", 
+    excerpt: "Stacked lineup announced for inaugural event featuring top talent from across India.",
+    content: "Full article content here...",
+    readTime: "3 min read",
+    views: 18700
   },
 ];
 
-export default function Page() {
-   const [current, setCurrent] = useState(0);
-  
-    useEffect(() => {
-      const interval = setInterval(() => {
-        setCurrent((prev) =>
-          prev === testimonials.length - 1 ? 0 : prev + 1
-        );
-      }, 3500);
-  
-      return () => clearInterval(interval);
-    }, []);
+const categories = ["All", "Events", "Fighters", "Community", "Partners"];
 
-    const navigate = useNavigate();
-      
+// ================= NEWS DETAIL MODAL =================
+function NewsDetailModal({ article, onClose }) {
   return (
-    <main className="bg-black text-white overflow-hidden font-sans">
-
-      {/* HERO */}
-      <section className="border-b border-red-900/30">
-
-        <div className="grid lg:grid-cols-2">
-
-          {/* LEFT */}
-          <div className="p-6 lg:p-10 flex flex-col justify-center bg-black">
-
-            {/* LOGO */}
-            <img
-              src="/images/gfc-logo.png"
-              alt=""
-              className="w-[140px] lg:w-[180px]"
-            />
-
-            <p className="text-[10px] tracking-[4px] uppercase text-gray-400 mt-2">
-              Global Fighting Championship
-            </p>
-
-            {/* HEADING */}
-            <h1 className="uppercase font-black leading-[0.9] mt-8 text-[clamp(2.5rem,6vw,5.5rem)]">
-              India Doesn't
-              <br />
-              Follow Anymore.
-              <br />
-
-              <span className="text-red-600">
-                India Becomes
-                <br />
-                The Stage.
-              </span>
-            </h1>
-
-            {/* TEXT */}
-            <p className="text-gray-300 mt-6 leading-relaxed max-w-xl text-sm lg:text-base">
-              Become part of the founding GFC Community — an early movement
-              built around combat sports, premium experiences, real stories,
-              and the future of fighting culture in India.
-            </p>
-
-            {/* BUTTON */}
-           <button
-    onClick={() => navigate("/join-community")}
-      className="
-      mt-8
-      relative
-      overflow-hidden
-      bg-gradient-to-r
-      from-red-700
-      to-red-500
-      hover:from-red-600
-      hover:to-red-400
-      transition-all
-      duration-300
-      uppercase
-      font-extrabold
-      tracking-wide
-      px-6
-      md:px-8
-      py-4
-      text-[12px]
-      md:text-[14px]
-      border
-      border-red-400/20
-      shadow-[0_0_30px_rgba(255,0,0,0.45)]
-      w-full
-      sm:w-auto
-      group
-      hover:scale-[1.02]
-      active:scale-[0.98]
-      "
-    >
-      <span
-        className="
-        absolute
-        inset-0
-        -translate-x-full
-        group-hover:translate-x-full
-        transition-transform
-        duration-1000
-        bg-gradient-to-r
-        from-transparent
-        via-white/20
-        to-transparent
-        "
-      />
-
-      <span className="relative z-10">
-        APPLY TO JOIN THE GFC COMMUNITY →
-      </span>
-    </button>
-
-            <p className="mt-4 uppercase tracking-[3px] text-red-400 text-xs">
-              Limited Founding Memberships Open
-            </p>
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md" onClick={onClose}>
+      <motion.div 
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        className="relative max-w-2xl w-full max-h-[85vh] overflow-y-auto bg-zinc-900 border border-red-600/30 rounded-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button onClick={onClose} className="absolute top-3 right-3 text-gray-400 hover:text-white text-xl z-10">✕</button>
+        
+        <div className="p-5">
+          <img src={article.image} alt={article.title} className="w-full h-48 object-cover rounded-xl mb-4" />
+          
+          <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
+            <span className="flex items-center gap-1"><FaCalendarAlt size={10} /> {article.date}</span>
+            <span className="flex items-center gap-1"><FaUser size={10} /> {article.author}</span>
+            <span className="flex items-center gap-1 text-red-500"><FaTag size={10} /> {article.category}</span>
           </div>
-
-          {/* RIGHT */}
-          <div className="relative min-h-[500px] lg:min-h-[750px]">
-
-            <img
-              src="/images/c1.png"
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-
-            <div className="absolute inset-0 bg-gradient-to-l from-transparent via-black/20 to-black/60" />
+          
+          <h2 className="text-xl font-bold uppercase mb-3">{article.title}</h2>
+          
+          <div className="flex items-center gap-4 text-xs text-gray-500 mb-4 pb-3 border-b border-white/10">
+            <span><FaEye className="inline mr-1" /> {article.views.toLocaleString()} views</span>
+            <span><FaClock className="inline mr-1" /> {article.readTime}</span>
           </div>
-        </div>
-      </section>
-
-      {/* MOVEMENT */}
-      <section className="border-b border-red-900/20 bg-[#050505]">
-
-        <div className="grid lg:grid-cols-2">
-
-          {/* LEFT */}
-          <div className="p-6 lg:p-10">
-
-            <h2 className="uppercase font-black leading-none text-[clamp(2rem,5vw,4rem)]">
-
-              More Than Fans.
-              <br />
-
-              <span className="text-red-600">
-                We're Building A Movement.
-              </span>
-            </h2>
-
-            <div className="mt-6 space-y-5 text-gray-300 leading-relaxed text-sm lg:text-base">
-
-              <p>
-                GFC (Global Fighting Championship) is a next-generation combat
-                sports platform focused on fighters, storytelling,
-                entertainment, and community-driven growth.
-              </p>
-
-              <p>
-                The GFC Community is the foundation behind this movement — a
-                growing network of ambitious individuals, fight enthusiasts,
-                creators, professionals, entrepreneurs, and supporters who
-                want to be part of something meaningful from the beginning.
-              </p>
-            </div>
-
-            <p className="mt-8 text-red-500 font-semibold leading-relaxed text-sm lg:text-base">
-              This is not just a membership.
-              <br />
-              It is early access to a platform being built for the future of
-              combat sports in India.
-            </p>
-          </div>
-
-          {/* RIGHT */}
-          <div className="relative min-h-[400px]">
-
-            <img
-              src="/images/c2.png"
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-
-            <div className="absolute inset-0 bg-black/20" />
-          </div>
-        </div>
-      </section>
-
-      {/* WHY JOIN */}
-      <section className="py-14 border-b border-red-900/20">
-
-        <div className="max-w-7xl mx-auto px-4 lg:px-6">
-
-          <h2 className="uppercase text-center font-black text-[clamp(2rem,5vw,4rem)]">
-
-            Why Join The
-            <span className="text-red-600"> GFC Community?</span>
-          </h2>
-
-          <p className="text-center text-gray-400 mt-2 text-sm">
-            As a Founding Community Member, You Receive:
+          
+          <p className="text-gray-300 text-sm leading-relaxed mb-4">
+            {article.excerpt} Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+            Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
           </p>
+          
+          <p className="text-gray-400 text-sm leading-relaxed mb-6">
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip 
+            ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.
+          </p>
+          
+          <div className="flex flex-wrap gap-3">
+            <button className="flex-1 bg-red-600 hover:bg-red-700 transition py-2 rounded-lg text-sm font-bold uppercase">READ FULL ARTICLE</button>
+            <button className="border border-white/20 hover:border-red-600 transition px-4 py-2 rounded-lg text-sm font-bold uppercase flex items-center gap-2">
+              <FaShare size={12} /> SHARE
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
 
-          <div className="grid md:grid-cols-2 xl:grid-cols-6 gap-4 mt-10">
+// ================= MAIN PAGE =================
+export default function NewsPage() {
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState(null);
+  const [emailSubscribe, setEmailSubscribe] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
 
-            {[
-              [FaTicketAlt, "Exclusive Event Invitations"],
-              [FaShieldAlt, "VIP Opportunities"],
-              [FaLock, "Insider Access"],
-              [FaUsers, "Community & Networking"],
-              [FaChartLine, "Be Part Of The Growth"],
-              [FaStar, "Recognition & Early Positioning"],
-            ].map(([Icon, title], index) => (
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
-              <div
-                key={index}
-                className="border border-white/10 bg-[#060606] p-6 rounded-sm hover:border-red-500/50 transition-all duration-300"
+  const handleGetTickets = () => {
+    window.dispatchEvent(new CustomEvent("openTicketModal"));
+  };
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    if (emailSubscribe) {
+      setSubscribed(true);
+      setTimeout(() => setSubscribed(false), 3000);
+      setEmailSubscribe("");
+    }
+  };
+
+  const filteredNews = newsItems.filter((item) => {
+    const matchesCategory = selectedCategory === "All" || item.category === selectedCategory;
+    const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          item.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  // Get unique categories with counts
+  const categoriesWithCount = [
+    "All",
+    ...categories.filter(c => c !== "All").map(cat => ({
+      name: cat,
+      count: newsItems.filter(item => item.category === cat).length
+    }))
+  ];
+
+  // Animation variants
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  };
+
+  return (
+    <div className="pt-16 sm:pt-20 overflow-x-hidden">
+      
+      {/* ================= HERO SECTION ================= */}
+   {/* ================= HERO SECTION ================= */}
+<section className="relative flex items-center bg-black overflow-hidden" style={{ minHeight: "100vh", height: "100vh", maxHeight: "900px" }}>
+  <div className="absolute inset-0">
+    <img 
+      src="/images/c3.png" 
+      alt="News Hero" 
+      className="w-full h-full object-cover object-center"
+    />
+    <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/30" />
+  </div>
+  
+  <div className="relative z-10 w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="max-w-2xl">
+      <p className="text-red-500 uppercase tracking-[4px] text-xs sm:text-sm mb-3 font-semibold">LATEST UPDATES</p>
+      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase leading-[1.1]">
+        GFC <span className="text-red-600">News</span>
+      </h1>
+      <p className="text-gray-300 text-sm sm:text-base mt-4 leading-relaxed">
+        Stay updated with the latest announcements, fight news, and community updates.
+      </p>
+    </div>
+  </div>
+</section>
+
+      {/* ================= STATS BAR ================= */}
+      <div className="bg-[#050505] border-b border-white/10">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-wrap justify-center gap-6 sm:gap-10 text-center">
+            <div>
+              <p className="text-xl sm:text-2xl font-black text-white">{newsItems.length}</p>
+              <p className="text-gray-500 text-[10px] sm:text-xs uppercase">ARTICLES</p>
+            </div>
+            <div>
+              <p className="text-xl sm:text-2xl font-black text-white">{categories.length - 1}</p>
+              <p className="text-gray-500 text-[10px] sm:text-xs uppercase">CATEGORIES</p>
+            </div>
+            <div>
+              <p className="text-xl sm:text-2xl font-black text-white">15K+</p>
+              <p className="text-gray-500 text-[10px] sm:text-xs uppercase">MONTHLY READERS</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ================= FILTERS & SEARCH ================= */}
+      <div className="bg-[#050505] border-b border-white/10 sticky top-16 sm:top-20 z-30">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button 
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 rounded-lg text-xs uppercase hover:bg-white/10 transition"
               >
-
-                <Icon className="text-red-500 text-5xl mb-5" />
-
-                <h3 className="uppercase font-bold text-lg leading-tight">
-                  {title}
-                </h3>
-
-                <p className="mt-4 text-gray-400 text-sm leading-relaxed">
-                  Premium member-only access and exclusive experiences inside
-                  the GFC ecosystem.
-                </p>
+                <FaFilter size={10} /> {showFilters ? "HIDE" : "FILTER"}
+              </button>
+              <div className="relative flex-1 sm:w-64">
+                <input
+                  type="text"
+                  placeholder="Search news..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-8 pr-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-xs placeholder-gray-500 focus:outline-none focus:border-red-500 transition"
+                />
+                <FaSearch className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 text-[10px]" />
+                {searchTerm && (
+                  <button onClick={() => setSearchTerm("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white">
+                    <FaTimes size={10} />
+                  </button>
+                )}
               </div>
-            ))}
+            </div>
+            <p className="text-gray-500 text-[10px] sm:text-xs">Showing {filteredNews.length} of {newsItems.length} articles</p>
+          </div>
+          
+          {/* Category Filters */}
+          <AnimatePresence>
+            {showFilters && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mt-3 pt-3 border-t border-white/10 overflow-hidden"
+              >
+                <div className="flex flex-wrap justify-center gap-1.5">
+                  {categories.map((category) => {
+                    const count = category === "All" ? newsItems.length : newsItems.filter(i => i.category === category).length;
+                    return (
+                      <button
+                        key={category}
+                        onClick={() => setSelectedCategory(category)}
+                        className={`px-2.5 py-1 text-[10px] sm:text-xs uppercase font-semibold transition-all rounded ${
+                          selectedCategory === category 
+                            ? "bg-red-600 text-white" 
+                            : "bg-white/5 text-gray-400 hover:bg-white/10"
+                        }`}
+                      >
+                        {category} ({count})
+                      </button>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* ================= NEWS GRID ================= */}
+      <section className="py-8 sm:py-12">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+          {filteredNews.length === 0 ? (
+            <div className="text-center py-16">
+              <p className="text-gray-400 text-sm">No articles found matching your criteria.</p>
+              <button 
+                onClick={() => { setSelectedCategory("All"); setSearchTerm(""); }}
+                className="mt-2 text-red-500 text-xs hover:text-red-400 transition"
+              >
+                Clear all filters
+              </button>
+            </div>
+          ) : (
+            <motion.div 
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6"
+            >
+              {filteredNews.map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  variants={fadeInUp}
+                  whileHover={{ y: -5 }}
+                  onClick={() => setSelectedArticle(item)}
+                  className="bg-[#050505] border border-white/10 hover:border-red-600 rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-red-900/20"
+                >
+                  <div className="relative h-48 overflow-hidden">
+                    <img 
+                      src={item.image} 
+                      alt={item.title} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                    />
+                    <div className="absolute top-3 right-3">
+                      <span className="bg-red-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-full">{item.category}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 sm:p-5">
+                    <div className="flex items-center gap-3 text-[10px] text-gray-400 mb-3 flex-wrap">
+                      <span className="flex items-center gap-1"><FaCalendarAlt size={9} /> {item.date}</span>
+                      <span className="flex items-center gap-1"><FaUser size={9} /> {item.author}</span>
+                      <span className="flex items-center gap-1 text-gray-500"><FaEye size={9} /> {item.views.toLocaleString()}</span>
+                    </div>
+                    
+                    <h3 className="text-base sm:text-lg font-bold uppercase mb-2 leading-tight">{item.title}</h3>
+                    <p className="text-gray-400 text-xs sm:text-sm mb-3 leading-relaxed">{item.excerpt}</p>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500 text-[10px]">{item.readTime}</span>
+                      <button className="text-red-500 hover:text-red-400 text-xs font-semibold uppercase flex items-center gap-1">
+                        READ MORE <FaArrowRight size={10} />
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+        </div>
+      </section>
+
+      {/* ================= NEWSLETTER SECTION ================= */}
+      <section className="py-12 sm:py-16 bg-gradient-to-r from-red-900/10 to-black border-y border-red-900/20">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black uppercase mb-2">Never Miss an <span className="text-red-600">Update</span></h2>
+              <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
+                Subscribe to our newsletter for exclusive news, fight announcements, and community updates.
+              </p>
+            </div>
+            <div>
+              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
+                <input 
+                  type="email" 
+                  placeholder="Enter your email" 
+                  value={emailSubscribe}
+                  onChange={(e) => setEmailSubscribe(e.target.value)}
+                  required
+                  className="flex-1 px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-red-500 transition"
+                />
+                <button 
+                  type="submit"
+                  className="bg-red-600 hover:bg-red-700 transition px-6 py-2.5 rounded-lg text-sm font-bold uppercase flex items-center justify-center gap-2"
+                >
+                  <FaBell size={12} /> SUBSCRIBE
+                </button>
+              </form>
+              {subscribed && (
+                <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-green-500 text-xs mt-2">
+                  ✓ Successfully subscribed to newsletter!
+                </motion.p>
+              )}
+            </div>
           </div>
         </div>
       </section>
 
-    <section className="w-full bg-black text-white overflow-hidden">
-
-      {/* ================================================= */}
-      {/* WHO IS THIS FOR */}
-      {/* ================================================= */}
-
-      <div className="border-t border-white/10">
-
-        <div className="max-w-[1400px] mx-auto grid lg:grid-cols-[1fr_1.2fr_1fr] gap-[1px] bg-white/10">
-
-          {/* LEFT */}
-          <div className="bg-[#050505] p-5 md:p-7">
-
-            <div className="space-y-5">
-
-              {[
-                "Believe India deserves world-class combat sports platforms",
-                "Want to be early supporters of something meaningful",
-                "Enjoy sports, entertainment, networking, and live experiences",
-                "Want to connect with ambitious and like-minded individuals",
-                "Want insider access instead of being late to the movement",
-              ].map((item, index) => (
-
-                <div
-                  key={index}
-                  className="flex gap-4 items-start"
-                >
-
-                  <FaCheckCircle
-                    className="
-                    text-red-600
-                    text-sm
-                    mt-[4px]
-                    shrink-0
-                    "
-                  />
-
-                  <p
-                    className="
-                    text-gray-300
-                    text-[13px]
-                    md:text-[14px]
-                    leading-[1.7]
-                    font-medium
-                    "
-                  >
-                    {item}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* CENTER */}
-          <div className="relative min-h-[320px] md:min-h-[420px] overflow-hidden">
-
-            <img
-              src="/images/c3.png"
-              alt=""
-              className="
-              absolute
-              inset-0
-              w-full
-              h-full
-              object-cover
-              object-center
-              "
-            />
-
-            <div
-              className="
-              absolute
-              inset-0
-              bg-black/45
-              "
-            />
-
-            <div
-              className="
-              relative
-              z-10
-              h-full
-              flex
-              flex-col
-              items-center
-              justify-start
-              text-center
-              pt-6
-              px-4
-              "
-            >
-
-              <h2
-                className="
-                uppercase
-                font-black
-                leading-none
-                tracking-tight
-                text-[clamp(2rem,5vw,4rem)]
-                "
+      {/* ================= POPULAR TAGS ================= */}
+      <section className="py-8">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-gray-400 text-xs uppercase tracking-wider mb-3">POPULAR TOPICS</p>
+          <div className="flex flex-wrap justify-center gap-2">
+            {categories.filter(c => c !== "All").map((category) => (
+              <button
+                key={category}
+                onClick={() => { setSelectedCategory(category); setShowFilters(true); }}
+                className="px-3 py-1 bg-white/5 hover:bg-red-600/20 border border-white/10 hover:border-red-600 rounded-full text-[10px] sm:text-xs transition"
               >
-                WHO IS THIS FOR?
-              </h2>
-
-              <p
-                className="
-                text-red-600
-                uppercase
-                font-bold
-                tracking-wide
-                mt-2
-                text-[11px]
-                md:text-[13px]
-                "
-              >
-                This Community Is Built For People Who:
-              </p>
-            </div>
-          </div>
-
-          {/* RIGHT */}
-          <div className="bg-[#050505] p-5 md:p-7">
-
-            <h3
-              className="
-              text-red-600
-              uppercase
-              font-bold
-              tracking-wide
-              text-[14px]
-              md:text-[16px]
-              mb-5
-              "
-            >
-              Whether you are:
-            </h3>
-
-            <div className="space-y-4">
-
-              {[
-                "A Fight Enthusiast",
-                "Entrepreneur",
-                "Creator",
-                "Working Professional",
-                "Student",
-                "Investor",
-                "Marketer",
-                "Sports Lover",
-              ].map((item, index) => (
-
-                <div
-                  key={index}
-                  className="
-                  flex
-                  items-center
-                  gap-3
-                  "
-                >
-
-                  <FaStar
-                    className="
-                    text-red-600
-                    text-[11px]
-                    shrink-0
-                    "
-                  />
-
-                  <p
-                    className="
-                    text-white
-                    text-[13px]
-                    md:text-[14px]
-                    font-medium
-                    "
-                  >
-                    {item}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <p
-              className="
-              mt-8
-              uppercase
-              font-black
-              leading-[1.2]
-              text-red-600
-              text-[18px]
-              md:text-[24px]
-              max-w-[320px]
-              "
-            >
-              There Is A Place For You Inside The GFC Community.
-            </p>
+                #{category}
+              </button>
+            ))}
+            <button className="px-3 py-1 bg-white/5 hover:bg-red-600/20 border border-white/10 hover:border-red-600 rounded-full text-[10px] sm:text-xs transition">#GFCGlobal1</button>
+            <button className="px-3 py-1 bg-white/5 hover:bg-red-600/20 border border-white/10 hover:border-red-600 rounded-full text-[10px] sm:text-xs transition">#Origin</button>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* ================================================= */}
-      {/* WHAT MAKES GFC DIFFERENT */}
-      {/* ================================================= */}
-
-      <div className="border-t border-white/10">
-
-        <div className="max-w-[1400px] mx-auto grid lg:grid-cols-[1.2fr_1fr] gap-[1px] bg-white/10">
-
-          {/* LEFT */}
-          <div className="bg-[#050505] p-5 md:p-7">
-
-            <h2
-              className="
-              uppercase
-              font-black
-              leading-none
-              tracking-tight
-              text-[clamp(2rem,5vw,4rem)]
-              "
-            >
-
-              <span className="text-white">
-                What Makes
-              </span>
-
-              <span className="text-red-600">
-                {" "}GFC Different?
-              </span>
-            </h2>
-
-            <p
-              className="
-              mt-3
-              text-gray-300
-              text-[13px]
-              md:text-[14px]
-              leading-[1.7]
-              max-w-[700px]
-              "
-            >
-              Most platforms focus only on events.
-            </p>
-
-            <p
-              className="
-              mt-3
-              text-red-600
-              text-[13px]
-              md:text-[14px]
-              font-bold
-              "
-            >
-              GFC is being built around:
-            </p>
-
-            {/* ICON GRID */}
-            <div
-              className="
-              grid
-              grid-cols-2
-              sm:grid-cols-3
-              lg:grid-cols-6
-              gap-5
-              md:gap-6
-              mt-8
-              "
-            >
-
-              {[
-                [FaUsers, "Fighters"],
-                [FaBookOpen, "Stories"],
-                [FaPlayCircle, "Content"],
-                [FaUserFriends, "Community"],
-                [FaGlobe, "Culture"],
-                [FaTrophy, "Long-Term\nBrand Building"],
-              ].map(([Icon, title], index) => (
-
-                <div
-                  key={index}
-                  className="
-                  flex
-                  flex-col
-                  items-center
-                  justify-start
-                  text-center
-                  min-h-[150px]
-                  "
-                >
-
-                  <div
-                    className="
-                    w-[56px]
-                    h-[56px]
-                    sm:w-[62px]
-                    sm:h-[62px]
-                    border
-                    border-white/20
-                    rounded-full
-                    flex
-                    items-center
-                    justify-center
-                    "
-                  >
-
-                    <Icon
-                      className="
-                      text-white
-                      text-[20px]
-                      sm:text-[24px]
-                      "
-                    />
-                  </div>
-
-                  <p
-                    className="
-                    whitespace-pre-line
-                    uppercase
-                    font-bold
-                    text-[10px]
-                    sm:text-[11px]
-                    leading-[1.5]
-                    tracking-[1px]
-                    mt-3
-                    text-white
-                    max-w-[110px]
-                    "
-                  >
-                    {title}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            {/* TEXT */}
-            <div className="mt-10 space-y-3">
-
-              <p
-                className="
-                text-gray-300
-                text-[13px]
-                md:text-[14px]
-                leading-[1.7]
-                "
-              >
-                We are not chasing one successful night.
-              </p>
-
-              <p
-                className="
-                text-gray-300
-                text-[13px]
-                md:text-[14px]
-                leading-[1.7]
-                "
-              >
-                We are building a movement that grows city by city,
-                fighter by fighter, story by story.
-              </p>
-            </div>
-          </div>
-
-          {/* RIGHT */}
-          <div className="bg-[#050505] p-5 md:p-7 relative overflow-hidden">
-
-            <p
-              className="
-              uppercase
-              font-black
-              tracking-wide
-              text-[14px]
-              "
-            >
-
-              <span className="text-white">
-                Community
-              </span>
-
-              <span className="text-red-600">
-                {" "}Vision
-              </span>
-            </p>
-
-            <h2
-              className="
-              uppercase
-              font-black
-              leading-[0.95]
-              mt-5
-              text-[clamp(1.7rem,4vw,3.4rem)]
-              relative
-              z-10
-              max-w-[320px]
-              "
-            >
-
-              <span className="text-white">
-                One Community.
-              </span>
-
-              <br />
-
-              <span className="text-red-600">
-                Many Cities.
-              </span>
-
-              <br />
-
-              <span className="text-white">
-                One Movement.
-              </span>
-            </h2>
-
-            <div className="mt-5 space-y-4 max-w-[300px] md:max-w-[340px] relative z-10">
-
-              <p
-                className="
-                text-gray-300
-                text-[13px]
-                md:text-[14px]
-                leading-[1.7]
-                "
-              >
-                The GFC Community is designed to expand across India through
-                local chapters, networking circles, live experiences,
-                and community-led engagement.
-              </p>
-
-              <p
-                className="
-                text-gray-300
-                text-[13px]
-                md:text-[14px]
-                leading-[1.7]
-                "
-              >
-                Early members will play a major role in helping shape this
-                journey.
-              </p>
-            </div>
-
-            {/* INDIA MAP */}
-            <img
-              src="/images/c4.png"
-              alt=""
-              className="
-              absolute
-              right-[-20px]
-              bottom-0
-              w-[48%]
-              md:w-[52%]
-              lg:w-[55%]
-              object-contain
-              opacity-90
-              pointer-events-none
-              "
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* ================================================= */}
-      {/* FOUNDING MEMBER BENEFITS */}
-      {/* ================================================= */}
-
-      <div className="border-t border-white/10">
-
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-5">
-
-          <div
-            className="
-            border
-            border-red-900/40
-            bg-[#040404]
-            overflow-hidden
-            "
+      {/* ================= CTA SECTION ================= */}
+      <section className="py-12 sm:py-16 text-center">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-black uppercase mb-3">
+            Join the <span className="text-red-600">Movement</span>
+          </h2>
+          <p className="text-gray-300 text-xs sm:text-sm max-w-xl mx-auto mb-5 leading-relaxed">
+            Be part of India's combat sports revolution. Get exclusive content, early access, and community benefits.
+          </p>
+          <button 
+            onClick={handleGetTickets}
+            className="bg-red-600 hover:bg-red-700 transition px-6 sm:px-8 py-2.5 rounded-lg text-sm font-bold uppercase inline-flex items-center gap-2"
           >
-
-            <div className="
-            grid
-            lg:grid-cols-[320px_1fr]
-            gap-[1px]
-            bg-red-900/20
-            ">
-
-              {/* LEFT */}
-              <div className="bg-black p-4 md:p-5">
-
-                <h2
-                  className="
-                  uppercase
-                  font-black
-                  tracking-tight
-                  leading-none
-                  text-white
-                  text-[22px]
-                  md:text-[30px]
-                  "
-                >
-                  Founding Member Benefits
-                </h2>
-
-                <div
-                  className="
-                  mt-4
-                  bg-gradient-to-r
-                  from-red-800
-                  to-red-600
-                  border
-                  border-red-500/30
-                  h-[120px]
-                  md:h-[135px]
-                  flex
-                  flex-col
-                  justify-center
-                  px-6
-                  "
-                >
-
-                  <p
-                    className="
-                    uppercase
-                    tracking-[2px]
-                    text-white/80
-                    text-[11px]
-                    md:text-xs
-                    font-semibold
-                    "
-                  >
-                    Contribution Amount
-                  </p>
-
-                  <h2
-                    className="
-                    text-white
-                    font-black
-                    text-[52px]
-                    md:text-[64px]
-                    leading-none
-                    mt-2
-                    "
-                  >
-                    ₹5,000
-                  </h2>
-                </div>
-              </div>
-
-              {/* RIGHT */}
-              <div className="
-              bg-black
-              grid
-              grid-cols-2
-              md:grid-cols-3
-              xl:grid-cols-7
-              gap-[1px]
-              bg-red-900/20
-              ">
-
-                {[
-                  [FaWhatsapp, "Access to official\nGFC WhatsApp\ncommunity"],
-                  [FaUsers, "Invitation to\nexclusive community\nevents"],
-                  [FaPlayCircle, "VIP opportunities\nfor future\nexperiences"],
-                  [FaLock, "Insider\nannouncements\n& updates"],
-                  [FaUsers, "Networking\naccess"],
-                  [FaStar, "Founding member\nrecognition"],
-                  [FaTrophy, "Early participation\nin future\ninitiatives"],
-                ].map(([Icon, title], index) => (
-
-                  <div
-                    key={index}
-                    className="
-                    bg-black
-                    flex
-                    flex-col
-                    items-center
-                    justify-center
-                    text-center
-                    px-4
-                    py-7
-                    min-h-[170px]
-                    md:min-h-[190px]
-                    "
-                  >
-
-                    <div
-                      className="
-                      w-[52px]
-                      h-[52px]
-                      sm:w-[58px]
-                      sm:h-[58px]
-                      border
-                      border-white/20
-                      rounded-full
-                      flex
-                      items-center
-                      justify-center
-                      "
-                    >
-
-                      <Icon
-                        className="
-                        text-white
-                        text-[20px]
-                        sm:text-[24px]
-                        "
-                      />
-                    </div>
-
-                    <p
-                      className="
-                      whitespace-pre-line
-                      uppercase
-                      font-bold
-                      text-white
-                      text-[10px]
-                      sm:text-[11px]
-                      leading-[1.6]
-                      tracking-wide
-                      mt-4
-                      max-w-[120px]
-                      "
-                    >
-                      {title}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+            <FaHeart size={14} /> JOIN THE COMMUNITY
+          </button>
         </div>
-      </div>
-    </section>  
-     
+      </section>
 
-      <section className="w-full bg-black overflow-hidden border-t border-white/10">
-    
-          {/* ====================================== */}
-          {/* TESTIMONIALS */}
-          {/* ====================================== */}
-    
-          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 md:pt-8">
-    
-            {/* TITLE */}
-            <div className="text-center mb-5">
-    
-              <h2
-                className="
-                uppercase
-                font-black
-                leading-none
-                tracking-tight
-                text-[clamp(1.4rem,4vw,3rem)]
-              "
-              >
-                <span className="text-white">
-                  What Our
-                </span>
-    
-                <span className="text-red-600">
-                  {" "}Community Members Say
-                </span>
-              </h2>
-            </div>
-    
-            {/* DESKTOP */}
-            <div className="hidden lg:grid grid-cols-2 gap-4">
-    
-              {[
-                testimonials[current],
-                testimonials[
-                  current === testimonials.length - 1
-                    ? 0
-                    : current + 1
-                ],
-              ].map((item, index) => (
-    
-                <div
-                  key={index}
-                  className="
-                  relative
-                  h-[190px]
-                  overflow-hidden
-                  border
-                  border-white/10
-                  bg-[#050505]
-                  "
-                >
-    
-                  {/* IMAGE */}
-                  <img
-                    src={item.image}
-                    alt=""
-                    className="
-                    absolute
-                    inset-0
-                    w-full
-                    h-full
-                    object-cover
-                    object-center
-                    "
-                  />
-    
-                  {/* OVERLAY */}
-                  <div
-                    className="
-                    absolute
-                    inset-0
-                    bg-gradient-to-r
-                    from-black/95
-                    via-black/70
-                    to-black/20
-                    "
-                  />
-    
-                  {/* CONTENT */}
-                  <div
-                    className="
-                    relative
-                    z-10
-                    h-full
-                    flex
-                    flex-col
-                    justify-center
-                    px-7
-                    "
-                  >
-    
-                    <FaQuoteLeft
-                      className="
-                      text-red-500
-                      text-3xl
-                      mb-3
-                      "
-                    />
-    
-                    <p
-                      className="
-                      italic
-                      text-white
-                      leading-relaxed
-                      text-lg
-                      max-w-[320px]
-                      "
-                    >
-                      {item.quote}
-                    </p>
-    
-                    <p
-                      className="
-                      mt-3
-                      uppercase
-                      tracking-[2px]
-                      text-red-400
-                      text-xs
-                      "
-                    >
-                      — {item.author}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-    
-            {/* MOBILE */}
-            <div className="lg:hidden">
-    
-              <div
-                className="
-                relative
-                h-[220px]
-                overflow-hidden
-                border
-                border-white/10
-                bg-[#050505]
-                "
-              >
-    
-                {/* IMAGE */}
-                <img
-                  src={testimonials[current].image}
-                  alt=""
-                  className="
-                  absolute
-                  inset-0
-                  w-full
-                  h-full
-                  object-cover
-                  object-center
-                  "
-                />
-    
-                {/* OVERLAY */}
-                <div
-                  className="
-                  absolute
-                  inset-0
-                  bg-gradient-to-r
-                  from-black/95
-                  via-black/70
-                  to-black/20
-                  "
-                />
-    
-                {/* CONTENT */}
-                <div
-                  className="
-                  relative
-                  z-10
-                  h-full
-                  flex
-                  flex-col
-                  justify-center
-                  px-5
-                  "
-                >
-    
-                  <FaQuoteLeft
-                    className="
-                    text-red-500
-                    text-3xl
-                    mb-3
-                    "
-                  />
-    
-                  <p
-                    className="
-                    italic
-                    text-white
-                    leading-relaxed
-                    text-base
-                    "
-                  >
-                    {testimonials[current].quote}
-                  </p>
-    
-                  <p
-                    className="
-                    mt-3
-                    uppercase
-                    tracking-[2px]
-                    text-red-400
-                    text-[11px]
-                    "
-                  >
-                    — {testimonials[current].author}
-                  </p>
-                </div>
-              </div>
-            </div>
-    
-            {/* DOTS */}
-            <div className="flex justify-center gap-2 mt-5">
-    
-              {testimonials.map((_, index) => (
-    
-                <button
-                  key={index}
-                  onClick={() => setCurrent(index)}
-                  className={`
-                    transition-all duration-300 rounded-full
-                    ${
-                      current === index
-                        ? "bg-red-600 w-8 h-2"
-                        : "bg-white/30 w-2 h-2"
-                    }
-                  `}
-                />
-              ))}
-            </div>
-          </div>
-    
-          {/* ====================================== */}
-          {/* FOOTER */}
-          {/* ====================================== */}
-    
-          <div
-            className="
-            border-t
-            border-white/10
-            bg-[#030303]
-            relative
-            overflow-hidden
-            mt-8
-            "
-          >
-    
-            {/* RED GLOW */}
-            <div
-              className="
-              absolute
-              inset-0
-              bg-[radial-gradient(circle_at_center,rgba(255,0,0,0.15),transparent_60%)]
-              "
-            />
-    
-            <div
-              className="
-              relative
-              z-10
-              max-w-[1400px]
-              mx-auto
-              px-4
-              sm:px-6
-              lg:px-8
-              py-6
-              md:py-8
-              "
-            >
-    
-              <div
-                className="
-                grid
-                lg:grid-cols-[220px_1fr_220px]
-                gap-8
-                items-center
-                "
-              >
-    
-                {/* LEFT */}
-                <div
-                  className="
-                  flex
-                  flex-col
-                  items-center
-                  lg:items-start
-                  text-center
-                  lg:text-left
-                  "
-                >
-    
-                  <img
-                    src="/gfc-logo.png"
-                    alt=""
-                    className="
-                    w-[110px]
-                    md:w-[150px]
-                    object-contain
-                    "
-                  />
-    
-                  <p
-                    className="
-                    uppercase
-                    tracking-[3px]
-                    text-gray-400
-                    mt-3
-                    text-[10px]
-                    md:text-xs
-                    "
-                  >
-                    Fights. Stories. Legacy.
-                  </p>
-                </div>
-    
-                {/* CENTER */}
-                <div className="text-center">
-    
-                  {/* TITLE */}
-                  <div
-                    className="
-                    uppercase
-                    leading-[0.82]
-                    "
-                  >
-    
-                    <h2
-                      className="
-                      text-white
-                      font-black
-                      text-[clamp(2rem,6vw,4.8rem)]
-                      "
-                    >
-                      The Movement
-                    </h2>
-    
-                    <h2
-                      className="
-                      text-red-600
-                      font-black
-                      text-[clamp(2rem,6vw,4.8rem)]
-                      -mt-1
-                      "
-                    >
-                      Has Begun.
-                    </h2>
-                  </div>
-    
-                  {/* SUBTEXT */}
-                  <p
-                    className="
-                    mt-2
-                    text-gray-300
-                    leading-tight
-                    text-[11px]
-                    md:text-sm
-                    "
-                  >
-                    You can watch it grow later.
-                    <br />
-                    Or become part of it now.
-                  </p>
-    
-                  {/* BUTTON */}
-                  <button
-                    className="
-                    mt-4
-                    bg-gradient-to-r
-                    from-red-700
-                    to-red-500
-                    hover:from-red-600
-                    hover:to-red-400
-                    transition-all
-                    duration-300
-                    uppercase
-                    font-bold
-                    tracking-wide
-                    px-5
-                    md:px-8
-                    py-3
-                    text-[11px]
-                    md:text-sm
-                    border
-                    border-red-400/30
-                    shadow-[0_0_25px_rgba(255,0,0,0.35)]
-                    w-full
-                    sm:w-auto
-                    "
-                  >
-                    APPLY TO JOIN THE GFC COMMUNITY →
-                  </button>
-    
-                  <p
-                    className="
-                    mt-3
-                    uppercase
-                    tracking-[2px]
-                    text-red-400
-                    text-[9px]
-                    md:text-[10px]
-                    "
-                  >
-                    Limited Founding Memberships Currently Open
-                  </p>
-                </div>
-    
-                {/* RIGHT */}
-                <div
-                  className="
-                  flex
-                  flex-col
-                  items-center
-                  lg:items-end
-                  "
-                >
-    
-                  <p
-                    className="
-                    uppercase
-                    font-bold
-                    tracking-[3px]
-                    text-white
-                    text-xs
-                    md:text-sm
-                    mb-3
-                    "
-                  >
-                    Follow GFC
-                  </p>
-    
-                  {/* ICONS */}
-                  <div className="flex gap-3">
-    
-                    {[
-                      FaInstagram,
-                      FaYoutube,
-                      FaTimes,
-                      FaFacebookF,
-                    ].map((Icon, index) => (
-    
-                      <button
-                        key={index}
-                        className="
-                        w-9
-                        h-9
-                        md:w-10
-                        md:h-10
-                        border
-                        border-white
-                        text-white
-                        rounded-full
-                        flex
-                        items-center
-                        justify-center
-                        hover:border-red-500
-                        hover:text-red-500
-                        transition-all
-                        duration-300
-                        "
-                      >
-    
-                        <Icon className="text-xs md:text-sm" />
-                      </button>
-                    ))}
-                  </div>
-    
-                  {/* TAG */}
-                  <p
-                    className="
-                    text-red-500
-                    font-bold
-                    mt-3
-                    text-xs
-                    md:text-sm
-                    "
-                  >
-                    #GFCGlobal
-                  </p>
-                </div>
-              </div>
-    
-              {/* BOTTOM TEXT */}
-              <div
-                className="
-                border-t
-                border-white/10
-                mt-6
-                pt-4
-                text-center
-                "
-              >
-    
-                <p
-                  className="
-                  text-gray-500
-                  text-[8px]
-                  md:text-[10px]
-                  leading-relaxed
-                  max-w-[900px]
-                  mx-auto
-                  "
-                >
-                  GFC Community Membership is currently available through a limited
-                  founding intake process.
-                  <br />
-                  Applications are reviewed internally before onboarding
-                  confirmation.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-    </main>
+      {/* ================= NEWS DETAIL MODAL ================= */}
+      <AnimatePresence>
+        {selectedArticle && <NewsDetailModal article={selectedArticle} onClose={() => setSelectedArticle(null)} />}
+      </AnimatePresence>
+    </div>
   );
 }

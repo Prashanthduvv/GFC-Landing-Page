@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import TicketModal from "../components/TicketModal";
 import { useTicketModal } from "../hooks/useTicketModal";
 import NewsletterSubscribe from "../components/NewsletterSubscribe";
@@ -54,7 +55,7 @@ export default function HomePage() {
   }, []);
 
   const handleWatchTrailer = () => setIsTrailerModalOpen(true);
-
+const navigate = useNavigate();
   return (
     <>
       <TicketModal isOpen={isTicketModalOpen} onClose={closeTicketModal} />
@@ -235,19 +236,48 @@ export default function HomePage() {
         {/* Fighters Section */}
         <section id="fighters" className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-16 py-10 sm:py-12 md:py-16">
           <div className="grid lg:grid-cols-2 gap-8 md:gap-10 lg:gap-12 items-start">
-            <div className="max-w-md mx-auto lg:mx-0 text-center lg:text-left">
-              <p className="text-red-600 text-[10px] sm:text-xs md:text-sm tracking-widest uppercase mb-2 sm:mb-3">ABOUT GFC</p>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight uppercase text-white">
-                WE ARE BUILDING <br /> MORE THAN EVENTS.<br />
-                <span className="text-red-600">WE ARE BUILDING A MOVEMENT.</span>
-              </h2>
-              <p className="text-gray-400 text-xs sm:text-sm md:text-base mt-4 sm:mt-5 leading-relaxed">
-                GFC is a combat sports platform focused on fighters, content and culture.
-              </p>
-              <button onClick={() => window.dispatchEvent(new CustomEvent("openTicketModal"))} className="mt-5 sm:mt-6 border border-gray-600 px-4 sm:px-5 py-1.5 sm:py-2 text-xs sm:text-sm uppercase hover:bg-white hover:text-black transition rounded-sm text-white">
-                GET TICKETS →
-              </button>
-            </div>
+           <div className="max-w-[580px] mx-auto lg:mx-0 text-center lg:text-left">
+
+  <p className="text-red-500 text-[11px] sm:text-xs md:text-sm font-semibold tracking-[5px] uppercase mb-4">
+    ABOUT GFC
+  </p>
+
+  <h2 className="font-[Anton] uppercase leading-[0.95] text-white">
+    <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
+      WE ARE
+    </span>
+
+    <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
+      BUILDING
+    </span>
+
+    <span className="block text-gray-300 text-2xl sm:text-3xl md:text-4xl lg:text-5xl mt-3">
+      MORE THAN
+    </span>
+
+    <span className="block text-gray-300 text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
+      EVENTS.
+    </span>
+
+    <span className="block text-red-500 text-3xl sm:text-4xl md:text-5xl lg:text-6xl mt-5">
+      A MOVEMENT.
+    </span>
+  </h2>
+
+  <div className="w-24 h-[3px] bg-red-600 mt-6 mx-auto lg:mx-0" />
+
+  <p className="text-gray-400 text-sm sm:text-base md:text-lg mt-6 leading-relaxed max-w-xl mx-auto lg:mx-0">
+    GFC is redefining combat sports through elite athletes, cinematic storytelling,
+    and culture-driven entertainment built for the next generation.
+  </p>
+
+  <button
+    onClick={() => window.dispatchEvent(new CustomEvent("openTicketModal"))}
+    className="mt-8 bg-red-600 hover:bg-red-700 transition-all duration-300 px-6 sm:px-7 py-3 text-xs sm:text-sm font-semibold uppercase tracking-wider rounded-sm text-white"
+  >
+    GET TICKETS →
+  </button>
+</div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
               {fighters.map((f, i) => (
                 <div key={i} className="relative bg-[#0c0c0c] border border-gray-800 overflow-hidden group rounded-md">
@@ -257,9 +287,16 @@ export default function HomePage() {
                     <h3 className="font-bold text-xs sm:text-sm tracking-wide uppercase text-white">{f.name}</h3>
                     <p className="text-red-600 text-[10px] sm:text-xs uppercase mt-0.5 sm:mt-1">{f.tag1}</p>
                     <p className="text-red-600 text-[10px] sm:text-xs uppercase">{f.tag2}</p>
-                    <button className="mt-2 sm:mt-3 border border-gray-600 px-3 sm:px-4 py-0.5 sm:py-1 text-[9px] sm:text-[10px] uppercase hover:bg-white hover:text-black transition rounded-sm text-white">
-                      VIEW PROFILE
-                    </button>
+                 <button
+  onClick={() => navigate("/fighters")}
+  className="mt-3 inline-flex items-center gap-2 border border-red-600/40 bg-black/40 backdrop-blur-sm px-4 py-2 text-[10px] sm:text-xs font-semibold tracking-[2px] uppercase text-white hover:bg-red-600 hover:border-red-600 hover:scale-105 transition-all duration-300 rounded-sm group"
+>
+  <span>VIEW PROFILE</span>
+
+  <span className="transition-transform duration-300 group-hover:translate-x-1">
+    →
+  </span>
+</button>
                   </div>
                 </div>
               ))}
@@ -303,6 +340,39 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* Promo Video Section */}
+<section className="py-10 sm:py-12 md:py-16 bg-black border-t border-neutral-900">
+  <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-16">
+    
+    <div className="text-center mb-6 sm:mb-8">
+      <p className="text-red-600 text-[10px] sm:text-xs md:text-sm uppercase tracking-[4px] mb-2">
+        Official Trailer
+      </p>
+
+      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold uppercase text-white">
+        EXPERIENCE THE <span className="text-red-600">MOVEMENT</span>
+      </h2>
+
+      <p className="text-gray-400 text-xs sm:text-sm md:text-base mt-3 max-w-2xl mx-auto">
+        Watch the official GFC promo and witness the rise of India's next combat sports revolution.
+      </p>
+    </div>
+
+    <div className="relative aspect-video overflow-hidden rounded-xl border border-red-900/30 shadow-[0_0_40px_rgba(255,0,0,0.15)]">
+      <iframe
+        width="100%"
+        height="100%"
+        src="https://www.youtube.com/embed/5vAqBcE3AMo?autoplay=0&rel=0"
+        title="GFC Promo Video"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowFullScreen
+        className="absolute inset-0 w-full h-full"
+      />
+    </div>
+  </div>
+</section>
 
         {/* Sponsors Section */}
         <section id="sponsors" className="py-12 sm:py-16 md:py-20 bg-black border-t border-neutral-900 overflow-hidden">
@@ -372,6 +442,9 @@ const features = [
 
 const fighters = [
   { name: "ARJUN MALIK", tag1: "THE TECHNICIAN.", tag2: "THE THINKER.", img: "/f1.png" },
+  { name: "MEERA IYER", tag1: "THE WARRIOR.", tag2: "THE FINISHER.", img: "/f2.png" },
+  { name: "ZAYN KHAN", tag1: "THE PUNISHER.", tag2: "THE STORM.", img: "/f3.png" },
+    { name: "ARJUN MALIK", tag1: "THE TECHNICIAN.", tag2: "THE THINKER.", img: "/f1.png" },
   { name: "MEERA IYER", tag1: "THE WARRIOR.", tag2: "THE FINISHER.", img: "/f2.png" },
   { name: "ZAYN KHAN", tag1: "THE PUNISHER.", tag2: "THE STORM.", img: "/f3.png" },
 ];
