@@ -128,7 +128,7 @@ function AppNavbar() {
           className="hidden sm:flex items-center justify-center relative overflow-hidden bg-gradient-to-r from-red-700 to-red-500 hover:from-red-600 hover:to-red-400 transition-all duration-300 uppercase font-extrabold tracking-wide px-4 lg:px-5 py-2.5 text-[10px] lg:text-[11px] border border-red-400/20 shadow-[0_0_25px_rgba(255,0,0,0.35)] whitespace-nowrap group text-white hover:scale-[1.02] active:scale-[0.98]"
         >
           <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-          <span className="relative z-10">OIN GFC COMMUNITY →</span>
+          <span className="relative z-10">JOIN GFC COMMUNITY →</span>
         </button>
       </div>
 

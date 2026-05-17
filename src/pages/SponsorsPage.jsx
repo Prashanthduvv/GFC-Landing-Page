@@ -59,54 +59,53 @@ export default function SponsorsPage() {
 
   return (
     <div className="pt-16 sm:pt-20 overflow-x-hidden">
-      
-    {/* ================= HERO SECTION ================= */}
-<section className="relative flex items-center bg-black overflow-hidden" style={{ minHeight: "100vh", height: "100vh", maxHeight: "900px" }}>
-  <div className="absolute inset-0">
-    <img 
-      src="/images/c4.png" 
-      alt="Sponsors Hero" 
-      className="w-full h-full object-cover object-center"
+{/* ================= HERO SECTION ================= */}
+<section className="max-w-[1400px] mx-auto relative w-full bg-black overflow-hidden">
+
+  <div className="relative w-full h-[75vh] sm:h-[30vh] lg:min-h-[470px]">
+
+    {/* Background Image */}
+    <img
+      src="https://static.vecteezy.com/system/resources/previews/024/108/426/non_2x/one-single-line-drawing-of-young-energetic-man-boxer-improve-his-attack-punch-illustration-sport-combative-training-concept-modern-continuous-line-draw-design-for-boxing-championship-banner-png.png"
+      alt="Sponsors Hero"
+      className="
+        absolute inset-0
+        w-full h-full
+        object-contain
+        object-center
+      "
     />
+
+    {/* Overlay */}
     <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/30" />
-  </div>
-  
-  <div className="relative z-10 w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-    <div className="max-w-2xl">
-      <p className="text-red-500 uppercase tracking-[4px] text-xs sm:text-sm mb-3 font-semibold">OUR PARTNERS</p>
-      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase leading-[1.1]">
-        Trusted By <span className="text-red-600">Leaders.</span>
-      </h1>
-      <p className="text-gray-300 text-sm sm:text-base mt-4 leading-relaxed">
-        World-class brands partnering with GFC to build the future of combat sports in India.
-      </p>
+
+    {/* Content */}
+    <div className="relative z-10 flex items-center h-full">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div className="max-w-2xl">
+
+          <p className="text-red-500 uppercase tracking-[4px] text-xs sm:text-sm mb-3 font-semibold">
+            OUR PARTNERS
+          </p>
+
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase leading-tight">
+            Trusted By <span className="text-red-600">Leaders.</span>
+          </h1>
+
+          <p className="text-gray-300 text-sm sm:text-base lg:text-lg mt-4 leading-relaxed">
+            World-class brands partnering with GFC to build the future of combat sports in India.
+          </p>
+
+        </div>
+
+      </div>
     </div>
+
   </div>
 </section>
 
-      {/* ================= STATS BAR ================= */}
-      <div className="bg-[#050505] border-b border-white/10">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-wrap justify-center gap-6 sm:gap-10 text-center">
-            <div>
-              <p className="text-xl sm:text-2xl font-black text-white">15+</p>
-              <p className="text-gray-500 text-[10px] sm:text-xs uppercase">ACTIVE PARTNERS</p>
-            </div>
-            <div>
-              <p className="text-xl sm:text-2xl font-black text-white">10M+</p>
-              <p className="text-gray-500 text-[10px] sm:text-xs uppercase">MONTHLY REACH</p>
-            </div>
-            <div>
-              <p className="text-xl sm:text-2xl font-black text-white">3</p>
-              <p className="text-gray-500 text-[10px] sm:text-xs uppercase">EVENTS YEARLY</p>
-            </div>
-            <div>
-              <p className="text-xl sm:text-2xl font-black text-white">100+</p>
-              <p className="text-gray-500 text-[10px] sm:text-xs uppercase">COUNTRIES</p>
-            </div>
-          </div>
-        </div>
-      </div>
+     
 
       {/* ================= BENEFITS SECTION (Toggle) ================= */}
       {showBenefits && (

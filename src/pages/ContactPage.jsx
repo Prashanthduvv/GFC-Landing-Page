@@ -1,22 +1,25 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   FaEnvelope, FaPhone, FaMapMarkerAlt, FaInstagram, FaYoutube, 
   FaTwitter, FaFacebookF, FaTiktok, FaArrowRight, FaCheckCircle,
-  FaClock, FaUser, FaComment, FaPaperPlane, FaWhatsapp, FaLinkedin,   FaHandshake, FaNewspaper, FaUsers
+  FaClock, FaUser, FaComment, FaPaperPlane, FaWhatsapp, FaLinkedin,
+  FaHandshake, FaNewspaper, FaUsers, FaStar, FaHeadset, FaQrcode
 } from "react-icons/fa";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    subject: "",
+    department: "general",
     message: ""
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-const [openFaq, setOpenFaq] = useState(null);
+  const [openFaq, setOpenFaq] = useState(null);
+  const [selectedDepartment, setSelectedDepartment] = useState(null);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -28,57 +31,49 @@ const [openFaq, setOpenFaq] = useState(null);
       setErrors(prev => ({ ...prev, [name]: "" }));
     }
   };
-const departments = [
-  {
-    id: "general",
-    name: "General Inquiry",
-    email: "hello@gfc.com",
-    icon: FaEnvelope,
-    color: "from-red-600 to-red-500",
-    description:
-      "Questions about GFC, website issues, support requests, or general assistance.",
-    response: "< 24 Hours",
-    availability: "24/7 Support",
-  },
-  {
-    id: "sponsorship",
-    name: "Sponsorship",
-    email: "sponsors@gfc.com",
-    icon: FaHandshake,
-    color: "from-yellow-500 to-orange-500",
-    description:
-      "Brand partnerships, sponsorship opportunities, advertising, and collaborations.",
-    response: "1 - 2 Business Days",
-    availability: "Mon - Fri",
-  },
-  {
-    id: "media",
-    name: "Media / Press",
-    email: "media@gfc.com",
-    icon: FaNewspaper,
-    color: "from-blue-500 to-cyan-500",
-    description:
-      "Press releases, interviews, media access, publications, and PR requests.",
-    response: "< 12 Hours",
-    availability: "Priority Support",
-  },
-  {
-    id: "community",
-    name: "Community",
-    email: "community@gfc.com",
-    icon: FaUsers,
-    color: "from-purple-500 to-pink-500",
-    description:
-      "Community events, creator programs, collaborations, and audience engagement.",
-    response: "< 48 Hours",
-    availability: "Active Daily",
-  },
-];
 
-const [selectedDepartment, setSelectedDepartment] = useState(
-  departments[0]
-);
-
+  const departments = [
+    {
+      id: "general",
+      name: "General Inquiry",
+      email: "hello@gfc.com",
+      icon: FaEnvelope,
+      color: "from-red-600 to-red-500",
+      description: "Questions about GFC, website issues, support requests, or general assistance.",
+      response: "< 24 Hours",
+      availability: "24/7 Support",
+    },
+    {
+      id: "sponsorship",
+      name: "Sponsorship",
+      email: "sponsors@gfc.com",
+      icon: FaHandshake,
+      color: "from-yellow-500 to-orange-500",
+      description: "Brand partnerships, sponsorship opportunities, advertising, and collaborations.",
+      response: "1 - 2 Business Days",
+      availability: "Mon - Fri",
+    },
+    {
+      id: "media",
+      name: "Media / Press",
+      email: "media@gfc.com",
+      icon: FaNewspaper,
+      color: "from-blue-500 to-cyan-500",
+      description: "Press releases, interviews, media access, publications, and PR requests.",
+      response: "< 12 Hours",
+      availability: "Priority Support",
+    },
+    {
+      id: "community",
+      name: "Community",
+      email: "community@gfc.com",
+      icon: FaUsers,
+      color: "from-purple-500 to-pink-500",
+      description: "Community events, creator programs, collaborations, and audience engagement.",
+      response: "< 48 Hours",
+      availability: "Active Daily",
+    },
+  ];
 
   const validateForm = () => {
     const newErrors = {};
@@ -94,10 +89,6 @@ const [selectedDepartment, setSelectedDepartment] = useState(
       newErrors.email = "Email is required";
     } else if (!emailRegex.test(formData.email)) {
       newErrors.email = "Enter a valid email address";
-    }
-    
-    if (!formData.subject.trim()) {
-      newErrors.subject = "Subject is required";
     }
     
     if (!formData.message.trim()) {
@@ -123,9 +114,9 @@ const [selectedDepartment, setSelectedDepartment] = useState(
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
     
-    console.log("Form Data:", formData);
+    console.log("Form Data:", { ...formData, department: departments.find(d => d.id === formData.department)?.name });
     setIsSubmitted(true);
-    setFormData({ name: "", email: "", subject: "", message: "" });
+    setFormData({ name: "", email: "", department: "general", message: "" });
     
     setTimeout(() => setIsSubmitted(false), 5000);
     setIsSubmitting(false);
@@ -150,23 +141,14 @@ const [selectedDepartment, setSelectedDepartment] = useState(
     { icon: FaTiktok, link: "https://tiktok.com", label: "TikTok", color: "hover:text-gray-300" },
     { icon: FaLinkedin, link: "https://linkedin.com", label: "LinkedIn", color: "hover:text-blue-500" },
   ];
-const faqs = [
-    {
-      q: "How do I buy tickets?",
-      a: "Tickets can be purchased directly through our official website.",
-    },
-    {
-      q: "How long does support take?",
-      a: "Most inquiries receive a response within 24 hours.",
-    },
-    {
-      q: "Do you accept sponsors?",
-      a: "Yes. Please contact our sponsorship department.",
-    },
-    {
-      q: "Can I collaborate with GFC?",
-      a: "Absolutely. Reach out through our community or media departments.",
-    },
+
+  const faqs = [
+    { q: "How do I buy tickets for GFC events?", a: "Tickets can be purchased directly through our website by clicking the 'GET TICKETS' button on any page." },
+    { q: "How can I become a GFC Community member?", a: "Click the 'APPLY NOW' button on the Community page and fill out the application form." },
+    { q: "How can I become a sponsor?", a: "Please contact our sponsorship department via email at sponsors@gfc.com or select 'Sponsorship' from the department selector above." },
+    { q: "When is the next GFC event?", a: "GFC Global 1: Origin is scheduled for June 30, 2026 in New Delhi, India." },
+    { q: "How long does it take to get a response?", a: "Most inquiries receive a response within 24 hours. Sponsorship requests may take 1-2 business days." },
+    { q: "Can I collaborate with GFC as a creator?", a: "Absolutely! Please reach out to our Community department for collaboration opportunities." },
   ];
 
   const fadeInUp = {
@@ -182,31 +164,52 @@ const faqs = [
   return (
     <div className="pt-16 sm:pt-20 overflow-x-hidden">
       
-      {/* ================= HERO SECTION ================= */}
-      <section className="relative min-h-[45vh] sm:min-h-[50vh] flex items-center">
-        <div className="absolute inset-0">
-          <img 
-            src="/images/c4.png" 
-            alt="Contact Hero" 
-            className="w-full h-full object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/30" />
-        </div>
-        
-        <div className="relative z-10 w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl">
-            <p className="text-red-500 uppercase tracking-[4px] text-xs sm:text-sm mb-3 font-semibold">GET IN TOUCH</p>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase leading-[1.1]">
-              Contact <span className="text-red-600">Us</span>
-            </h1>
-            <p className="text-gray-300 text-sm sm:text-base mt-4 leading-relaxed">
-              Have questions? We'd love to hear from you. Reach out to us anytime.
-            </p>
-          </div>
-        </div>
-      </section>
+{/* ================= HERO SECTION ================= */}
+<section className="max-w-[1400px] mx-auto relative w-full bg-black overflow-hidden">
 
-         
+  <div className="relative w-full h-[75vh] sm:h-[30vh] lg:min-h-[460px]">
+
+    {/* Background Image */}
+    <img
+      src="/images/c4.png"
+      alt="Contact Hero"
+      className="
+        absolute inset-0
+        w-full h-full
+        object-contain
+        object-center
+      "
+    />
+
+    {/* Overlay */}
+    <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/30" />
+
+    {/* Content */}
+    <div className="relative z-10 flex items-center h-full">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div className="max-w-2xl">
+
+          <p className="text-red-500 uppercase tracking-[4px] text-xs sm:text-sm mb-3 font-semibold">
+            GET IN TOUCH
+          </p>
+
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase leading-tight">
+            Contact <span className="text-red-600">Us</span>
+          </h1>
+
+          <p className="text-gray-300 text-sm sm:text-base lg:text-lg mt-4 leading-relaxed">
+            Have questions? We'd love to hear from you. Reach out to us anytime.
+          </p>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
       {/* ================= CONTACT INFO CARDS ================= */}
       <section className="py-12">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -226,7 +229,7 @@ const faqs = [
                   href={item.link}
                   target={item.title === "Email" || item.title === "WhatsApp" ? "_blank" : undefined}
                   rel="noopener noreferrer"
-                  className="bg-[#050505] border border-white/10 hover:border-red-600 rounded-xl p-5 text-center group transition-all duration-300 hover:-translate-y-1"
+                  className="bg-[#050505] border border-white/10 hover:border-red-600 rounded-xl p-5 text-center group transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-red-900/20"
                 >
                   <Icon className="text-red-500 text-3xl mx-auto mb-3 group-hover:scale-110 transition" />
                   <h3 className="text-base font-bold uppercase mb-1">{item.title}</h3>
@@ -239,8 +242,78 @@ const faqs = [
         </div>
       </section>
 
-      {/* ================= CONTACT FORM + MAP ================= */}
+      {/* ================= DEPARTMENT SELECTION SECTION ================= */}
       <section className="py-12 bg-[#050505] border-y border-red-900/20">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-10">
+            <p className="text-red-500 uppercase tracking-[4px] text-xs font-semibold mb-2">SUPPORT ROUTING</p>
+            <h2 className="text-2xl sm:text-3xl font-black uppercase">Choose The Right <span className="text-red-600">Department</span></h2>
+            <p className="text-gray-400 text-sm mt-2 max-w-2xl">Select the department that best matches your inquiry for faster support and responses.</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {departments.map((dept, index) => {
+              const Icon = dept.icon;
+              const isActive = formData.department === dept.id;
+              
+              return (
+                <motion.button
+                  key={index}
+                  variants={fadeInUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  onClick={() => setFormData(prev => ({ ...prev, department: dept.id }))}
+                  className={`group relative overflow-hidden rounded-xl border p-5 text-left transition-all duration-300 ${
+                    isActive 
+                      ? "border-red-600 bg-red-600/10 shadow-lg shadow-red-900/20" 
+                      : "border-white/10 bg-black hover:border-white/30 hover:-translate-y-1"
+                  }`}
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-br ${dept.color} opacity-0 group-hover:opacity-10 transition duration-500`} />
+                  {isActive && <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-red-500 animate-pulse" />}
+                  
+                  <div className="relative z-10">
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${dept.color} flex items-center justify-center mb-3`}>
+                      <Icon className="text-white text-lg" />
+                    </div>
+                    <h4 className="text-base font-bold uppercase">{dept.name}</h4>
+                    <p className="text-gray-400 text-xs mt-2 line-clamp-2">{dept.description}</p>
+                    <div className="mt-3 pt-3 border-t border-white/10">
+                      <p className="text-gray-500 text-[10px]">Response: <span className="text-white">{dept.response}</span></p>
+                    </div>
+                  </div>
+                </motion.button>
+              );
+            })}
+          </div>
+
+          {/* Selected Department Info */}
+          <div className="mt-6 bg-black/50 border border-white/10 rounded-xl p-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${departments.find(d => d.id === formData.department)?.color} flex items-center justify-center`}>
+                  {(() => {
+                    const Icon = departments.find(d => d.id === formData.department)?.icon;
+                    return Icon ? <Icon className="text-white text-sm" /> : null;
+                  })()}
+                </div>
+                <div>
+                  <p className="text-gray-500 text-[10px] uppercase tracking-wider">Selected Department</p>
+                  <p className="text-white font-semibold">{departments.find(d => d.id === formData.department)?.name}</p>
+                </div>
+              </div>
+              <div>
+                <p className="text-gray-500 text-[10px] uppercase tracking-wider">Contact Email</p>
+                <p className="text-red-400 text-sm font-mono">{departments.find(d => d.id === formData.department)?.email}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= CONTACT FORM + MAP ================= */}
+      <section className="py-12">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-10">
             
@@ -258,7 +331,6 @@ const faqs = [
               </div>
               
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Name */}
                 <div>
                   <div className="relative">
                     <FaUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm" />
@@ -276,7 +348,6 @@ const faqs = [
                   {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
                 </div>
                 
-                {/* Email */}
                 <div>
                   <div className="relative">
                     <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm" />
@@ -294,25 +365,6 @@ const faqs = [
                   {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                 </div>
                 
-                {/* Subject */}
-                <div>
-                  <div className="relative">
-                    <FaComment className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm" />
-                    <input
-                      type="text"
-                      name="subject"
-                      value={formData.subject}
-                      onChange={handleChange}
-                      placeholder="Subject"
-                      className={`w-full pl-11 pr-4 py-3 bg-black border rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-red-500 transition ${
-                        errors.subject ? "border-red-500" : "border-white/10"
-                      }`}
-                    />
-                  </div>
-                  {errors.subject && <p className="text-red-500 text-xs mt-1">{errors.subject}</p>}
-                </div>
-                
-                {/* Message */}
                 <div>
                   <textarea
                     name="message"
@@ -327,24 +379,25 @@ const faqs = [
                   {errors.message && <p className="text-red-500 text-xs mt-1">{errors.message}</p>}
                 </div>
                 
-                {/* Submit Button */}
                 <button
                   type="submit"
                   disabled={isSubmitting}
                   className="w-full bg-red-600 hover:bg-red-700 transition py-3 rounded-lg font-bold uppercase text-sm tracking-wide flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
-                    <>SENDING...</>
+                    <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> SENDING...</>
                   ) : (
                     <>SEND MESSAGE <FaPaperPlane size={12} /></>
                   )}
                 </button>
                 
-                {isSubmitted && (
-                  <p className="text-green-500 text-sm text-center flex items-center justify-center gap-2">
-                    <FaCheckCircle /> Message sent successfully!
-                  </p>
-                )}
+                <AnimatePresence>
+                  {isSubmitted && (
+                    <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-green-500 text-sm text-center flex items-center justify-center gap-2">
+                      <FaCheckCircle /> Message sent successfully! We'll get back to you soon.
+                    </motion.p>
+                  )}
+                </AnimatePresence>
               </form>
             </motion.div>
             
@@ -356,7 +409,6 @@ const faqs = [
               viewport={{ once: true }}
               className="space-y-6"
             >
-              {/* Map */}
               <div className="bg-black border border-white/10 rounded-xl overflow-hidden">
                 <div className="bg-red-600 px-5 py-3">
                   <h3 className="font-bold uppercase text-sm">Our Location</h3>
@@ -376,7 +428,6 @@ const faqs = [
                 </div>
               </div>
               
-              {/* Office Hours */}
               <div className="bg-black border border-white/10 rounded-xl overflow-hidden">
                 <div className="bg-red-600 px-5 py-3">
                   <h3 className="font-bold uppercase text-sm flex items-center gap-2"><FaClock /> Office Hours</h3>
@@ -400,271 +451,81 @@ const faqs = [
           </div>
         </div>
       </section>
-<div className="mb-10 sm:mb-12">
-  {/* HEADER */}
-  <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-7 sm:mb-8">
-    <div>
-      <p className="text-red-500 uppercase tracking-[4px] text-xs sm:text-sm font-semibold mb-3">
-        SUPPORT ROUTING
-      </p>
 
-      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase leading-tight">
-        Choose The Right
-        <span className="text-red-600 block">
-          Department
-        </span>
-      </h3>
-    </div>
-
-    <p className="text-gray-400 text-sm sm:text-base max-w-lg leading-relaxed">
-      Select the department that best matches your inquiry so your message is
-      routed directly to the correct GFC team for faster support and responses.
-    </p>
-  </div>
-
-  {/* GRID */}
-  <div className="grid grid-cols-4 sm:grid-cols-4 2xl:grid-cols-4 gap-4 sm:gap-5">
-    {departments.map((dept, index) => {
-      const Icon = dept.icon;
-
-      const isActive =
-        selectedDepartment.id === dept.id;
-
-      return (
-        <button
-          key={index}
-          type="button"
-          onClick={() => setSelectedDepartment(dept)}
-          className={`group relative overflow-hidden rounded-2xl border p-5 sm:p-6 text-left transition-all duration-500 backdrop-blur-xl min-h-[260px] flex flex-col
-          
-          ${
-            isActive
-              ? "border-red-500 bg-red-500/10 shadow-[0_0_50px_rgba(255,0,0,0.15)] scale-[1.02]"
-              : "border-white/10 bg-white/[0.03] hover:border-white/30 hover:-translate-y-1"
-          }`}
-        >
-          {/* ACTIVE GLOW */}
-          <div
-            className={`absolute inset-0 bg-gradient-to-br ${dept.color} opacity-0 group-hover:opacity-10 transition duration-500`}
-          />
-
-          {/* ACTIVE INDICATOR */}
-          {isActive && (
-            <div className="absolute top-4 right-4">
-              <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
-            </div>
-          )}
-
-          {/* CONTENT */}
-          <div className="relative z-10 flex flex-col h-full">
-            {/* ICON */}
-            <div
-              className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br ${dept.color} flex items-center justify-center mb-5 shadow-lg`}
-            >
-              <Icon className="text-white text-xl sm:text-2xl" />
-            </div>
-
-            {/* TITLE */}
-            <h4 className="text-lg sm:text-xl font-black uppercase leading-tight">
-              {dept.name}
-            </h4>
-
-            {/* DESC */}
-            <p className="text-gray-400 text-sm leading-relaxed mt-3">
-              {dept.description}
-            </p>
-
-            {/* RESPONSE */}
-            <div className="mt-5 space-y-3">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-500">
-                  Response Time
-                </span>
-
-                <span className="font-semibold text-white">
-                  {dept.response}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-500">
-                  Availability
-                </span>
-
-                <span className="font-semibold text-white">
-                  {dept.availability}
-                </span>
-              </div>
-            </div>
-
-            {/* FOOTER */}
-            <div className="mt-auto pt-6 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-
-                <span className="text-xs text-gray-400">
-                  Online
-                </span>
-              </div>
-
-              <span
-                className={`text-xs uppercase tracking-wide font-bold transition
-                ${
-                  isActive
-                    ? "text-red-400"
-                    : "text-gray-500 group-hover:text-white"
-                }`}
-              >
-                {isActive ? "Selected" : "Select"}
-              </span>
-            </div>
+      {/* ================= FAQ SECTION ================= */}
+      <section className="py-12 bg-[#050505] border-y border-red-900/20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <p className="text-red-500 uppercase tracking-[4px] text-xs font-semibold mb-2">FAQ</p>
+            <h2 className="text-2xl sm:text-3xl font-black uppercase">Frequently Asked <span className="text-red-600">Questions</span></h2>
+            <p className="text-gray-400 text-sm mt-2">Find quick answers to common questions</p>
           </div>
-        </button>
-      );
-    })}
-  </div>
-
-  {/* SELECTED DEPARTMENT PANEL */}
-  <div className="mt-6 sm:mt-7 bg-white/5 border border-white/10 rounded-2xl sm:rounded-3xl p-5 sm:p-6 backdrop-blur-xl">
-    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-      {/* LEFT */}
-      <div className="flex items-start gap-4">
-        <div
-          className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${selectedDepartment.color} flex items-center justify-center shrink-0`}
-        >
-          <selectedDepartment.icon className="text-white text-xl" />
-        </div>
-
-        <div>
-          <p className="text-xs uppercase tracking-[3px] text-gray-500 mb-2">
-            Currently Selected
-          </p>
-
-          <h4 className="text-xl sm:text-2xl font-black uppercase leading-tight">
-            {selectedDepartment.name}
-          </h4>
-
-          <p className="text-gray-400 text-sm sm:text-base mt-2 leading-relaxed max-w-2xl">
-            {selectedDepartment.description}
-          </p>
-        </div>
-      </div>
-
-      {/* RIGHT */}
-      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 lg:justify-end">
-        {/* EMAIL */}
-        <div>
-          <p className="text-xs uppercase tracking-[2px] text-gray-500 mb-2">
-            Contact Email
-          </p>
-
-          <p className="text-sm sm:text-base font-medium break-all">
-            {selectedDepartment.email}
-          </p>
-        </div>
-
-        {/* RESPONSE */}
-        <div>
-          <p className="text-xs uppercase tracking-[2px] text-gray-500 mb-2">
-            Avg. Response
-          </p>
-
-          <p className="text-sm sm:text-base font-medium">
-            {selectedDepartment.response}
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-     <section className="py-14 sm:py-16 lg:py-24">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase text-center mb-10 sm:mb-14">
-            Frequently Asked{" "}
-            <span className="text-red-600">
-              Questions
-            </span>
-          </h2>
-
-          <div className="space-y-4">
+          
+          <div className="space-y-3">
             {faqs.map((faq, index) => (
-              <div
+              <motion.div
                 key={index}
-                className="border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                viewport={{ once: true }}
+                className="border border-white/10 rounded-xl overflow-hidden"
               >
                 <button
-                  onClick={() =>
-                    setOpenFaq(openFaq === index ? null : index)
-                  }
-                  className="w-full flex justify-between items-center gap-4 p-5 sm:p-6 bg-white/5 hover:bg-white/10 transition"
+                  onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                  className="w-full flex justify-between items-center gap-4 p-4 sm:p-5 bg-black hover:bg-white/5 transition text-left"
                 >
-                  <span className="font-semibold text-left text-sm sm:text-base">
-                    {faq.q}
-                  </span>
-
-                  <span className="text-red-500 text-xl shrink-0">
-                    {openFaq === index ? "-" : "+"}
-                  </span>
+                  <span className="font-semibold text-sm sm:text-base">{faq.q}</span>
+                  <span className="text-red-500 text-xl font-bold shrink-0">{openFaq === index ? "−" : "+"}</span>
                 </button>
-
-                <div
-                  className={`overflow-hidden transition-all duration-300
-                  ${
-                    openFaq === index
-                      ? "max-h-40 p-5 sm:p-6"
-                      : "max-h-0"
-                  }`}
-                >
-                  <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
-                    {faq.a}
-                  </p>
-                </div>
-              </div>
+                
+                <AnimatePresence>
+                  {openFaq === index && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="border-t border-white/10 px-4 sm:px-5 py-4 bg-white/5"
+                    >
+                      <p className="text-gray-400 text-sm leading-relaxed">{faq.a}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-
-      {/* ===================================================== */}
-      {/* SOCIAL */}
-      {/* ===================================================== */}
-
-      <section className="pb-24 sm:pb-28 text-center">
+      {/* ================= SOCIAL CONNECT SECTION ================= */}
+      <section className="py-12 text-center">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase mb-5">
-            Connect With{" "}
-            <span className="text-red-600">
-              Us
-            </span>
-          </h2>
-
-          <p className="text-gray-400 max-w-2xl mx-auto mb-8 sm:mb-10 text-sm sm:text-base leading-relaxed">
-            Follow GFC on social media for updates, announcements, events, and
-            exclusive behind-the-scenes content.
+          <h2 className="text-2xl sm:text-3xl font-black uppercase mb-3">Connect With <span className="text-red-600">Us</span></h2>
+          <p className="text-gray-400 text-sm mb-8 max-w-md mx-auto">
+            Follow GFC on social media for the latest updates, behind-the-scenes content, and exclusive announcements.
           </p>
-
-          <div className="flex flex-wrap justify-center gap-4 sm:gap-5">
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
             {socialLinks.map((social, index) => {
               const Icon = social.icon;
-
               return (
-                <a
+                <motion.a
                   key={index}
                   href={social.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-white/10 bg-white/5 flex items-center justify-center hover:bg-red-600 hover:border-red-500 hover:scale-110 transition-all duration-300"
+                  whileHover={{ scale: 1.1, y: -3 }}
+                  className={`w-10 h-10 sm:w-11 sm:h-11 border border-white/20 rounded-full flex items-center justify-center text-gray-400 transition-all duration-300 hover:border-red-500 ${social.color}`}
                 >
-                  <Icon size={18} className="sm:w-5 sm:h-5" />
-                </a>
+                  <Icon size={16} />
+                </motion.a>
               );
             })}
           </div>
         </div>
       </section>
-     
 
+     
     </div>
   );
 }

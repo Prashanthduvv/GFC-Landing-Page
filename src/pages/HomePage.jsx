@@ -278,29 +278,52 @@ const navigate = useNavigate();
     GET TICKETS →
   </button>
 </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
-              {fighters.map((f, i) => (
-                <div key={i} className="relative bg-[#0c0c0c] border border-gray-800 overflow-hidden group rounded-md">
-                  <img src={f.img} alt={f.name} className="h-[260px] sm:h-[280px] md:h-[300px] lg:h-[320px] w-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                  <div className="absolute bottom-0 p-3 sm:p-4 text-center w-full">
-                    <h3 className="font-bold text-xs sm:text-sm tracking-wide uppercase text-white">{f.name}</h3>
-                    <p className="text-red-600 text-[10px] sm:text-xs uppercase mt-0.5 sm:mt-1">{f.tag1}</p>
-                    <p className="text-red-600 text-[10px] sm:text-xs uppercase">{f.tag2}</p>
-                 <button
-  onClick={() => navigate("/fighters")}
-  className="mt-3 inline-flex items-center gap-2 border border-red-600/40 bg-black/40 backdrop-blur-sm px-4 py-2 text-[10px] sm:text-xs font-semibold tracking-[2px] uppercase text-white hover:bg-red-600 hover:border-red-600 hover:scale-105 transition-all duration-300 rounded-sm group"
->
-  <span>VIEW PROFILE</span>
+   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
+  {fighters.map((f, i) => (
+    <div
+      key={i}
+      className="group relative bg-[#0c0c0c] border border-gray-800 rounded-md overflow-hidden"
+    >
+      {/* Image Container */}
+      <div className="relative h-[260px] sm:h-[300px] md:h-[340px] overflow-hidden">
+        <img
+          src={f.img}
+          alt={f.name}
+          className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+        />
 
-  <span className="transition-transform duration-300 group-hover:translate-x-1">
-    →
-  </span>
-</button>
-                  </div>
-                </div>
-              ))}
-            </div>
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+      </div>
+
+      {/* Content */}
+      <div className="absolute bottom-0 left-0 w-full p-4 text-center z-10">
+        <h3 className="font-bold text-sm tracking-wide uppercase text-white">
+          {f.name}
+        </h3>
+
+        <p className="text-red-600 text-[11px] uppercase mt-1">
+          {f.tag1}
+        </p>
+
+        <p className="text-red-600 text-[11px] uppercase">
+          {f.tag2}
+        </p>
+
+        <button
+          onClick={() => navigate("/fighters")}
+          className="mt-3 inline-flex items-center gap-2 border border-red-600/40 bg-black/40 backdrop-blur-sm px-4 py-2 text-[10px] sm:text-xs font-semibold tracking-[2px] uppercase text-white hover:bg-red-600 hover:border-red-600 transition-all duration-300 rounded-sm"
+        >
+          <span>VIEW PROFILE</span>
+
+          <span className="transition-transform duration-300 group-hover:translate-x-1">
+            →
+          </span>
+        </button>
+      </div>
+    </div>
+  ))}
+</div>
           </div>
         </section>
 
@@ -441,14 +464,43 @@ const features = [
 ];
 
 const fighters = [
-  { name: "ARJUN MALIK", tag1: "THE TECHNICIAN.", tag2: "THE THINKER.", img: "/f1.png" },
-  { name: "MEERA IYER", tag1: "THE WARRIOR.", tag2: "THE FINISHER.", img: "/f2.png" },
-  { name: "ZAYN KHAN", tag1: "THE PUNISHER.", tag2: "THE STORM.", img: "/f3.png" },
-    { name: "ARJUN MALIK", tag1: "THE TECHNICIAN.", tag2: "THE THINKER.", img: "/f1.png" },
-  { name: "MEERA IYER", tag1: "THE WARRIOR.", tag2: "THE FINISHER.", img: "/f2.png" },
-  { name: "ZAYN KHAN", tag1: "THE PUNISHER.", tag2: "THE STORM.", img: "/f3.png" },
+  {
+    name: "ARJUN MALIK",
+    tag1: "THE TECHNICIAN.",
+    tag2: "THE THINKER.",
+    img: "/f1.png",
+  },
+  {
+    name: "MEERA IYER",
+    tag1: "THE WARRIOR.",
+    tag2: "THE FINISHER.",
+    img: "/f2.png",
+  },
+  {
+    name: "ZAYN KHAN",
+    tag1: "THE PUNISHER.",
+    tag2: "THE STORM.",
+    img: "/f3.png",
+  },
+  {
+    name: "ARJUN MALIK",
+    tag1: "THE TECHNICIAN.",
+    tag2: "THE THINKER.",
+    img: "/f1.png",
+  },
+  {
+    name: "MEERA IYER",
+    tag1: "THE WARRIOR.",
+    tag2: "THE FINISHER.",
+    img: "/f2.png",
+  },
+  {
+    name: "ZAYN KHAN",
+    tag1: "THE PUNISHER.",
+    tag2: "THE STORM.",
+    img: "/f3.png",
+  },
 ];
-
 const sponsorLogos = ["/p1.png", "/p2.png", "/p3.png", "/p4.png", "/p5.png", "/p6.png"];
 function CountdownBox({ value, label }) {
   return (

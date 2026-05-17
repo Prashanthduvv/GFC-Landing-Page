@@ -3,25 +3,10 @@ import { motion, useInView, useAnimation } from "framer-motion";
 import { 
   FaTrophy, FaUsers, FaGlobe, FaStar, FaRocket, FaHeart, 
   FaPlayCircle, FaHandshake, FaArrowRight, FaCheckCircle, 
-  FaBuilding, FaMedal, FaInstagram, FaLinkedin, FaTimes
+  FaBuilding, FaMedal, FaInstagram, FaLinkedin, FaTimes,
+  FaInfoCircle
 } from "react-icons/fa";
-
-// Inline styles for animations (no external CSS needed)
-const styles = {
-  '@keyframes fadeIn': {
-    from: { opacity: 0, transform: 'translateY(20px)' },
-    to: { opacity: 1, transform: 'translateY(0)' }
-  },
-  '@keyframes pulse': {
-    '0%, 100%': { opacity: 1 },
-    '50%': { opacity: 0.5 }
-  },
-  '@keyframes glow': {
-    '0%': { boxShadow: '0 0 0px rgba(220, 38, 38, 0)' },
-    '50%': { boxShadow: '0 0 20px rgba(220, 38, 38, 0.5)' },
-    '100%': { boxShadow: '0 0 0px rgba(220, 38, 38, 0)' }
-  }
-};
+import { useNavigate } from "react-router-dom";
 
 export default function AboutPage() {
   const [animatedStats, setAnimatedStats] = useState({
@@ -34,7 +19,11 @@ export default function AboutPage() {
   const [showVideo, setShowVideo] = useState(false);
   const [selectedValue, setSelectedValue] = useState(null);
   
+  // Refs for scrolling
   const statsRef = useRef(null);
+  const valuesRef = useRef(null);
+  const missionRef = useRef(null);
+  
   const isStatsInView = useInView(statsRef, { once: true, threshold: 0.3 });
   const controls = useAnimation();
 
@@ -73,6 +62,39 @@ export default function AboutPage() {
     window.dispatchEvent(new CustomEvent("openTicketModal"));
   };
 
+  // Improved LEARN MORE CTA Handler
+  const handleLearnMore = () => {
+    // 1. Smooth scroll to Core Values section
+    const valuesSection = document.getElementById("core-values");
+    if (valuesSection) {
+      valuesSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+    
+    // 2. Update URL hash without reload
+    window.history.pushState(null, "", "#core-values");
+    
+    // 3. Analytics tracking (ready for Google Analytics or similar)
+    console.log("[Analytics] Learn More clicked - Scrolling to Core Values");
+    
+    // 4. Optional: Add visual feedback (you can implement a toast notification)
+    // showToast("Exploring GFC Core Values");
+  };
+
+  // Alternative: Scroll to specific section by ID
+  const scrollToSection = (sectionId) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+      window.history.pushState(null, "", `#${sectionId}`);
+    }
+  };
+
   // Stats data with icons
   const stats = [
     { key: "founded", number: animatedStats.founded, label: "FOUNDED", icon: FaStar, suffix: "" },
@@ -105,12 +127,11 @@ export default function AboutPage() {
     },
   ];
 
-  // Team members data
   const teamMembers = [
-    { name: "VIKRAM RAJ", role: "CEO & Founder", bio: "Former athlete turned visionary" },
-    { name: "ANJALI SHARMA", role: "Head of Operations", bio: "10+ years in sports management" },
-    { name: "RAHUL MEHTA", role: "Fight Director", bio: "Expert matchmaker" },
-    { name: "PRIYA SINGH", role: "Community Lead", bio: "Building the movement" },
+    { name: "VIKRAM RAJ", role: "CEO & Founder", bio: "Former athlete turned visionary", image: "/f1.png" },
+    { name: "ANJALI SHARMA", role: "Head of Operations", bio: "10+ years in sports management", image: "/f2.png" },
+    { name: "RAHUL MEHTA", role: "Fight Director", bio: "Expert matchmaker", image: "/f3.png" },
+    { name: "PRIYA SINGH", role: "Community Lead", bio: "Building the movement", image: "/f1.png" },
   ];
 
   // Milestones timeline
@@ -141,36 +162,60 @@ export default function AboutPage() {
       transition: { staggerChildren: 0.15 }
     }
   };
+  
+  const navigate = useNavigate();
 
   return (
     <div className="pt-20 sm:pt-24 overflow-x-hidden" style={{ backgroundColor: '#000000', color: '#ffffff' }}>
       
-      {/* ================= HERO SECTION ================= */}
-   {/* ================= HERO SECTION ================= */}
-<section className="relative flex items-center bg-black overflow-hidden" style={{ minHeight: "100vh", height: "100vh", maxHeight: "900px" }}>
-  <div className="absolute inset-0">
-    <img 
-      src="/images/c3.png" 
-      alt="About Hero" 
-      className="w-full h-full object-cover object-center"
+  {/* ================= HERO SECTION ================= */}
+<section className="max-w-[1400px] mx-auto relative w-full bg-black overflow-hidden">
+
+  <div className="relative w-full h-[75vh] sm:h-[30vh] lg:min-h-[470px]">
+
+    {/* Background Image */}
+    <img
+      src="https://media.dave.sport/boxingsocial/2026/03/Screenshot-2026-03-21-at-11.31.09-PM.png"
+      alt="About Hero"
+      className="
+        absolute inset-0
+        w-full h-full
+        object-contain
+        object-center
+      "
     />
+
+    {/* Overlay */}
     <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/30" />
-  </div>
-  
-  <div className="relative z-10 w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-    <div className="max-w-2xl">
-      <p className="text-red-500 uppercase tracking-[4px] text-xs sm:text-sm mb-3 font-semibold">ABOUT GFC</p>
-      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase leading-[1.1]">
-        We Are Building <span className="text-red-600">A Movement.</span>
-      </h1>
-      <p className="text-gray-300 text-sm sm:text-base mt-4 leading-relaxed">
-        India's premier combat sports platform focused on fighters, storytelling, and community-driven growth.
-      </p>
+
+    {/* Content */}
+    <div className="relative z-10 flex items-center h-full">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div className="max-w-2xl">
+
+          <p className="text-red-500 uppercase tracking-[4px] text-xs sm:text-sm mb-3 font-semibold">
+            ABOUT GFC
+          </p>
+
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase leading-tight">
+            We Are Building <span className="text-red-600">A Movement.</span>
+          </h1>
+
+          <p className="text-gray-300 text-sm sm:text-base lg:text-lg mt-4 leading-relaxed">
+            India's premier combat sports platform focused on fighters,
+            storytelling, and community-driven growth.
+          </p>
+
+        </div>
+
+      </div>
     </div>
+
   </div>
 </section>
 
-      {/* ================= ANIMATED STATS SECTION ================= */}
+      {/* ================= STATS SECTION ================= */}
       <section ref={statsRef} className="py-12 sm:py-16 border-y border-red-900/20 bg-gradient-to-b from-black to-[#050505]">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
@@ -195,7 +240,7 @@ export default function AboutPage() {
                     <div className="absolute inset-0 bg-red-600/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <Icon className="text-red-500 text-3xl sm:text-4xl mx-auto mb-3 relative z-10 group-hover:scale-110 transition-transform duration-300" />
                   </div>
-                  <p className="text-2xl sm:text-3xl md:text-4xl font-black text-white" style={{ animation: 'fadeIn 0.6s ease-out forwards' }}>
+                  <p className="text-2xl sm:text-3xl md:text-4xl font-black text-white">
                     {stat.number.toLocaleString()}{stat.suffix}
                   </p>
                   <p className="text-gray-400 text-[10px] sm:text-xs uppercase tracking-wide mt-1">
@@ -209,7 +254,7 @@ export default function AboutPage() {
       </section>
 
       {/* ================= MISSION SECTION ================= */}
-      <section className="py-16 sm:py-20 lg:py-24">
+      <section id="mission" ref={missionRef} className="py-16 sm:py-20 lg:py-24">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <motion.div
@@ -217,7 +262,6 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
-              style={{ animation: 'fadeIn 0.6s ease-out forwards' }}
             >
               <p className="text-red-500 uppercase tracking-[4px] text-sm mb-4 font-semibold">OUR MISSION</p>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black uppercase leading-[1.1]" style={{ fontFamily: "'Anton', sans-serif", letterSpacing: '1px' }}>
@@ -243,17 +287,23 @@ export default function AboutPage() {
                   <p className="text-gray-400 text-sm">Building a sustainable future for combat sports in India</p>
                 </div>
               </div>
+              
+              {/* IMPROVED LEARN MORE CTA BUTTON */}
               <motion.button 
-                whileHover={{ scale: 1.02 }}
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={handleGetTickets}
-                className="mt-8 flex items-center gap-3 bg-red-600/20 border border-red-600 hover:bg-red-600 transition-all duration-300 px-6 py-3 rounded-lg font-bold uppercase tracking-wide group"
+                onClick={handleLearnMore}
+                className="mt-8 group relative overflow-hidden bg-gradient-to-r from-red-700 to-red-500 hover:from-red-600 hover:to-red-400 transition-all duration-500 px-8 py-4 rounded-xl font-bold text-base uppercase tracking-wide shadow-2xl shadow-red-900/50 flex items-center gap-3"
                 style={{ transition: 'all 0.3s ease' }}
-                onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 0 20px rgba(220, 38, 38, 0.3)'}
-                onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}
+                onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 0 30px rgba(220, 38, 38, 0.5)'}
+                onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 0 30px rgba(220, 38, 38, 0.3)'}
               >
-                <span>LEARN MORE</span>
-                <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
+                <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                <span className="relative z-10 flex items-center gap-2">
+                  <FaInfoCircle className="text-white" />
+                  LEARN MORE ABOUT GFC
+                  <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
+                </span>
               </motion.button>
             </motion.div>
             
@@ -287,8 +337,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ================= CORE VALUES SECTION ================= */}
-      <section className="py-16 sm:py-20 bg-[#050505] border-y border-red-900/20">
+      {/* ================= CORE VALUES SECTION (with ID for scrolling) ================= */}
+      <section id="core-values" className="py-16 sm:py-20 bg-[#050505] border-y border-red-900/20">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
@@ -370,13 +420,13 @@ export default function AboutPage() {
                 onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 0 20px rgba(220, 38, 38, 0.2)'}
                 onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}
               >
-                <div className="relative h-64 overflow-hidden">
-                  <div className="w-full h-full bg-gradient-to-br from-red-900/30 to-black flex items-center justify-center">
-                    <div className="w-24 h-24 rounded-full bg-red-600/20 flex items-center justify-center">
-                      <FaUsers className="text-red-500 text-4xl" />
-                    </div>
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+                <div className="relative h-64 sm:h-72 md:h-80 overflow-hidden">
+                  <img
+                    src={member.image}
+                    alt={member.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 </div>
                 <div className="p-5 text-center">
                   <h3 className="text-lg font-bold uppercase">{member.name}</h3>
@@ -412,7 +462,6 @@ export default function AboutPage() {
           </motion.div>
           
           <div className="relative">
-            {/* Timeline line */}
             <div className="absolute left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-red-600/30 hidden lg:block" />
             
             <div className="space-y-8 lg:space-y-12">
@@ -524,7 +573,7 @@ export default function AboutPage() {
               <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={handleGetTickets}
+                onClick={() => navigate("/join-community")}
                 className="relative overflow-hidden bg-gradient-to-r from-red-700 to-red-500 hover:from-red-600 hover:to-red-400 transition-all duration-500 px-8 py-4 rounded-xl font-bold text-lg uppercase tracking-wide shadow-2xl shadow-red-900/50 group"
                 style={{ transition: 'all 0.3s ease' }}
                 onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 0 30px rgba(220, 38, 38, 0.5)'}
@@ -532,19 +581,8 @@ export default function AboutPage() {
               >
                 <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
                 <span className="relative z-10 flex items-center gap-2">
-                  APPLY TO JOIN <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
+                  JOIN GFC COMMUNITY <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
                 </span>
-              </motion.button>
-              
-              <motion.button 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="border-2 border-white/30 hover:border-red-600 hover:bg-red-600/10 transition-all duration-300 px-8 py-4 rounded-xl font-bold uppercase tracking-wide"
-                style={{ transition: 'all 0.3s ease' }}
-                onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 0 20px rgba(220, 38, 38, 0.2)'}
-                onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}
-              >
-                LEARN MORE
               </motion.button>
             </div>
             <p className="mt-6 text-red-500 text-xs uppercase tracking-[3px] font-semibold" style={{ animation: 'pulse 2s infinite' }}>
@@ -555,45 +593,44 @@ export default function AboutPage() {
       </section>
 
       {/* ================= VIDEO MODAL ================= */}
-    {showVideo && (
-  <div 
-    className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md" 
-    onClick={() => setShowVideo(false)}
-  >
-    <motion.div 
-      initial={{ scale: 0.9, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      exit={{ scale: 0.9, opacity: 0 }}
-      className="relative max-w-4xl w-full" 
-      onClick={(e) => e.stopPropagation()}
-    >
-      <button 
-        onClick={() => setShowVideo(false)}
-        className="absolute -top-12 right-0 text-gray-400 hover:text-white transition"
-        style={{ transition: 'all 0.3s ease' }}
-        onMouseEnter={(e) => e.currentTarget.style.color = '#dc2626'}
-        onMouseLeave={(e) => e.currentTarget.style.color = '#9ca3af'}
-      >
-        <FaTimes size={24} />
-      </button>
-      <div className="aspect-video bg-black rounded-xl overflow-hidden border border-red-900/30">
-        <iframe 
-          width="100%" 
-          height="100%" 
-         src="https://www.youtube.com/embed/5vAqBcE3AMo?autoplay=1"
-          title="GFC Promo Video"
-          frameBorder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-          referrerPolicy="strict-origin-when-cross-origin" 
-          allowFullScreen
-          className="w-full h-full"
-        />
-      </div>
-    </motion.div>
-  </div>
-)}
+      {showVideo && (
+        <div 
+          className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md" 
+          onClick={() => setShowVideo(false)}
+        >
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            className="relative max-w-4xl w-full" 
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              onClick={() => setShowVideo(false)}
+              className="absolute -top-12 right-0 text-gray-400 hover:text-white transition"
+              style={{ transition: 'all 0.3s ease' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#dc2626'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#9ca3af'}
+            >
+              <FaTimes size={24} />
+            </button>
+            <div className="aspect-video bg-black rounded-xl overflow-hidden border border-red-900/30">
+              <iframe 
+                width="100%" 
+                height="100%" 
+                src="https://www.youtube.com/embed/5vAqBcE3AMo?autoplay=1"
+                title="GFC Promo Video"
+                frameBorder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerPolicy="strict-origin-when-cross-origin" 
+                allowFullScreen
+                className="w-full h-full"
+              />
+            </div>
+          </motion.div>
+        </div>
+      )}
 
-      {/* Add style tag for animations */}
       <style jsx>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(20px); }
