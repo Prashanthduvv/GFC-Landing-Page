@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import TicketModal from "../components/TicketModal";
 import { useTicketModal } from "../hooks/useTicketModal";
 import NewsletterSubscribe from "../components/NewsletterSubscribe";
+import { Link, useNavigate } from "react-router-dom";
+// In your HomePage component, add:
+import RealTimeNotifications from "../components/RealTimeNotifications";
+import RewardsDashboard from "../components/RewardsDashboard";
+
 import {
   FaInstagram,
   FaYoutube,
@@ -11,18 +15,94 @@ import {
   FaTwitter,
   FaTiktok,
   FaTimes,
+  FaArrowUp  // ← ADD THIS
 } from "react-icons/fa";
+
+// Add this to your HomePage.jsx
+function LiveMemberCounter() {
+  const [memberCount, setMemberCount] = useState(5234);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [trend, setTrend] = useState("up");
+
+  useEffect(() => {
+    // Load initial count
+    const savedCount = localStorage.getItem("gfc_total_members");
+    if (savedCount) setMemberCount(parseInt(savedCount));
+    
+    // Listen for member updates
+    const handleMemberUpdate = (event) => {
+      setIsAnimating(true);
+      setTrend(Math.random() > 0.5 ? "up" : "down");
+      setMemberCount(event.detail?.count || memberCount + 1);
+      setTimeout(() => setIsAnimating(false), 1000);
+    };
+    
+    // Update member count display periodically
+    const updateDisplay = () => {
+      const element = document.getElementById("live-member-count");
+      if (element) element.textContent = memberCount.toLocaleString();
+    };
+    
+    window.addEventListener("memberCountUpdate", handleMemberUpdate);
+    updateDisplay();
+    
+    return () => window.removeEventListener("memberCountUpdate", handleMemberUpdate);
+  }, [memberCount]);
+
+  return (
+    <div className="inline-flex items-center gap-2 bg-red-600/20 border border-red-600/30 rounded-full px-4 py-2 backdrop-blur-sm">
+      <div className={`w-2 h-2 rounded-full bg-green-500 ${isAnimating ? 'animate-ping' : ''}`} />
+      <span className="text-white text-sm font-semibold" id="live-member-count">
+        {memberCount.toLocaleString()}
+      </span>
+      <span className="text-gray-400 text-xs">Active Members</span>
+      {trend === "up" && <FaArrowUp className="text-green-500 text-xs animate-bounce" />}
+    </div>
+  );
+}
+
+// Countdown Box Component
+function CountdownBox({ value, label }) {
+  return (
+    <div
+      className="border border-gray-700 bg-black rounded-sm flex flex-col items-center justify-center"
+      style={{
+        minHeight: "clamp(60px, 8vw, 95px)",
+        padding: "clamp(8px, 1vw, 14px)",
+      }}
+    >
+      <p
+        className="font-bold text-white leading-none"
+        style={{
+          fontSize: "clamp(16px, 2vw, 32px)",
+        }}
+      >
+        {value}
+      </p>
+      <p
+        className="text-gray-400 uppercase tracking-wider mt-1"
+        style={{
+          fontSize: "clamp(8px, 0.8vw, 11px)",
+        }}
+      >
+        {label}
+      </p>
+    </div>
+  );
+}
 
 export default function HomePage() {
   const { isOpen: isTicketModalOpen, closeModal: closeTicketModal } = useTicketModal();
   const [isTrailerModalOpen, setIsTrailerModalOpen] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const navigate = useNavigate();
 
   const socials = [
-    { icon: FaInstagram, link: "https://instagram.com" },
-    { icon: FaYoutube, link: "https://youtube.com" },
-    { icon: FaFacebookF, link: "https://facebook.com" },
-    { icon: FaTwitter, link: "https://x.com" },
-    { icon: FaTiktok, link: "https://tiktok.com" },
+    { icon: FaInstagram, link: "https://instagram.com/gfcglobal", label: "Instagram" },
+    { icon: FaYoutube, link: "https://youtube.com/@gfcglobal", label: "YouTube" },
+    { icon: FaFacebookF, link: "https://facebook.com/gfcglobal", label: "Facebook" },
+    { icon: FaTwitter, link: "https://twitter.com/gfcglobal", label: "Twitter" },
+    { icon: FaTiktok, link: "https://tiktok.com/@gfcglobal", label: "TikTok" },
   ];
 
   const eventDate = new Date("2026-06-30T18:00:00").getTime();
@@ -47,6 +127,40 @@ export default function HomePage() {
     };
   }
 
+  // On component mount, get or create user ID
+  useEffect(() => {
+    let storedUserId = localStorage.getItem("gfc_user_id");
+    if (!storedUserId) {
+      storedUserId = "user_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem("gfc_user_id", storedUserId);
+    }
+    setUserId(storedUserId);
+  }, []);
+
+  // Track user actions
+  const trackUserAction = (action, details) => {
+    if (!userId) return;
+    const events = JSON.parse(localStorage.getItem("gfc_user_events") || "[]");
+    events.push({
+      action,
+      details,
+      timestamp: new Date().toISOString(),
+      userId
+    });
+    localStorage.setItem("gfc_user_events", JSON.stringify(events.slice(-100)));
+  };
+
+  // Track CTA clicks
+  const trackCTA = (ctaName, location) => {
+    trackUserAction("cta_click", { cta: ctaName, location });
+    console.log(`[Analytics] CTA Click: ${ctaName} at ${location}`);
+  };
+
+  const handleGetTickets = () => {
+    trackCTA("Get Tickets", "Hero Section");
+    window.dispatchEvent(new CustomEvent("openTicketModal"));
+  };
+
   useEffect(() => {
     const updateTime = () => setTimeLeft(getTimeRemaining());
     updateTime();
@@ -55,10 +169,12 @@ export default function HomePage() {
   }, []);
 
   const handleWatchTrailer = () => setIsTrailerModalOpen(true);
-const navigate = useNavigate();
+
   return (
     <>
       <TicketModal isOpen={isTicketModalOpen} onClose={closeTicketModal} />
+      <RealTimeNotifications userId={userId} />
+      <RewardsDashboard userId={userId} />
       
       {/* Trailer Modal */}
       {isTrailerModalOpen && (
@@ -83,38 +199,35 @@ const navigate = useNavigate();
       )}
 
       <div className="bg-black text-white font-[Inter] overflow-x-hidden w-full">
-        {/* ================= HERO SECTION - IMPROVED SPACING ================= */}
+        {/* ================= HERO SECTION ================= */}
         <section 
           id="home" 
           className="relative flex items-center bg-black overflow-hidden"
           style={{
-      
             paddingTop: "clamp(70px, 10vh, 120px)",
             paddingBottom: "clamp(40px, 8vh, 80px)",
             marginBottom: "0"
           }}
         >
-          {/* BACKGROUND IMAGE - Responsive positioning */}
-         <div className="absolute inset-0 max-w-[1400px] mx-auto pointer-events-none">
+          {/* BACKGROUND IMAGE */}
+          <div className="absolute inset-0 max-w-[1400px] mx-auto pointer-events-none">
             <img
               src="/fighter.png"
               alt="fighter"
               className="absolute object-contain opacity-80"
-             style={{
-  right: "0",
-  bottom: "0",
-
-  width: "100%",
-  maxWidth: "900px",
-
-  height: "auto",
-     maxHeight: "90%",
-  objectFit: "contain",
-}}
+              style={{
+                right: "0",
+                bottom: "0",
+                width: "100%",
+                maxWidth: "900px",
+                height: "auto",
+                maxHeight: "90%",
+                objectFit: "contain",
+              }}
             />
           </div>
 
-          {/* GRADIENT OVERLAY - Enhanced for better text visibility */}
+          {/* GRADIENT OVERLAY */}
           <div 
             className="absolute inset-0"
             style={{
@@ -133,60 +246,30 @@ const navigate = useNavigate();
                   marginRight: "auto"
                 }}
               >
-                {/* Badge */}
-                <div className="mb-4 sm:mb-5 md:mb-6 lg:mb-8">
-                  <p 
-                    className="text-red-500 uppercase tracking-[2px] sm:tracking-[3px] md:tracking-[4px]"
-                    style={{
-                      fontSize: "clamp(10px, 2vw, 14px)"
-                    }}
-                  >
-                    GFC GLOBAL 1: ORIGIN
-                  </p>
+                <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
+                  <div className="mb-4 sm:mb-5 md:mb-6 lg:mb-8">
+                    <p className="text-red-500 uppercase tracking-[2px] sm:tracking-[3px] md:tracking-[4px]" style={{ fontSize: "clamp(10px, 2vw, 14px)" }}>
+                      GFC GLOBAL 1: ORIGIN
+                    </p>
+                  </div>
+                  <LiveMemberCounter />
                 </div>
 
                 {/* Main Heading */}
                 <h1 className="font-[Anton] italic uppercase tracking-[1px] leading-[1.1]">
-                  <span 
-                    className="block"
-                    style={{
-                      fontSize: "clamp(40px, 8vw, 140px)"
-                    }}
-                  >
-                    FIGHTS.
-                  </span>
-                  <span 
-                    className="block"
-                    style={{
-                      fontSize: "clamp(36px, 7vw, 130px)"
-                    }}
-                  >
-                    STORIES.
-                  </span>
-                  <span 
-                    className="block text-red-500"
-                    style={{
-                      fontSize: "clamp(32px, 6.5vw, 120px)"
-                    }}
-                  >
-                    LEGENDS.
-                  </span>
+                  <span className="block" style={{ fontSize: "clamp(40px, 8vw, 140px)" }}>FIGHTS.</span>
+                  <span className="block" style={{ fontSize: "clamp(36px, 7vw, 130px)" }}>STORIES.</span>
+                  <span className="block text-red-500" style={{ fontSize: "clamp(32px, 6.5vw, 120px)" }}>LEGENDS.</span>
                 </h1>
 
-                {/* Subtitle */}
-                <p 
-                  className="mt-4 sm:mt-5 md:mt-6 text-gray-300"
-                  style={{
-                    fontSize: "clamp(14px, 2vw, 18px)"
-                  }}
-                >
+                <p className="mt-4 sm:mt-5 md:mt-6 text-gray-300" style={{ fontSize: "clamp(14px, 2vw, 18px)" }}>
                   India's Next Combat Sports Movement
                 </p>
 
                 {/* Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-5 mt-6 sm:mt-8 md:mt-10">
                   <button 
-                    onClick={() => window.dispatchEvent(new CustomEvent("openTicketModal"))} 
+                    onClick={handleGetTickets}
                     className="bg-red-600 hover:bg-red-700 transition font-semibold whitespace-nowrap"
                     style={{
                       padding: "clamp(10px, 1.5vh, 16px) clamp(20px, 4vw, 32px)",
@@ -213,15 +296,12 @@ const navigate = useNavigate();
           </div>
         </section>
 
-        {/* Features Section - No gap */}
+        {/* Features Section */}
         <section id="about" className="border-t border-neutral-900 bg-black relative z-20">
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-16 py-8 sm:py-10 md:py-12">
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-5 md:gap-6 text-center">
               {features.map((item, i) => (
-                <div
-                  key={i}
-                  className={`${i !== features.length - 1 ? 'sm:border-r-2 border-[#333] sm:pr-4 md:pr-5' : ''}`}
-                >
+                <div key={i} className={`${i !== features.length - 1 ? 'sm:border-r-2 border-[#333] sm:pr-4 md:pr-5' : ''}`}>
                   <i className={`fa ${item.icon} text-red-500 text-xl sm:text-2xl md:text-3xl mb-2 sm:mb-3`} />
                   <h3 className="text-[10px] sm:text-xs md:text-sm font-bold uppercase mb-0.5 sm:mb-1 text-white">
                     {item.title}
@@ -236,94 +316,50 @@ const navigate = useNavigate();
         {/* Fighters Section */}
         <section id="fighters" className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-16 py-10 sm:py-12 md:py-16">
           <div className="grid lg:grid-cols-2 gap-8 md:gap-10 lg:gap-12 items-start">
-           <div className="max-w-[580px] mx-auto lg:mx-0 text-center lg:text-left">
-
-  <p className="text-red-500 text-[11px] sm:text-xs md:text-sm font-semibold tracking-[5px] uppercase mb-4">
-    ABOUT GFC
-  </p>
-
-  <h2 className="font-[Anton] uppercase leading-[0.95] text-white">
-    <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
-      WE ARE
-    </span>
-
-    <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
-      BUILDING
-    </span>
-
-    <span className="block text-gray-300 text-2xl sm:text-3xl md:text-4xl lg:text-5xl mt-3">
-      MORE THAN
-    </span>
-
-    <span className="block text-gray-300 text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
-      EVENTS.
-    </span>
-
-    <span className="block text-red-500 text-3xl sm:text-4xl md:text-5xl lg:text-6xl mt-5">
-      A MOVEMENT.
-    </span>
-  </h2>
-
-  <div className="w-24 h-[3px] bg-red-600 mt-6 mx-auto lg:mx-0" />
-
-  <p className="text-gray-400 text-sm sm:text-base md:text-lg mt-6 leading-relaxed max-w-xl mx-auto lg:mx-0">
-    GFC is redefining combat sports through elite athletes, cinematic storytelling,
-    and culture-driven entertainment built for the next generation.
-  </p>
-
-  <button
-    onClick={() => window.dispatchEvent(new CustomEvent("openTicketModal"))}
-    className="mt-8 bg-red-600 hover:bg-red-700 transition-all duration-300 px-6 sm:px-7 py-3 text-xs sm:text-sm font-semibold uppercase tracking-wider rounded-sm text-white"
-  >
-    GET TICKETS →
-  </button>
-</div>
-   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
-  {fighters.map((f, i) => (
-    <div
-      key={i}
-      className="group relative bg-[#0c0c0c] border border-gray-800 rounded-md overflow-hidden"
-    >
-      {/* Image Container */}
-      <div className="relative h-[260px] sm:h-[300px] md:h-[340px] overflow-hidden">
-        <img
-          src={f.img}
-          alt={f.name}
-          className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-        />
-
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-      </div>
-
-      {/* Content */}
-      <div className="absolute bottom-0 left-0 w-full p-4 text-center z-10">
-        <h3 className="font-bold text-sm tracking-wide uppercase text-white">
-          {f.name}
-        </h3>
-
-        <p className="text-red-600 text-[11px] uppercase mt-1">
-          {f.tag1}
-        </p>
-
-        <p className="text-red-600 text-[11px] uppercase">
-          {f.tag2}
-        </p>
-
-        <button
-          onClick={() => navigate("/fighters")}
-          className="mt-3 inline-flex items-center gap-2 border border-red-600/40 bg-black/40 backdrop-blur-sm px-4 py-2 text-[10px] sm:text-xs font-semibold tracking-[2px] uppercase text-white hover:bg-red-600 hover:border-red-600 transition-all duration-300 rounded-sm"
-        >
-          <span>VIEW PROFILE</span>
-
-          <span className="transition-transform duration-300 group-hover:translate-x-1">
-            →
-          </span>
-        </button>
-      </div>
-    </div>
-  ))}
-</div>
+            <div className="max-w-[580px] mx-auto lg:mx-0 text-center lg:text-left">
+              <p className="text-red-500 text-[11px] sm:text-xs md:text-sm font-semibold tracking-[5px] uppercase mb-4">
+                ABOUT GFC
+              </p>
+              <h2 className="font-[Anton] uppercase leading-[0.95] text-white">
+                <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl">WE ARE</span>
+                <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl">BUILDING</span>
+                <span className="block text-gray-300 text-2xl sm:text-3xl md:text-4xl lg:text-5xl mt-3">MORE THAN</span>
+                <span className="block text-gray-300 text-2xl sm:text-3xl md:text-4xl lg:text-5xl">EVENTS.</span>
+                <span className="block text-red-500 text-3xl sm:text-4xl md:text-5xl lg:text-6xl mt-5">A MOVEMENT.</span>
+              </h2>
+              <div className="w-24 h-[3px] bg-red-600 mt-6 mx-auto lg:mx-0" />
+              <p className="text-gray-400 text-sm sm:text-base md:text-lg mt-6 leading-relaxed max-w-xl mx-auto lg:mx-0">
+                GFC is redefining combat sports through elite athletes, cinematic storytelling,
+                and culture-driven entertainment built for the next generation.
+              </p>
+              <button 
+                onClick={handleGetTickets}
+                className="mt-8 bg-red-600 hover:bg-red-700 transition-all duration-300 px-6 sm:px-7 py-3 text-xs sm:text-sm font-semibold uppercase tracking-wider rounded-sm text-white"
+              >
+                GET TICKETS →
+              </button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
+              {fighters.map((f, i) => (
+                <div key={i} className="group relative bg-[#0c0c0c] border border-gray-800 rounded-md overflow-hidden">
+                  <div className="relative h-[260px] sm:h-[300px] md:h-[340px] overflow-hidden">
+                    <img src={f.img} alt={f.name} className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                  </div>
+                  <div className="absolute bottom-0 left-0 w-full p-4 text-center z-10">
+                    <h3 className="font-bold text-sm tracking-wide uppercase text-white">{f.name}</h3>
+                    <p className="text-red-600 text-[11px] uppercase mt-1">{f.tag1}</p>
+                    <p className="text-red-600 text-[11px] uppercase">{f.tag2}</p>
+                    <button
+                      onClick={() => navigate("/fighters")}
+                      className="mt-3 inline-flex items-center gap-2 border border-red-600/40 bg-black/40 backdrop-blur-sm px-4 py-2 text-[10px] sm:text-xs font-semibold tracking-[2px] uppercase text-white hover:bg-red-600 hover:border-red-600 transition-all duration-300 rounded-sm"
+                    >
+                      VIEW PROFILE →
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -342,19 +378,14 @@ const navigate = useNavigate();
                   <span>📍 New Delhi</span>
                   <span>📺 Live on Digital</span>
                 </div>
-                <button onClick={() => window.dispatchEvent(new CustomEvent("openTicketModal"))} className="mt-3 sm:mt-4 bg-red-600 px-4 sm:px-5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold uppercase hover:bg-red-700 transition rounded-sm w-full sm:w-auto text-white">
+                <button onClick={handleGetTickets} className="mt-3 sm:mt-4 bg-red-600 px-4 sm:px-5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold uppercase hover:bg-red-700 transition rounded-sm w-full sm:w-auto text-white">
                   Book Your Seat
                 </button>
               </div>
               <div className="text-center md:text-left order-2 md:order-3">
                 <p className="text-red-600 text-[10px] sm:text-xs uppercase tracking-widest mb-2 sm:mb-3">The Countdown Begins</p>
-                <div
-  className="grid grid-cols-4 mx-auto md:mx-0"
-  style={{
-    gap: "clamp(6px, 1vw, 14px)",
-    width: "min(100%, 360px)",
-  }}
->  <CountdownBox value={timeLeft.days} label="Days" />
+                <div className="grid grid-cols-4 mx-auto md:mx-0" style={{ gap: "clamp(6px, 1vw, 14px)", width: "min(100%, 360px)" }}>
+                  <CountdownBox value={timeLeft.days} label="Days" />
                   <CountdownBox value={timeLeft.hours} label="Hrs" />
                   <CountdownBox value={timeLeft.minutes} label="Mins" />
                   <CountdownBox value={timeLeft.seconds} label="Secs" />
@@ -365,37 +396,31 @@ const navigate = useNavigate();
         </section>
 
         {/* Promo Video Section */}
-<section className="py-10 sm:py-12 md:py-16 bg-black border-t border-neutral-900">
-  <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-16">
-    
-    <div className="text-center mb-6 sm:mb-8">
-      <p className="text-red-600 text-[10px] sm:text-xs md:text-sm uppercase tracking-[4px] mb-2">
-        Official Trailer
-      </p>
-
-      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold uppercase text-white">
-        EXPERIENCE THE <span className="text-red-600">MOVEMENT</span>
-      </h2>
-
-      <p className="text-gray-400 text-xs sm:text-sm md:text-base mt-3 max-w-2xl mx-auto">
-        Watch the official GFC promo and witness the rise of India's next combat sports revolution.
-      </p>
-    </div>
-
-    <div className="relative aspect-video overflow-hidden rounded-xl border border-red-900/30 shadow-[0_0_40px_rgba(255,0,0,0.15)]">
-      <iframe
-        width="100%"
-        height="100%"
-        src="https://www.youtube.com/embed/5vAqBcE3AMo?autoplay=0&rel=0"
-        title="GFC Promo Video"
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowFullScreen
-        className="absolute inset-0 w-full h-full"
-      />
-    </div>
-  </div>
-</section>
+        <section className="py-10 sm:py-12 md:py-16 bg-black border-t border-neutral-900">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-16">
+            <div className="text-center mb-6 sm:mb-8">
+              <p className="text-red-600 text-[10px] sm:text-xs md:text-sm uppercase tracking-[4px] mb-2">Official Trailer</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold uppercase text-white">
+                EXPERIENCE THE <span className="text-red-600">MOVEMENT</span>
+              </h2>
+              <p className="text-gray-400 text-xs sm:text-sm md:text-base mt-3 max-w-2xl mx-auto">
+                Watch the official GFC promo and witness the rise of India's next combat sports revolution.
+              </p>
+            </div>
+            <div className="relative aspect-video overflow-hidden rounded-xl border border-red-900/30 shadow-[0_0_40px_rgba(255,0,0,0.15)]">
+              <iframe
+                width="100%"
+                height="100%"
+                src="https://www.youtube.com/embed/5vAqBcE3AMo?autoplay=0&rel=0"
+                title="GFC Promo Video"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="absolute inset-0 w-full h-full"
+              />
+            </div>
+          </div>
+        </section>
 
         {/* Sponsors Section */}
         <section id="sponsors" className="py-12 sm:py-16 md:py-20 bg-black border-t border-neutral-900 overflow-hidden">
@@ -415,38 +440,58 @@ const navigate = useNavigate();
           </div>
         </section>
 
-        {/* Footer with Newsletter */}
+        {/* Footer */}
         <footer className="border-t border-[#1a1a1a] bg-black">
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-16 py-10 sm:py-12 md:py-14">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 md:gap-12">
               <div className="text-center md:text-left">
-                <img src="/gfc-logo.png" alt="GFC Logo" className="h-9 sm:h-10 md:h-12 lg:h-14 object-contain mx-auto md:mx-0" />
-                <p className="text-gray-400 text-xs sm:text-sm md:text-base mt-3 sm:mt-4 leading-relaxed">Fights. Stories. Legends. Join the movement and be part of India's future in combat sports.</p>
+                <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+                  <img src="/gfc-logo.png" alt="GFC Logo" className="h-9 sm:h-10 md:h-12 lg:h-14 object-contain mx-auto md:mx-0 cursor-pointer hover:opacity-80 transition duration-300" />
+                </Link>
+                <p className="text-gray-400 text-xs sm:text-sm md:text-base mt-3 sm:mt-4 leading-relaxed">
+                  Fights. Stories. Legends. Join the movement and be part of India's future in combat sports.
+                </p>
                 <div className="flex gap-3 sm:gap-4 mt-4 sm:mt-5 flex-wrap justify-center md:justify-start">
                   {socials.map((item, i) => {
                     const Icon = item.icon;
                     return (
-                      <a key={i} href={item.link} target="_blank" rel="noopener noreferrer" className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center border border-gray-700 text-gray-400 hover:text-red-500 hover:border-red-500 transition-all duration-300 rounded-sm">
+                      <a key={i} href={item.link} target="_blank" rel="noopener noreferrer" className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center border border-gray-700 text-gray-400 hover:text-red-500 hover:border-red-500 transition-all duration-300 rounded-sm hover:-translate-y-0.5">
                         <Icon size={16} />
                       </a>
                     );
                   })}
                 </div>
               </div>
+              
               <div className="text-center md:text-left">
                 <h3 className="text-xs sm:text-sm md:text-base font-semibold uppercase tracking-wider mb-4 sm:mb-5 text-white">Quick Links</h3>
                 <div className="grid grid-cols-2 gap-y-2 sm:gap-y-3 gap-x-6 text-xs sm:text-sm md:text-base text-gray-400">
-                  {["About", "Media", "Events", "News", "Fighters", "Gallery", "GFC Origin", "Contact", "Sponsors", "FAQs"].map((link, i) => (
-                    <span key={i} className="hover:text-white transition cursor-pointer">{link}</span>
+                  {[
+                    { name: "About", path: "/about" },
+                    { name: "Media", path: "/news" },
+                    { name: "Events", path: "/fights" },
+                    { name: "News", path: "/news" },
+                    { name: "Fighters", path: "/fighters" },
+                    { name: "Gallery", path: "/gallery" },
+                    { name: "GFC Origin", path: "/origin" },
+                    { name: "Contact", path: "/contact" },
+                    { name: "Sponsors", path: "/sponsors" },
+                    { name: "FAQs", path: "/faq" },
+                  ].map((link, i) => (
+                    <Link key={i} to={link.path} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="hover:text-white transition-all duration-300 cursor-pointer hover:translate-x-0.5">
+                      {link.name}
+                    </Link>
                   ))}
                 </div>
               </div>
               
-              {/* Newsletter Section */}
               <NewsletterSubscribe />
             </div>
+            
             <div className="mt-8 sm:mt-10 md:mt-12 pt-5 border-t border-[#1a1a1a] text-center">
-              <p className="text-gray-600 text-[10px] sm:text-xs tracking-wide">© 2025 GFC Global. All Rights Reserved.</p>
+              <p className="text-gray-600 text-[10px] sm:text-xs tracking-wide">
+                © {new Date().getFullYear()} GFC Global. All Rights Reserved.
+              </p>
             </div>
           </div>
         </footer>
@@ -464,70 +509,12 @@ const features = [
 ];
 
 const fighters = [
-  {
-    name: "ARJUN MALIK",
-    tag1: "THE TECHNICIAN.",
-    tag2: "THE THINKER.",
-    img: "/f1.png",
-  },
-  {
-    name: "MEERA IYER",
-    tag1: "THE WARRIOR.",
-    tag2: "THE FINISHER.",
-    img: "/f2.png",
-  },
-  {
-    name: "ZAYN KHAN",
-    tag1: "THE PUNISHER.",
-    tag2: "THE STORM.",
-    img: "/f3.png",
-  },
-  {
-    name: "ARJUN MALIK",
-    tag1: "THE TECHNICIAN.",
-    tag2: "THE THINKER.",
-    img: "/f1.png",
-  },
-  {
-    name: "MEERA IYER",
-    tag1: "THE WARRIOR.",
-    tag2: "THE FINISHER.",
-    img: "/f2.png",
-  },
-  {
-    name: "ZAYN KHAN",
-    tag1: "THE PUNISHER.",
-    tag2: "THE STORM.",
-    img: "/f3.png",
-  },
+  { name: "ARJUN MALIK", tag1: "THE TECHNICIAN.", tag2: "THE THINKER.", img: "/f1.png" },
+  { name: "MEERA IYER", tag1: "THE WARRIOR.", tag2: "THE FINISHER.", img: "/f2.png" },
+  { name: "ZAYN KHAN", tag1: "THE PUNISHER.", tag2: "THE STORM.", img: "/f3.png" },
+  { name: "RAJIV MENON", tag1: "THE SILENT KILLER.", tag2: "THE PRECISE.", img: "/f1.png" },
+  { name: "ANJALI REDDY", tag1: "THE CYCLONE.", tag2: "THE AGGRESSOR.", img: "/f2.png" },
+  { name: "KARAN SINGH", tag1: "THE BULLDOZER.", tag2: "THE POWER.", img: "/f3.png" },
 ];
-const sponsorLogos = ["/p1.png", "/p2.png", "/p3.png", "/p4.png", "/p5.png", "/p6.png"];
-function CountdownBox({ value, label }) {
-  return (
-    <div
-      className="border border-gray-700 bg-black rounded-sm flex flex-col items-center justify-center"
-      style={{
-        minHeight: "clamp(60px, 8vw, 95px)",
-        padding: "clamp(8px, 1vw, 14px)",
-      }}
-    >
-      <p
-        className="font-bold text-white leading-none"
-        style={{
-          fontSize: "clamp(16px, 2vw, 32px)",
-        }}
-      >
-        {value}
-      </p>
 
-      <p
-        className="text-gray-400 uppercase tracking-wider mt-1"
-        style={{
-          fontSize: "clamp(8px, 0.8vw, 11px)",
-        }}
-      >
-        {label}
-      </p>
-    </div>
-  );
-}
+const sponsorLogos = ["/p1.png", "/p2.png", "/p3.png", "/p4.png", "/p5.png", "/p6.png"];

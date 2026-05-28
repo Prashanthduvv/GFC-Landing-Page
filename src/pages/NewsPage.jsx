@@ -6,6 +6,7 @@ import {
   FaFacebook, FaTwitter, FaWhatsapp, FaEye, FaClock, FaBookmark,
   FaThumbsUp, FaComment, FaChartLine, FaNewspaper, FaFire
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 // ================= NEWS DATA =================
 const newsItems = [
@@ -272,6 +273,12 @@ export default function NewsPage() {
 
   const handleGetTickets = () => {
     window.dispatchEvent(new CustomEvent("openTicketModal"));
+  };
+    const navigate = useNavigate();
+   
+    const handleJoinCommunity = () => {
+    navigate("/join-community");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleSubscribe = (e) => {
@@ -673,10 +680,10 @@ export default function NewsPage() {
             <motion.button 
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={handleGetTickets}
+              onClick={handleJoinCommunity}
               className="bg-red-600 hover:bg-red-700 transition-all duration-300 px-6 sm:px-8 py-3 rounded-lg text-sm font-bold uppercase inline-flex items-center gap-2 shadow-lg shadow-red-900/30"
             >
-              <FaHeart size={14} /> JOIN THE COMMUNITY
+              <FaHeart size={14} /> JOIN GFC COMMUNITY
             </motion.button>
           </motion.div>
         </div>

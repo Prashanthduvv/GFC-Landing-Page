@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaHandshake, FaCheckCircle, FaMedal, FaStar, FaArrowRight, FaHeart, FaEnvelope } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 // ================= SPONSOR DATA =================
 const sponsors = [
@@ -29,6 +30,9 @@ const benefits = [
   { title: "CONTENT", desc: "Custom content creation and brand integration" },
 ];
 
+
+
+
 // ================= MAIN PAGE =================
 export default function SponsorsPage() {
   const [selectedTier, setSelectedTier] = useState(null);
@@ -46,6 +50,12 @@ export default function SponsorsPage() {
     window.location.href = "/contact";
   };
 
+   const navigate = useNavigate();
+   
+    const handleJoinCommunity = () => {
+    navigate("/join-community");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
   // Animation variants
   const fadeInUp = {
     hidden: { opacity: 0, y: 30 },
@@ -297,7 +307,7 @@ export default function SponsorsPage() {
             Join the GFC Community and get exclusive access to events, content, and experiences.
           </p>
           <button 
-            onClick={handleGetTickets}
+              onClick={handleJoinCommunity}
             className="bg-red-600 hover:bg-red-700 transition px-6 sm:px-8 py-2.5 rounded-lg text-sm font-bold uppercase inline-flex items-center gap-2"
           >
             <FaHeart size={14} /> JOIN THE MOVEMENT

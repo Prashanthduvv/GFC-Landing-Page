@@ -29,6 +29,7 @@ function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/community" element={<CommunityPage />} />
           <Route path="/join-community" element={<JoinCommunityPage />} />
+          <Route path="/faq" element={<ContactPage />} />
         </Routes>
       </div>
     </Router>

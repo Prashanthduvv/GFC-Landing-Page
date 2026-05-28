@@ -453,7 +453,7 @@ export default function ContactPage() {
       </section>
 
       {/* ================= FAQ SECTION ================= */}
-      <section className="py-12 bg-[#050505] border-y border-red-900/20">
+      <section  id="faq" className="py-12 bg-[#050505] border-y border-red-900/20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <p className="text-red-500 uppercase tracking-[4px] text-xs font-semibold mb-2">FAQ</p>
