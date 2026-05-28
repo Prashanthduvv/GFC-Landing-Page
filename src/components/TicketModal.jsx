@@ -170,7 +170,7 @@ export default function TicketModal({ isOpen, onClose }) {
                     <h2 className="text-red-500 text-2xl font-bold uppercase">Get Your Tickets</h2>
                   </div>
                   <p className="text-gray-400 text-sm">
-                    GFC Global 1: Origin - June 30, 2026 | New Delhi
+                    GFC GlobaX : Origin - June 30, 2026 | New Delhi
                   </p>
                 </div>
 

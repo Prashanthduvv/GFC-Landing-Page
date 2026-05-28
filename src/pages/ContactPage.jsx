@@ -146,7 +146,7 @@ export default function ContactPage() {
     { q: "How do I buy tickets for GFC events?", a: "Tickets can be purchased directly through our website by clicking the 'GET TICKETS' button on any page." },
     { q: "How can I become a GFC Community member?", a: "Click the 'APPLY NOW' button on the Community page and fill out the application form." },
     { q: "How can I become a sponsor?", a: "Please contact our sponsorship department via email at sponsors@gfc.com or select 'Sponsorship' from the department selector above." },
-    { q: "When is the next GFC event?", a: "GFC Global 1: Origin is scheduled for June 30, 2026 in New Delhi, India." },
+    { q: "When is the next GFC event?", a: "GFC GlobaX: Origin is scheduled for June 30, 2026 in New Delhi, India." },
     { q: "How long does it take to get a response?", a: "Most inquiries receive a response within 24 hours. Sponsorship requests may take 1-2 business days." },
     { q: "Can I collaborate with GFC as a creator?", a: "Absolutely! Please reach out to our Community department for collaboration opportunities." },
   ];
@@ -194,7 +194,7 @@ export default function ContactPage() {
             GET IN TOUCH
           </p>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase leading-tight">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl  uppercase leading-tight">
             Contact <span className="text-red-600">Us</span>
           </h1>
 
@@ -247,7 +247,7 @@ export default function ContactPage() {
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-10">
             <p className="text-red-500 uppercase tracking-[4px] text-xs font-semibold mb-2">SUPPORT ROUTING</p>
-            <h2 className="text-2xl sm:text-3xl font-black uppercase">Choose The Right <span className="text-red-600">Department</span></h2>
+            <h2 className="text-2xl sm:text-3xl  uppercase">Choose The Right <span className="text-red-600">Department</span></h2>
             <p className="text-gray-400 text-sm mt-2 max-w-2xl">Select the department that best matches your inquiry for faster support and responses.</p>
           </div>
 
@@ -326,7 +326,7 @@ export default function ContactPage() {
             >
               <div className="mb-6">
                 <p className="text-red-500 uppercase tracking-[4px] text-xs font-semibold mb-2">SEND MESSAGE</p>
-                <h2 className="text-2xl sm:text-3xl font-black uppercase">Get in <span className="text-red-600">Touch</span></h2>
+                <h2 className="text-2xl sm:text-3xl  uppercase">Get in <span className="text-red-600">Touch</span></h2>
                 <p className="text-gray-400 text-sm mt-2">Fill out the form and we'll get back to you within 24 hours.</p>
               </div>
               
@@ -457,7 +457,7 @@ export default function ContactPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <p className="text-red-500 uppercase tracking-[4px] text-xs font-semibold mb-2">FAQ</p>
-            <h2 className="text-2xl sm:text-3xl font-black uppercase">Frequently Asked <span className="text-red-600">Questions</span></h2>
+            <h2 className="text-2xl sm:text-3xl  uppercase">Frequently Asked <span className="text-red-600">Questions</span></h2>
             <p className="text-gray-400 text-sm mt-2">Find quick answers to common questions</p>
           </div>
           
@@ -501,7 +501,7 @@ export default function ContactPage() {
       {/* ================= SOCIAL CONNECT SECTION ================= */}
       <section className="py-12 text-center">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl sm:text-3xl font-black uppercase mb-3">Connect With <span className="text-red-600">Us</span></h2>
+          <h2 className="text-2xl sm:text-3xl  uppercase mb-3">Connect With <span className="text-red-600">Us</span></h2>
           <p className="text-gray-400 text-sm mb-8 max-w-md mx-auto">
             Follow GFC on social media for the latest updates, behind-the-scenes content, and exclusive announcements.
           </p>

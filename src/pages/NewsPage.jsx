@@ -1,209 +1,389 @@
-import { useState, useEffect, useRef } from "react";
-import { motion, useInView, useAnimation, AnimatePresence } from "framer-motion";
-import { 
-  FaCalendarAlt, FaUser, FaTag, FaSearch, FaFilter, FaTimes,
-  FaArrowRight, FaHeart, FaEnvelope, FaBell, FaShare, FaLink,
-  FaFacebook, FaTwitter, FaWhatsapp, FaEye, FaClock, FaBookmark,
-  FaThumbsUp, FaComment, FaChartLine, FaNewspaper, FaFire
+import { useState, useEffect, useMemo } from "react";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+} from "framer-motion";
+import CountUp from "react-countup";
+import {
+  FaArrowRight,
+  FaBell,
+  FaBookmark,
+  FaCalendarAlt,
+  FaChartLine,
+  FaCheckCircle,
+  FaClock,
+  FaComment,
+  FaEye,
+  FaFacebook,
+  FaFilter,
+  FaFire,
+  FaHeart,
+  FaLink,
+  FaNewspaper,
+  FaSearch,
+  FaShare,
+  FaTag,
+  FaThumbsUp,
+  FaTimes,
+  FaTwitter,
+  FaUser,
+  FaWhatsapp,
+  FaBolt,
+  FaPlay,
 } from "react-icons/fa";
+
 import { useNavigate } from "react-router-dom";
 
-// ================= NEWS DATA =================
+// ======================================================
+// DATA
+// ======================================================
+
 const newsItems = [
-  { 
-    id: 1, 
-    title: "GFC Global 1: Origin Announced", 
-    date: "March 15, 2026", 
-    author: "GFC Media", 
-    category: "Events", 
-    image: "/images/c1.png", 
-    excerpt: "India's biggest combat sports event is coming to New Delhi this June. Get ready for history in the making.",
-    content: "Full article content here...",
-    readTime: "3 min read",
+  {
+    id: 1,
+    title: "GFC GlobaX : Origin Officially Announced",
+    date: "March 15, 2026",
+    author: "GFC Media",
+    category: "Events",
+    image: "/images/c1.png",
+    excerpt:
+      "India's biggest combat sports spectacle arrives this June with elite athletes and world-class production.",
+    readTime: "3 min",
     views: 15420,
     likes: 234,
-    comments: 45
+    comments: 45,
+    featured: true,
   },
-  { 
-    id: 2, 
-    title: "Arjun Malik Signs Exclusive Deal", 
-    date: "March 10, 2026", 
-    author: "GFC Media", 
-    category: "Fighters", 
-    image: "/f1.png", 
-    excerpt: "Undefeated welterweight prospect joins GFC roster in a landmark signing.",
-    content: "Full article content here...",
-    readTime: "2 min read",
+
+  {
+    id: 2,
+    title: "Arjun Malik Signs Historic GFC Deal",
+    date: "March 10, 2026",
+    author: "GFC Media",
+    category: "Fighters",
+    image: "/f1.png",
+    excerpt: "Undefeated welterweight sensation officially joins GFC.",
+    readTime: "2 min",
     views: 8920,
     likes: 156,
-    comments: 23
+    comments: 23,
   },
-  { 
-    id: 3, 
-    title: "Founding Community Applications Open", 
-    date: "March 5, 2026", 
-    author: "GFC Media", 
-    category: "Community", 
-    image: "/images/c3.png", 
-    excerpt: "Be part of history - limited founding memberships now available for early supporters.",
-    content: "Full article content here...",
-    readTime: "4 min read",
+
+  {
+    id: 3,
+    title: "Founding Community Applications Open",
+    date: "March 5, 2026",
+    author: "GFC Media",
+    category: "Community",
+    image: "/images/c3.png",
+    excerpt: "Become part of the founding movement with exclusive benefits.",
+    readTime: "4 min",
     views: 12500,
     likes: 345,
-    comments: 67
+    comments: 67,
   },
-  { 
-    id: 4, 
-    title: "GFC Announces Broadcast Partner", 
-    date: "February 28, 2026", 
-    author: "GFC Media", 
-    category: "Partners", 
-    image: "/images/c4.png", 
-    excerpt: "Global reach for India's premier combat sports platform through new partnership.",
-    content: "Full article content here...",
-    readTime: "2 min read",
-    views: 5600,
-    likes: 89,
-    comments: 12
-  },
-  { 
-    id: 5, 
-    title: "Meera Iyer: The Rise of a Champion", 
-    date: "February 20, 2026", 
-    author: "GFC Media", 
-    category: "Fighters", 
-    image: "/f2.png", 
-    excerpt: "Exclusive interview with strawweight sensation Meera Iyer ahead of her debut.",
-    content: "Full article content here...",
-    readTime: "5 min read",
-    views: 10300,
-    likes: 278,
-    comments: 34
-  },
-  { 
-    id: 6, 
-    title: "GFC Global 1 Fight Card Revealed", 
-    date: "February 15, 2026", 
-    author: "GFC Media", 
-    category: "Events", 
-    image: "/images/c1.png", 
-    excerpt: "Stacked lineup announced for inaugural event featuring top talent from across India.",
-    content: "Full article content here...",
-    readTime: "3 min read",
-    views: 18700,
-    likes: 423,
-    comments: 89
+
+  {
+    id: 4,
+    title: "GFC Announces Broadcast Partnership",
+    date: "February 28, 2026",
+    author: "GFC Media",
+    category: "Partners",
+    image: "/images/c4.png",
+    excerpt:
+      "Major international expansion begins through premium media partnership.",
+    readTime: "3 min",
+    views: 9800,
+    likes: 212,
+    comments: 19,
   },
 ];
 
+const statsData = [ { id: 1, icon: FaNewspaper, label: "Articles Published", value: 120, suffix: "+", color: "text-red-500", glow: "from-red-500/20 to-red-900/10", description: "Premium combat sports stories and official announcements.", }, { id: 2, icon: FaEye, label: "Monthly Views", value: 10, suffix: "M+", color: "text-blue-400", glow: "from-blue-500/20 to-blue-900/10", description: "Massive globaX reach across digital platforms and live audiences.", }, { id: 3, icon: FaChartLine, label: "Platform Growth", value: 240, suffix: "%", color: "text-green-400", glow: "from-green-500/20 to-green-900/10", description: "Rapid expansion of the GFC combat sports ecosystem worldwide.", }, { id: 4, icon: FaHeart, label: "Community Fans", value: 500, suffix: "K+", color: "text-pink-400", glow: "from-pink-500/20 to-pink-900/10", description: "Passionate fans supporting the future of combat sports.", }, ];
+
 const categories = ["All", "Events", "Fighters", "Community", "Partners"];
 
-// ================= NEWS DETAIL MODAL =================
-function NewsDetailModal({ article, onClose }) {
+const realtimeStats = [
+  {
+    id: 1,
+    label: "Live Fans",
+    value: 582340,
+    suffix: "+",
+    icon: FaHeart,
+    color: "from-red-500 to-orange-500",
+  },
+
+  {
+    id: 2,
+    label: "Fight Streams",
+    value: 128,
+    suffix: "M",
+    icon: FaEye,
+    color: "from-blue-500 to-cyan-500",
+  },
+
+  {
+    id: 3,
+    label: "Global Athletes",
+    value: 420,
+    suffix: "+",
+    icon: FaChartLine,
+    color: "from-green-500 to-emerald-500",
+  },
+
+  {
+    id: 4,
+    label: "Community Members",
+    value: 950,
+    suffix: "K+",
+    icon: FaBell,
+    color: "from-pink-500 to-purple-500",
+  },
+];
+
+
+
+// ======================================================
+// MODAL
+// ======================================================
+
+function NewsModal({ article, onClose }) {
   const [liked, setLiked] = useState(false);
-  const [bookmarked, setBookmarked] = useState(false);
-  const [likesCount, setLikesCount] = useState(article.likes || 0);
+  const [saved, setSaved] = useState(false);
 
-  const handleLike = () => {
-    if (liked) {
-      setLikesCount(likesCount - 1);
-    } else {
-      setLikesCount(likesCount + 1);
-    }
-    setLiked(!liked);
-  };
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
 
-  const handleBookmark = () => {
-    setBookmarked(!bookmarked);
-    const bookmarks = JSON.parse(localStorage.getItem("bookmarked_articles") || "[]");
-    if (!bookmarked) {
-      bookmarks.push(article.id);
-      localStorage.setItem("bookmarked_articles", JSON.stringify(bookmarks));
-    } else {
-      const newBookmarks = bookmarks.filter(id => id !== article.id);
-      localStorage.setItem("bookmarked_articles", JSON.stringify(newBookmarks));
-    }
-  };
+    const handleEscape = (e) => {
+      if (e.key === "Escape") onClose();
+    };
 
-  const handleShare = async () => {
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.body.style.overflow = "auto";
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [onClose]);
+
+  const shareArticle = async () => {
+    const shareData = {
+      title: article.title,
+      text: article.excerpt,
+      url: window.location.href,
+    };
+
     try {
-      await navigator.clipboard.writeText(window.location.href);
-      alert("Link copied to clipboard!");
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        alert("Link copied!");
+      }
     } catch (err) {
-      console.log("Failed to copy");
+      console.log(err);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md" onClick={onClose}>
-      <motion.div 
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        className="relative max-w-3xl w-full max-h-[90vh] overflow-y-auto bg-gradient-to-br from-zinc-900 to-black border border-red-600/30 rounded-2xl shadow-2xl"
+    <div
+      className="
+        fixed inset-0 z-[200]
+        flex items-center justify-center
+        bg-black/90 backdrop-blur-xl
+        p-4
+      "
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{
+          opacity: 0,
+          scale: 0.9,
+          y: 40,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.9,
+          y: 40,
+        }}
+        transition={{
+          duration: 0.4,
+        }}
         onClick={(e) => e.stopPropagation()}
+        className="
+          relative
+          max-w-5xl
+          w-full
+          max-h-[92vh]
+          overflow-y-auto
+          rounded-[32px]
+          border border-red-500/20
+          bg-[#050505]
+          backdrop-blur-2xl
+        "
       >
-        <button 
-          onClick={onClose} 
-          className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl z-10 transition-all duration-300 hover:rotate-90"
+        {/* CLOSE */}
+
+        <button
+          onClick={onClose}
+          className="
+            absolute top-5 right-5 z-20
+            w-12 h-12 rounded-full
+            bg-white/10 hover:bg-red-600
+            flex items-center justify-center
+            transition-all duration-300
+          "
         >
-          ✕
+          <FaTimes />
         </button>
-        
-        <div className="p-5 sm:p-6">
-          <img src={article.image} alt={article.title} className="w-full h-48 sm:h-64 object-cover rounded-xl mb-5" />
-          
-          <div className="flex flex-wrap items-center gap-3 text-xs text-gray-400 mb-4">
-            <span className="flex items-center gap-1"><FaCalendarAlt size={10} /> {article.date}</span>
-            <span className="flex items-center gap-1"><FaUser size={10} /> {article.author}</span>
-            <span className="flex items-center gap-1 text-red-500"><FaTag size={10} /> {article.category}</span>
+
+        {/* HERO */}
+
+        <div className="relative h-[260px] sm:h-[400px] overflow-hidden">
+          <img
+            src={article.image}
+            alt={article.title}
+            className="w-full h-full object-cover"
+          />
+
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+
+          <div className="absolute bottom-0 left-0 p-8">
+            <span className="bg-red-600 px-4 py-2 rounded-full text-xs uppercase font-bold">
+              {article.category}
+            </span>
+
+            <h2 className="mt-5 text-3xl sm:text-5xl  uppercase leading-tight max-w-4xl">
+              {article.title}
+            </h2>
           </div>
-          
-          <h2 className="text-xl sm:text-2xl font-bold uppercase mb-3">{article.title}</h2>
-          
-          <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 mb-5 pb-4 border-b border-white/10">
-            <span><FaEye className="inline mr-1" /> {article.views.toLocaleString()} views</span>
-            <span><FaClock className="inline mr-1" /> {article.readTime}</span>
-            <span><FaComment className="inline mr-1" /> {article.comments} comments</span>
+        </div>
+
+        {/* CONTENT */}
+
+        <div className="p-6 sm:p-10">
+          {/* META */}
+
+          <div className="flex flex-wrap gap-5 border-b border-white/10 pb-6 text-sm text-gray-400">
+            <span className="flex items-center gap-2">
+              <FaCalendarAlt className="text-red-500" />
+              {article.date}
+            </span>
+
+            <span className="flex items-center gap-2">
+              <FaEye className="text-blue-400" />
+              {article.views.toLocaleString()}
+            </span>
+
+            <span className="flex items-center gap-2">
+              <FaClock className="text-yellow-400" />
+              {article.readTime}
+            </span>
+
+            <span className="flex items-center gap-2">
+              <FaComment className="text-green-400" />
+              {article.comments}
+            </span>
           </div>
-          
-          <div className="space-y-4">
-            <p className="text-gray-300 text-sm leading-relaxed">
-              {article.excerpt} Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-              Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+          {/* ARTICLE */}
+
+          <div className="mt-8 space-y-6 text-gray-300 leading-relaxed">
+            <p>
+              {article.excerpt} GFC continues to redefine combat sports
+              experiences through elite athletes, premium production, and
+              unforgettable fan engagement.
             </p>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip 
-              ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.
+
+            <p>
+              Fans worldwide are preparing for the next evolution of combat
+              sports entertainment. Every event is designed with cinematic
+              storytelling, immersive experiences, and world-class presentation.
             </p>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt 
-              mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem.
+
+            <p>
+              This announcement marks another major milestone in GFC’s journey
+              toward becoming Asia’s premier fight promotion.
             </p>
           </div>
-          
-          <div className="flex flex-wrap gap-3 mt-6 pt-4 border-t border-white/10">
-            <button 
-              onClick={handleLike}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold uppercase transition-all duration-300 ${
-                liked ? 'bg-red-600 text-white' : 'border border-white/20 hover:border-red-600 hover:bg-red-600/10'
-              }`}
+
+          {/* ACTIONS */}
+
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <button
+              onClick={() => setLiked(!liked)}
+              className={`
+                min-h-[52px]
+                rounded-2xl
+                font-bold uppercase
+                flex items-center justify-center gap-3
+                transition-all duration-300
+                ${
+                  liked
+                    ? "bg-red-600 text-white"
+                    : "bg-white/5 border border-white/10 hover:border-red-500"
+                }
+              `}
             >
-              <FaThumbsUp /> {liked ? 'LIKED' : 'LIKE'} ({likesCount})
+              <FaThumbsUp />
+              {liked ? "LIKED" : "LIKE"}
             </button>
-            <button 
-              onClick={handleBookmark}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold uppercase transition-all duration-300 ${
-                bookmarked ? 'bg-yellow-600 text-white' : 'border border-white/20 hover:border-yellow-600 hover:bg-yellow-600/10'
-              }`}
+
+            <button
+              onClick={() => setSaved(!saved)}
+              className={`
+                min-h-[52px]
+                rounded-2xl
+                font-bold uppercase
+                flex items-center justify-center gap-3
+                transition-all duration-300
+                ${
+                  saved
+                    ? "bg-yellow-500 text-black"
+                    : "bg-white/5 border border-white/10 hover:border-yellow-500"
+                }
+              `}
             >
-              <FaBookmark /> {bookmarked ? 'SAVED' : 'SAVE'}
+              <FaBookmark />
+              {saved ? "SAVED" : "SAVE"}
             </button>
-            <button 
-              onClick={handleShare}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold uppercase border border-white/20 hover:border-red-600 hover:bg-red-600/10 transition-all duration-300"
+
+            <button
+              onClick={shareArticle}
+              className="
+                min-h-[52px]
+                rounded-2xl
+                bg-white/5 border border-white/10
+                hover:border-red-500
+                font-bold uppercase
+                flex items-center justify-center gap-3
+                transition-all duration-300
+              "
             >
-              <FaShare /> SHARE
+              <FaShare />
+              SHARE
+            </button>
+
+            <button
+              className="
+                min-h-[52px]
+                rounded-2xl
+                bg-white/5 border border-white/10
+                hover:border-blue-500
+                font-bold uppercase
+                flex items-center justify-center gap-3
+                transition-all duration-300
+              "
+            >
+              <FaLink />
+              COPY LINK
             </button>
           </div>
         </div>
@@ -212,506 +392,911 @@ function NewsDetailModal({ article, onClose }) {
   );
 }
 
-// ================= FEATURED NEWS CARD =================
-function FeaturedNewsCard({ article, index, onClick }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
-      viewport={{ once: true }}
-      whileHover={{ y: -5 }}
-      onClick={() => onClick(article)}
-      className="relative bg-gradient-to-br from-zinc-900 to-black border border-white/10 hover:border-red-600 rounded-xl overflow-hidden cursor-pointer transition-all duration-500 group"
-    >
-      <div className="relative h-64 overflow-hidden">
-        <img src={article.image} alt={article.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-        <div className="absolute top-4 left-4">
-          <span className="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">{article.category}</span>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 p-5">
-          <div className="flex items-center gap-3 text-xs text-gray-300 mb-2">
-            <span className="flex items-center gap-1"><FaCalendarAlt size={10} /> {article.date}</span>
-            <span className="flex items-center gap-1"><FaEye size={10} /> {article.views.toLocaleString()}</span>
-          </div>
-          <h3 className="text-xl font-bold uppercase leading-tight">{article.title}</h3>
-          <p className="text-gray-300 text-sm mt-2 line-clamp-2">{article.excerpt}</p>
-          <div className="flex items-center justify-between mt-3">
-            <span className="text-gray-400 text-xs"><FaClock className="inline mr-1" /> {article.readTime}</span>
-            <span className="text-red-500 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
-              READ MORE <FaArrowRight size={12} />
-            </span>
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
+// ======================================================
+// MAIN COMPONENT
+// ======================================================
 
-// ================= MAIN PAGE =================
 export default function NewsPage() {
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
-  const [selectedArticle, setSelectedArticle] = useState(null);
-  const [emailSubscribe, setEmailSubscribe] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
-  const [viewMode, setViewMode] = useState("grid"); // grid, list
-  const [bookmarkedIds, setBookmarkedIds] = useState([]);
+  const navigate = useNavigate();
 
-  const statsRef = useRef(null);
-  const isStatsInView = useInView(statsRef, { once: true, threshold: 0.3 });
-  const controls = useAnimation();
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const [selectedArticle, setSelectedArticle] = useState(null);
+
+  const [email, setEmail] = useState("");
+
+  const [loading, setLoading] = useState(true);
+
+  const [subscribed, setSubscribed] = useState(false);
+
+  const { scrollY } = useScroll();
+
+  const heroScale = useTransform(scrollY, [0, 500], [1, 1.08]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const saved = JSON.parse(localStorage.getItem("bookmarked_articles") || "[]");
-    setBookmarkedIds(saved);
-    if (isStatsInView) controls.start("visible");
-  }, [isStatsInView, controls]);
 
-  const handleGetTickets = () => {
-    window.dispatchEvent(new CustomEvent("openTicketModal"));
-  };
-    const navigate = useNavigate();
-   
-    const handleJoinCommunity = () => {
-    navigate("/join-community");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1200);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // ======================================================
+  // FILTERED DATA
+  // ======================================================
+
+  const filteredNews = useMemo(() => {
+    return newsItems.filter((item) => {
+      const categoryMatch =
+        selectedCategory === "All" || item.category === selectedCategory;
+
+      const searchMatch =
+        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
+
+      return categoryMatch && searchMatch;
+    });
+  }, [selectedCategory, searchTerm]);
+
+  const featuredArticle = filteredNews[0];
+
+  const regularArticles = filteredNews.slice(1);
+
+  // ======================================================
+  // SUBSCRIBE
+  // ======================================================
 
   const handleSubscribe = (e) => {
     e.preventDefault();
-    if (emailSubscribe) {
-      setSubscribed(true);
-      setTimeout(() => setSubscribed(false), 3000);
-      setEmailSubscribe("");
-      const subscribers = JSON.parse(localStorage.getItem("newsletter_subscribers") || "[]");
-      if (!subscribers.includes(emailSubscribe)) {
-        subscribers.push(emailSubscribe);
-        localStorage.setItem("newsletter_subscribers", JSON.stringify(subscribers));
-      }
-    }
+
+    if (!email) return;
+
+    setSubscribed(true);
+
+    setTimeout(() => {
+      setSubscribed(false);
+    }, 3000);
+
+    setEmail("");
   };
 
-  const filteredNews = newsItems.filter((item) => {
-    const matchesCategory = selectedCategory === "All" || item.category === selectedCategory;
-    const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          item.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  // ======================================================
+  // LOADER
+  // ======================================================
 
-  // Featured article (first of filtered)
-  const featuredArticle = filteredNews[0];
-  const regularArticles = filteredNews.slice(1);
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <motion.div
+          animate={{
+            opacity: [0.4, 1, 0.4],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{
+            repeat: Infinity,
+            duration: 1.5,
+          }}
+          className="flex flex-col items-center"
+        >
+          <div className="w-20 h-20 rounded-full border-4 border-red-600 border-t-transparent animate-spin" />
 
-  // Stats
-  const totalArticles = newsItems.length;
-  const totalViews = newsItems.reduce((sum, item) => sum + item.views, 0);
-  const categoriesCount = categories.length - 1;
-  const avgReadTime = Math.round(newsItems.reduce((sum, item) => sum + parseInt(item.readTime), 0) / newsItems.length);
+          <p className="mt-6 text-red-500 uppercase tracking-[4px] text-sm font-bold">
+            Loading GFC News...
+          </p>
+        </motion.div>
+      </div>
+    );
+  }
 
-  // Animation variants
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
-  };
-
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
-  };
+  // ======================================================
+  // UI
+  // ======================================================
 
   return (
-    <div className="pt-16 sm:pt-20 overflow-x-hidden">
-      
-      {/* ================= HERO SECTION ================= */}
-      <section className="relative min-h-[45vh] sm:min-h-[50vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0">
-          <img 
-            src="/images/c3.png" 
-            alt="News Hero" 
-            className="w-full h-full object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/30" />
-        </div>
-        
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl">
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-red-500 uppercase tracking-[4px] text-xs sm:text-sm mb-3 font-semibold"
-            >
-              LATEST UPDATES
-            </motion.p>
-            <motion.h1 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase leading-tight"
-            >
-              GFC <span className="text-red-600">News</span>
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="text-gray-300 text-sm sm:text-base lg:text-lg mt-4 leading-relaxed"
-            >
-              Stay updated with the latest announcements, fight news, and community updates.
-            </motion.p>
-          </div>
-        </div>
-      </section>
+    <div className="relative overflow-hidden bg-black text-white">
+      {/* ====================================================== */}
+      {/* BACKGROUND */}
+      {/* ====================================================== */}
 
-      {/* ================= STATS BAR ================= */}
-      <section ref={statsRef} className="py-8 border-y border-red-900/20 bg-gradient-to-b from-black to-[#050505]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            variants={staggerContainer}
-            initial="hidden"
-            animate={controls}
-            className="grid grid-cols-2 sm:grid-cols-4 gap-6"
+      <div className="fixed inset-0 overflow-hidden -z-10">
+        {/* GRID */}
+
+        <div
+          className="
+            absolute inset-0 opacity-20
+            bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)]
+            bg-[size:50px_50px]
+          "
+        />
+
+        {/* ORBS */}
+
+        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-red-500/10 blur-[140px] rounded-full animate-pulse" />
+
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-orange-500/10 blur-[120px] rounded-full animate-pulse delay-1000" />
+      </div>
+
+      {/* ====================================================== */}
+      {/* HERO */}
+      {/* ====================================================== */}
+
+      <section className="relative min-h-screen flex items-center overflow-hidden">
+        <motion.img
+          style={{ scale: heroScale }}
+          src="/images/c3.png"
+          alt="Hero"
+          className="
+            absolute inset-0
+            w-full h-full
+            object-cover opacity-30
+          "
+        />
+
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/75 to-black/30" />
+
+        <div className="relative z-10 max-w-[1440px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-32">
+          <motion.div
+            initial={{
+              opacity: 0,
+              y: 80,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              duration: 1,
+            }}
           >
-            {[
-              { label: "ARTICLES", value: totalArticles, icon: FaNewspaper },
-              { label: "TOTAL VIEWS", value: totalViews.toLocaleString(), icon: FaEye },
-              { label: "CATEGORIES", value: categoriesCount, icon: FaTag },
-              { label: "AVG READ TIME", value: `${avgReadTime} min`, icon: FaClock },
-            ].map((stat, idx) => {
-              const Icon = stat.icon;
-              return (
-                <motion.div
-                  key={idx}
-                  variants={fadeInUp}
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  className="text-center p-3 rounded-xl hover-glow cursor-pointer"
-                >
-                  <Icon className="text-red-500 text-2xl sm:text-3xl mx-auto mb-2" />
-                  <p className="text-xl sm:text-2xl font-black text-white">{stat.value}</p>
-                  <p className="text-gray-400 text-[10px] sm:text-xs uppercase tracking-wide">{stat.label}</p>
-                </motion.div>
-              );
-            })}
+            {/* TOP LABEL */}
+
+            <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-red-500/10 border border-red-500/20 backdrop-blur-xl">
+              <FaBolt className="text-red-500" />
+
+              <p className="uppercase tracking-[5px] text-red-500 text-xs font-bold">
+                Live Updates
+              </p>
+            </div>
+
+            {/* TITLE */}
+
+            <h1
+              className="
+                mt-8
+                text-4xl
+                sm:text-5xl
+                md:text-6xl
+                lg:text-7xl
+                xl:text-8xl
+                
+                uppercase
+                leading-[0.92]
+                tracking-tight
+                max-w-5xl
+              "
+            >
+              GFC{" "}
+              <span className="bg-gradient-to-r from-red-500 via-red-400 to-orange-500 bg-clip-text text-transparent">
+                News.
+              </span>
+            </h1>
+
+            {/* DESC */}
+
+            <p className="mt-8 max-w-2xl text-gray-300 text-base sm:text-lg leading-relaxed">
+              Discover elite stories, fight announcements, athlete signings, and
+              premium combat sports experiences from GFC.
+            </p>
+
+            {/* ACTIONS */}
+
+            <div className="mt-10 flex flex-wrap gap-5">
+              <motion.button
+                whileHover={{
+                  scale: 1.05,
+                }}
+                whileTap={{
+                  scale: 0.96,
+                }}
+                className="
+                  min-h-[56px]
+                  px-8
+                  rounded-2xl
+                  bg-red-600 hover:bg-red-700
+                  font-bold uppercase
+                  flex items-center gap-3
+                  transition-all duration-300
+                  hover:shadow-[0_0_35px_rgba(239,68,68,0.4)]
+                "
+              >
+                Explore Stories
+                <FaArrowRight />
+              </motion.button>
+
+              <motion.button
+                whileHover={{
+                  scale: 1.05,
+                }}
+                whileTap={{
+                  scale: 0.96,
+                }}
+                onClick={() => navigate("/join-community")}
+                className="
+                  min-h-[56px]
+                  px-8
+                  rounded-2xl
+                  border border-white/10
+                  bg-white/5
+                  hover:border-red-500
+                  font-bold uppercase
+                  transition-all duration-300
+                "
+              >
+                Join Community
+              </motion.button>
+            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* ================= FILTERS & SEARCH ================= */}
-      <div className="bg-[#050505] border-b border-white/10 sticky top-16 sm:top-20 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <button 
-                onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 rounded-lg text-xs uppercase hover:bg-white/10 transition-all duration-300"
-              >
-                <FaFilter size={10} /> {showFilters ? "HIDE" : "FILTER"}
-              </button>
-              <div className="relative flex-1 sm:w-64">
+
+{/* ====================================================== */}
+{/* REALTIME STATS */}
+{/* ====================================================== */}
+
+<section className="relative overflow-hidden">
+  {/* BACKGROUND GLOW */}
+
+  <div className="absolute inset-0">
+    <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-red-500/10 blur-[120px] rounded-full" />
+
+    <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-orange-500/10 blur-[100px] rounded-full" />
+  </div>
+
+  <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
+    {/* HEADER */}
+
+    <motion.div
+      initial={{ opacity: 0, y: 60 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8 }}
+      className="text-center mb-16"
+    >
+      <p className="uppercase tracking-[5px] text-red-500 text-sm font-bold">
+        Live Platform Metrics
+      </p>
+
+      <h2 className="mt-5 text-4xl sm:text-5xl md:text-6xl globaxuppercase">
+        Real-Time <span className="text-red-500">Growth.</span>
+      </h2>
+
+      <p className="mt-6 text-gray-400 max-w-2xl mx-auto leading-relaxed">
+        Experience the explosive rise of GFC through live audience engagement,
+        global athlete expansion, and premium combat sports reach.
+      </p>
+    </motion.div>
+
+    {/* GRID */}
+
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8">
+      {realtimeStats.map((stat, index) => {
+        const Icon = stat.icon;
+
+        return (
+          <motion.div
+            key={stat.id}
+            initial={{ opacity: 0, y: 80 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{
+              delay: index * 0.1,
+              duration: 0.8,
+            }}
+            whileHover={{
+              y: -10,
+              scale: 1.03,
+            }}
+            className="
+              group relative overflow-hidden
+              rounded-[32px]
+              border border-white/10
+              bg-white/[0.04]
+              backdrop-blur-2xl
+              p-8
+              transition-all duration-500
+              hover:border-red-500/40
+            "
+          >
+            {/* LIVE DOT */}
+
+            <div className="absolute top-5 right-5 flex items-center gap-2">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
+
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500" />
+              </span>
+
+              <span className="text-xs uppercase tracking-[2px] text-red-500 font-bold">
+                LIVE
+              </span>
+            </div>
+
+            {/* ICON */}
+
+            <div
+              className={`
+                w-20 h-20 rounded-3xl
+                bg-gradient-to-br ${stat.color}
+                flex items-center justify-center
+                shadow-[0_0_40px_rgba(239,68,68,0.25)]
+              `}
+            >
+              <Icon className="text-3xl text-white" />
+            </div>
+
+            {/* VALUE */}
+
+            <div className="mt-8">
+              <h3 className="text-5xl globaxuppercase leading-none">
+                <CountUp
+                  end={stat.value}
+                  duration={3}
+                  separator=","
+                />
+
+                <span className="text-red-500 ml-1">
+                  {stat.suffix}
+                </span>
+              </h3>
+
+              <p className="mt-4 text-gray-400 uppercase tracking-[2px] text-sm font-semibold">
+                {stat.label}
+              </p>
+            </div>
+
+            {/* HOVER GLOW */}
+
+            <div
+              className="
+                absolute inset-0 opacity-0
+                group-hover:opacity-100
+                transition-opacity duration-500
+                bg-gradient-to-br from-red-500/5 via-transparent to-orange-500/5
+              "
+            />
+          </motion.div>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+
+
+      {/* ====================================================== */}
+      {/* FILTERS */}
+      {/* ====================================================== */}
+
+      <div className="sticky top-0 z-50 backdrop-blur-xl bg-black/70 border-b border-white/10">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-4">
+          <div className="flex flex-col lg:flex-row gap-4 justify-between">
+            {/* SEARCH */}
+
+            <div className="flex flex-wrap gap-3 items-center">
+              <div className="relative">
                 <input
                   type="text"
-                  placeholder="Search news..."
+                  placeholder="Search articles..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-8 pr-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-xs placeholder-gray-500 focus:outline-none focus:border-red-500 transition-all duration-300"
+                  className="
+                    w-[280px] sm:w-[340px]
+                    min-h-[52px]
+                    rounded-2xl
+                    bg-white/5
+                    border border-white/10
+                    focus:border-red-500
+                    pl-12 pr-5
+                    outline-none
+                    transition-all duration-300
+                  "
                 />
-                <FaSearch className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 text-[10px]" />
-                {searchTerm && (
-                  <button onClick={() => setSearchTerm("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition">
-                    <FaTimes size={10} />
-                  </button>
-                )}
-              </div>
-              <div className="hidden sm:flex gap-1 border-l border-white/10 pl-2">
-                <button 
-                  onClick={() => setViewMode("grid")}
-                  className={`p-1.5 rounded ${viewMode === "grid" ? "bg-red-600" : "hover:bg-white/10"}`}
-                >
-                  ⊞
-                </button>
-                <button 
-                  onClick={() => setViewMode("list")}
-                  className={`p-1.5 rounded ${viewMode === "list" ? "bg-red-600" : "hover:bg-white/10"}`}
-                >
-                  ☰
-                </button>
+
+                <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
               </div>
             </div>
-            <p className="text-gray-500 text-[10px] sm:text-xs">Showing {filteredNews.length} of {newsItems.length} articles</p>
+
+            {/* CATEGORIES */}
+
+            <div className="flex flex-wrap gap-2">
+              {categories.map((category) => (
+                <motion.button
+                  key={category}
+                  whileHover={{
+                    scale: 1.05,
+                  }}
+                  whileTap={{
+                    scale: 0.96,
+                  }}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`
+                    min-h-[48px]
+                    px-5 rounded-full
+                    text-xs uppercase font-bold
+                    transition-all duration-300
+                    ${
+                      selectedCategory === category
+                        ? "bg-red-600 text-white"
+                        : "bg-white/5 border border-white/10 hover:border-red-500"
+                    }
+                  `}
+                >
+                  {category}
+                </motion.button>
+              ))}
+            </div>
           </div>
-          
-          {/* Category Filters */}
-          <AnimatePresence>
-            {showFilters && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mt-3 pt-3 border-t border-white/10 overflow-hidden"
-              >
-                <div className="flex flex-wrap justify-center gap-1.5">
-                  {categories.map((category) => {
-                    const count = category === "All" ? newsItems.length : newsItems.filter(i => i.category === category).length;
-                    return (
-                      <button
-                        key={category}
-                        onClick={() => setSelectedCategory(category)}
-                        className={`px-2.5 py-1 text-[10px] sm:text-xs uppercase font-semibold transition-all duration-300 rounded ${
-                          selectedCategory === category 
-                            ? "bg-red-600 text-white shadow-lg shadow-red-900/30" 
-                            : "bg-white/5 text-gray-400 hover:bg-white/10"
-                        }`}
-                      >
-                        {category} ({count})
-                      </button>
-                    );
-                  })}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
       </div>
 
-      {/* ================= FEATURED ARTICLE ================= */}
-      {filteredNews.length > 0 && (
-        <section className="py-8 sm:py-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="mb-6">
-              <p className="text-red-500 uppercase tracking-[4px] text-xs font-semibold mb-2">FEATURED STORY</p>
-              <h2 className="text-2xl sm:text-3xl font-black uppercase">Editor's <span className="text-red-600">Pick</span></h2>
+      {/* ====================================================== */}
+      {/* FEATURED */}
+      {/* ====================================================== */}
+
+      {featuredArticle && (
+        <section className="py-24">
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
+            {/* HEADER */}
+
+            <div className="mb-14">
+              <p className="uppercase tracking-[5px] text-red-500 text-sm font-bold">
+                Featured Story
+              </p>
+
+              <h2 className="mt-4 text-4xl sm:text-5xl  uppercase">
+                Editor's <span className="text-red-500">Pick</span>
+              </h2>
             </div>
-            <FeaturedNewsCard article={featuredArticle} index={0} onClick={setSelectedArticle} />
+
+            {/* FEATURE CARD */}
+
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: 80,
+              }}
+              whileInView={{
+                opacity: 1,
+                y: 0,
+              }}
+              viewport={{
+                once: true,
+              }}
+              transition={{
+                duration: 0.8,
+              }}
+              whileHover={{
+                y: -10,
+              }}
+              onClick={() => setSelectedArticle(featuredArticle)}
+              className="
+                group relative overflow-hidden
+                rounded-[40px]
+                border border-white/10
+                hover:border-red-500/40
+                cursor-pointer
+              "
+            >
+              <div className="relative h-[350px] sm:h-[520px] overflow-hidden">
+                <img
+                  src={featuredArticle.image}
+                  alt={featuredArticle.title}
+                  className="
+                    w-full h-full object-cover
+                    transition-transform duration-700
+                    group-hover:scale-105
+                  "
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+
+                <div className="absolute bottom-0 left-0 p-8 sm:p-12 max-w-4xl">
+                  <span className="bg-red-600 px-4 py-2 rounded-full text-xs uppercase font-bold">
+                    {featuredArticle.category}
+                  </span>
+
+                  <h3 className="mt-6 text-3xl sm:text-5xl  uppercase leading-tight">
+                    {featuredArticle.title}
+                  </h3>
+
+                  <p className="mt-5 text-gray-300 text-lg leading-relaxed">
+                    {featuredArticle.excerpt}
+                  </p>
+
+                  <div className="mt-6 flex flex-wrap gap-5 text-sm text-gray-400">
+                    <span className="flex items-center gap-2">
+                      <FaEye className="text-blue-400" />
+                      {featuredArticle.views.toLocaleString()}
+                    </span>
+
+                    <span className="flex items-center gap-2">
+                      <FaClock className="text-yellow-400" />
+                      {featuredArticle.readTime}
+                    </span>
+
+                    <span className="flex items-center gap-2">
+                      <FaHeart className="text-pink-400" />
+                      {featuredArticle.likes}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </section>
       )}
 
-      {/* ================= NEWS GRID ================= */}
-      <section className="py-8 sm:py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-6 flex justify-between items-center">
-            <div>
-              <p className="text-red-500 uppercase tracking-[4px] text-xs font-semibold mb-2">LATEST NEWS</p>
-              <h2 className="text-2xl sm:text-3xl font-black uppercase">Recent <span className="text-red-600">Articles</span></h2>
-            </div>
-            {searchTerm && (
-              <p className="text-gray-400 text-xs">Search results for: <span className="text-red-500">"{searchTerm}"</span></p>
-            )}
+      {/* ====================================================== */}
+      {/* GRID */}
+      {/* ====================================================== */}
+
+      <section className="pb-28">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
+          {/* HEADER */}
+
+          <div className="mb-14">
+            <p className="uppercase tracking-[5px] text-red-500 text-sm font-bold">
+              Latest Stories
+            </p>
+
+            <h2 className="mt-4 text-4xl sm:text-5xl  uppercase">
+              Recent <span className="text-red-500">Articles</span>
+            </h2>
           </div>
-          
-          {regularArticles.length === 0 && filteredNews.length === 1 ? (
-            <div className="text-center py-16">
-              <p className="text-gray-400 text-sm">No more articles found.</p>
-              <button 
-                onClick={() => { setSelectedCategory("All"); setSearchTerm(""); }}
-                className="mt-2 text-red-500 text-xs hover:text-red-400 transition"
+
+          {/* GRID */}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+            {regularArticles.map((article, index) => (
+              <motion.div
+                key={article.id}
+                initial={{
+                  opacity: 0,
+                  y: 80,
+                }}
+                whileInView={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                viewport={{
+                  once: true,
+                }}
+                transition={{
+                  delay: index * 0.1,
+                  duration: 0.8,
+                }}
+                whileHover={{
+                  y: -10,
+                  scale: 1.02,
+                }}
+                onClick={() => setSelectedArticle(article)}
+                className="
+                  group relative overflow-hidden
+                  bg-white/[0.04]
+                  backdrop-blur-2xl
+                  border border-white/10
+                  hover:border-red-500/40
+                  rounded-[32px]
+                  transition-all duration-500
+                  cursor-pointer
+                "
               >
-                Browse all articles
-              </button>
-            </div>
-          ) : filteredNews.length === 0 ? (
-            <div className="text-center py-16">
-              <p className="text-gray-400 text-sm">No articles found matching your criteria.</p>
-              <button 
-                onClick={() => { setSelectedCategory("All"); setSearchTerm(""); }}
-                className="mt-2 text-red-500 text-xs hover:text-red-400 transition"
-              >
-                Clear all filters
-              </button>
-            </div>
-          ) : (
-            <motion.div 
-              variants={staggerContainer}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className={`grid gap-5 sm:gap-6 ${
-                viewMode === "grid" 
-                  ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" 
-                  : "grid-cols-1"
-              }`}
-            >
-              {regularArticles.map((item, index) => (
-                <motion.div
-                  key={item.id}
-                  variants={fadeInUp}
-                  whileHover={{ y: -5 }}
-                  onClick={() => setSelectedArticle(item)}
-                  className={`bg-[#050505] border border-white/10 hover:border-red-600 rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-red-900/20 group ${
-                    viewMode === "list" ? "flex flex-col sm:flex-row" : ""
-                  }`}
-                >
-                  <div className={`relative overflow-hidden ${viewMode === "list" ? "sm:w-48 h-48 sm:h-auto" : "h-48"}`}>
-                    <img 
-                      src={item.image} 
-                      alt={item.title} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                    />
-                    <div className="absolute top-3 right-3">
-                      <span className="bg-red-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-full">{item.category}</span>
-                    </div>
-                    {bookmarkedIds.includes(item.id) && (
-                      <div className="absolute top-3 left-3">
-                        <FaBookmark className="text-yellow-500 text-sm" />
-                      </div>
-                    )}
+                {/* IMAGE */}
+
+                <div className="relative h-[220px] sm:h-[260px] overflow-hidden">
+                  <img
+                    src={article.image}
+                    alt={article.title}
+                    className="
+                      w-full h-full object-cover
+                      transition-transform duration-700
+                      group-hover:scale-110
+                    "
+                  />
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+
+                  <div className="absolute top-4 left-4">
+                    <span className="bg-red-600 px-3 py-1 rounded-full text-xs uppercase font-bold">
+                      {article.category}
+                    </span>
                   </div>
-                  
-                  <div className={`p-4 sm:p-5 ${viewMode === "list" ? "flex-1" : ""}`}>
-                    <div className="flex flex-wrap items-center gap-3 text-[10px] text-gray-400 mb-3">
-                      <span className="flex items-center gap-1"><FaCalendarAlt size={9} /> {item.date}</span>
-                      <span className="flex items-center gap-1"><FaUser size={9} /> {item.author}</span>
-                      <span className="flex items-center gap-1"><FaEye size={9} /> {item.views.toLocaleString()}</span>
+                </div>
+
+                {/* CONTENT */}
+
+                <div className="p-6">
+                  <div className="flex flex-wrap gap-4 text-xs text-gray-400">
+                    <span className="flex items-center gap-2">
+                      <FaCalendarAlt className="text-red-500" />
+                      {article.date}
+                    </span>
+
+                    <span className="flex items-center gap-2">
+                      <FaEye className="text-blue-400" />
+                      {article.views.toLocaleString()}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-5 text-2xl  uppercase leading-tight">
+                    {article.title}
+                  </h3>
+
+                  <p className="mt-4 text-gray-400 leading-relaxed">
+                    {article.excerpt}
+                  </p>
+
+                  <div className="mt-6 flex items-center justify-between">
+                    <div className="flex gap-4 text-xs text-gray-500">
+                      <span className="flex items-center gap-2">
+                        <FaClock className="text-yellow-400" />
+                        {article.readTime}
+                      </span>
+
+                      <span className="flex items-center gap-2">
+                        <FaHeart className="text-pink-400" />
+                        {article.likes}
+                      </span>
                     </div>
-                    
-                    <h3 className="text-base sm:text-lg font-bold uppercase mb-2 leading-tight line-clamp-2">{item.title}</h3>
-                    <p className="text-gray-400 text-xs sm:text-sm mb-3 leading-relaxed line-clamp-2">{item.excerpt}</p>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className="text-gray-500 text-[10px] flex items-center gap-1"><FaClock /> {item.readTime}</span>
-                        <span className="text-gray-500 text-[10px] flex items-center gap-1"><FaThumbsUp /> {item.likes}</span>
-                      </div>
-                      <button className="text-red-500 hover:text-red-400 text-xs font-semibold uppercase flex items-center gap-1 group-hover:gap-2 transition-all">
-                        READ MORE <FaArrowRight size={10} />
-                      </button>
+
+                    <div className="flex items-center gap-2 text-red-500 font-bold uppercase text-sm">
+                      Read
+                      <FaArrowRight />
                     </div>
                   </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ================= NEWSLETTER SECTION ================= */}
-      <section className="py-12 sm:py-16 bg-gradient-to-r from-red-900/10 to-black border-y border-red-900/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
+      {/* ====================================================== */}
+      {/* NEWSLETTER */}
+      {/* ====================================================== */}
+
+      <section className="py-28 bg-gradient-to-r from-red-950/10 via-black to-black border-y border-white/10">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* LEFT */}
+
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
+              initial={{
+                opacity: 0,
+                x: -80,
+              }}
+              whileInView={{
+                opacity: 1,
+                x: 0,
+              }}
+              viewport={{
+                once: true,
+              }}
+              transition={{
+                duration: 0.8,
+              }}
             >
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black uppercase mb-2">Never Miss an <span className="text-red-600">Update</span></h2>
-              <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
-                Subscribe to our newsletter for exclusive news, fight announcements, and community updates.
+              <p className="uppercase tracking-[5px] text-red-500 text-sm font-bold">
+                Newsletter
+              </p>
+
+              <h2 className="mt-5 text-4xl sm:text-5xl  uppercase leading-tight">
+                Never Miss An <span className="text-red-500">Update.</span>
+              </h2>
+
+              <p className="mt-6 text-gray-400 max-w-xl leading-relaxed">
+                Subscribe for exclusive stories, event announcements, athlete
+                signings, and premium GFC updates.
               </p>
             </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
+
+            {/* FORM */}
+
+            <motion.form
+              onSubmit={handleSubscribe}
+              initial={{
+                opacity: 0,
+                x: 80,
+              }}
+              whileInView={{
+                opacity: 1,
+                x: 0,
+              }}
+              viewport={{
+                once: true,
+              }}
+              transition={{
+                duration: 0.8,
+              }}
+              className="
+                bg-white/[0.04]
+                backdrop-blur-2xl
+                border border-white/10
+                rounded-[32px]
+                p-8
+              "
             >
-              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
-                <input 
-                  type="email" 
-                  placeholder="Enter your email" 
-                  value={emailSubscribe}
-                  onChange={(e) => setEmailSubscribe(e.target.value)}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <input
+                  type="email"
+                  placeholder="Enter your email..."
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="flex-1 px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-red-500 transition-all duration-300"
+                  className="
+                    flex-1
+                    min-h-[56px]
+                    rounded-2xl
+                    bg-black/30
+                    border border-white/10
+                    focus:border-red-500
+                    px-5
+                    outline-none
+                  "
                 />
-                <button 
+
+                <motion.button
+                  whileHover={{
+                    scale: 1.05,
+                  }}
+                  whileTap={{
+                    scale: 0.96,
+                  }}
                   type="submit"
-                  className="bg-red-600 hover:bg-red-700 transition-all duration-300 px-6 py-2.5 rounded-lg text-sm font-bold uppercase flex items-center justify-center gap-2 group"
+                  className="
+                    min-h-[56px]
+                    px-8
+                    rounded-2xl
+                    bg-red-600 hover:bg-red-700
+                    font-bold uppercase
+                    flex items-center justify-center gap-3
+                    transition-all duration-300
+                  "
                 >
-                  <FaBell size={12} className="group-hover:animate-pulse" /> SUBSCRIBE
-                </button>
-              </form>
+                  <FaBell />
+                  Subscribe
+                </motion.button>
+              </div>
+
               <AnimatePresence>
                 {subscribed && (
-                  <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-green-500 text-xs mt-2">
-                    ✓ Successfully subscribed to newsletter!
+                  <motion.p
+                    initial={{
+                      opacity: 0,
+                      y: 10,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                    }}
+                    exit={{
+                      opacity: 0,
+                    }}
+                    className="mt-4 text-green-400 text-sm flex items-center gap-2"
+                  >
+                    <FaCheckCircle />
+                    Successfully subscribed!
                   </motion.p>
                 )}
               </AnimatePresence>
-            </motion.div>
+            </motion.form>
           </div>
         </div>
       </section>
 
-      {/* ================= TRENDING TOPICS ================= */}
-      <section className="py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-gray-400 text-xs uppercase tracking-wider mb-3 flex items-center justify-center gap-2">
-            <FaFire className="text-red-500" /> TRENDING TOPICS
-          </p>
-          <div className="flex flex-wrap justify-center gap-2">
-            {categories.filter(c => c !== "All").map((category) => (
-              <motion.button
-                key={category}
-                whileHover={{ scale: 1.05 }}
-                onClick={() => { setSelectedCategory(category); setShowFilters(true); window.scrollTo({ top: 400, behavior: "smooth" }); }}
-                className="px-3 py-1 bg-white/5 hover:bg-red-600/20 border border-white/10 hover:border-red-600 rounded-full text-[10px] sm:text-xs transition-all duration-300"
-              >
-                #{category}
-              </motion.button>
-            ))}
-            <motion.button whileHover={{ scale: 1.05 }} className="px-3 py-1 bg-white/5 hover:bg-red-600/20 border border-white/10 hover:border-red-600 rounded-full text-[10px] sm:text-xs transition-all duration-300">#GFCGlobal1</motion.button>
-            <motion.button whileHover={{ scale: 1.05 }} className="px-3 py-1 bg-white/5 hover:bg-red-600/20 border border-white/10 hover:border-red-600 rounded-full text-[10px] sm:text-xs transition-all duration-300">#Origin</motion.button>
-            <motion.button whileHover={{ scale: 1.05 }} className="px-3 py-1 bg-white/5 hover:bg-red-600/20 border border-white/10 hover:border-red-600 rounded-full text-[10px] sm:text-xs transition-all duration-300">#GFCCommunity</motion.button>
-          </div>
-        </div>
-      </section>
+      {/* ====================================================== */}
+      {/* FINAL CTA */}
+      {/* ====================================================== */}
 
-      {/* ================= FINAL CTA SECTION ================= */}
-      <section className="py-16 text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-red-900/20 via-black to-black" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
+      <section className="py-32 text-center">
+        <div className="max-w-5xl mx-auto px-6">
+          <motion.h2
+            initial={{
+              opacity: 0,
+              y: 80,
+            }}
+            whileInView={{
+              opacity: 1,
+              y: 0,
+            }}
+            viewport={{
+              once: true,
+            }}
+            transition={{
+              duration: 0.8,
+            }}
+            className="
+              text-4xl
+              sm:text-5xl
+              md:text-6xl
+              lg:text-7xl
+              
+              uppercase
+              leading-[0.95]
+            "
           >
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase mb-3">
-              Join the <span className="text-red-600">Movement</span>
-            </h2>
-            <p className="text-gray-300 text-xs sm:text-sm max-w-xl mx-auto mb-6 leading-relaxed">
-              Be part of India's combat sports revolution. Get exclusive content, early access, and community benefits.
-            </p>
-            <motion.button 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleJoinCommunity}
-              className="bg-red-600 hover:bg-red-700 transition-all duration-300 px-6 sm:px-8 py-3 rounded-lg text-sm font-bold uppercase inline-flex items-center gap-2 shadow-lg shadow-red-900/30"
-            >
-              <FaHeart size={14} /> JOIN GFC COMMUNITY
-            </motion.button>
-          </motion.div>
+            Join The <span className="text-red-500">Movement.</span>
+          </motion.h2>
+
+          <p className="mt-8 text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed">
+            Become part of India's fastest growing combat sports community and
+            experience premium fight entertainment.
+          </p>
+
+          <motion.button
+            whileHover={{
+              scale: 1.05,
+            }}
+            whileTap={{
+              scale: 0.96,
+            }}
+            onClick={() => navigate("/join-community")}
+            className="
+              mt-12
+              min-h-[56px]
+              px-10
+              rounded-2xl
+              bg-red-600 hover:bg-red-700
+              font-bold uppercase
+              inline-flex items-center gap-4
+              transition-all duration-300
+              hover:shadow-[0_0_45px_rgba(239,68,68,0.45)]
+            "
+          >
+            <FaHeart />
+            Join GFC Community
+          </motion.button>
         </div>
       </section>
 
-      {/* ================= NEWS DETAIL MODAL ================= */}
+      {/* ====================================================== */}
+      {/* MODAL */}
+      {/* ====================================================== */}
+
       <AnimatePresence>
-        {selectedArticle && <NewsDetailModal article={selectedArticle} onClose={() => setSelectedArticle(null)} />}
+        {selectedArticle && (
+          <NewsModal
+            article={selectedArticle}
+            onClose={() => setSelectedArticle(null)}
+          />
+        )}
       </AnimatePresence>
 
+      {/* ====================================================== */}
+      {/* STYLES */}
+      {/* ====================================================== */}
+
       <style jsx>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
+        html {
+          scroll-behavior: smooth;
         }
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
+
+        ::-webkit-scrollbar {
+          width: 10px;
         }
-        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
-        .animate-pulse { animation: pulse 2s infinite; }
-        .hover-glow { transition: all 0.3s ease; }
-        .hover-glow:hover { box-shadow: 0 0 20px rgba(220, 38, 38, 0.3); transform: translateY(-2px); }
-        .line-clamp-2 {
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
+
+        ::-webkit-scrollbar-track {
+          background: #050505;
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background: #dc2626;
+          border-radius: 20px;
         }
       `}</style>
     </div>

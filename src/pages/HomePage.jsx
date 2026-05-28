@@ -98,14 +98,14 @@ export default function HomePage() {
   const navigate = useNavigate();
 
   const socials = [
-    { icon: FaInstagram, link: "https://instagram.com/gfcglobal", label: "Instagram" },
-    { icon: FaYoutube, link: "https://youtube.com/@gfcglobal", label: "YouTube" },
-    { icon: FaFacebookF, link: "https://facebook.com/gfcglobal", label: "Facebook" },
-    { icon: FaTwitter, link: "https://twitter.com/gfcglobal", label: "Twitter" },
-    { icon: FaTiktok, link: "https://tiktok.com/@gfcglobal", label: "TikTok" },
+    { icon: FaInstagram, link: "https://instagram.com/gfcglobax", label: "Instagram" },
+    { icon: FaYoutube, link: "https://youtube.com/@gfcglobax", label: "YouTube" },
+    { icon: FaFacebookF, link: "https://facebook.com/gfcglobax", label: "Facebook" },
+    { icon: FaTwitter, link: "https://twitter.com/gfcglobax", label: "Twitter" },
+    { icon: FaTiktok, link: "https://tiktok.com/@gfcglobax", label: "TikTok" },
   ];
 
-  const eventDate = new Date("2026-06-30T18:00:00").getTime();
+ const eventDate = new Date("2026-06-20T18:00:00").getTime();
   const [timeLeft, setTimeLeft] = useState({
     days: "00",
     hours: "00",
@@ -249,7 +249,7 @@ export default function HomePage() {
                 <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
                   <div className="mb-4 sm:mb-5 md:mb-6 lg:mb-8">
                     <p className="text-red-500 uppercase tracking-[2px] sm:tracking-[3px] md:tracking-[4px]" style={{ fontSize: "clamp(10px, 2vw, 14px)" }}>
-                      GFC GLOBAL 1: ORIGIN
+                      {/* GFC GLOBAX : ORIGIN */}
                     </p>
                   </div>
                   <LiveMemberCounter />
@@ -303,7 +303,7 @@ export default function HomePage() {
               {features.map((item, i) => (
                 <div key={i} className={`${i !== features.length - 1 ? 'sm:border-r-2 border-[#333] sm:pr-4 md:pr-5' : ''}`}>
                   <i className={`fa ${item.icon} text-red-500 text-xl sm:text-2xl md:text-3xl mb-2 sm:mb-3`} />
-                  <h3 className="text-[10px] sm:text-xs md:text-sm font-bold uppercase mb-0.5 sm:mb-1 text-white">
+                  <h3 className="text-[10px] sm:text-xs md:text-sm uppercase mb-0.5 sm:mb-1 text-white">
                     {item.title}
                   </h3>
                   <p className="text-[9px] sm:text-[10px] md:text-xs text-gray-500">{item.desc}</p>
@@ -333,10 +333,10 @@ export default function HomePage() {
                 and culture-driven entertainment built for the next generation.
               </p>
               <button 
-                onClick={handleGetTickets}
+            onClick={() => navigate("/fighters")}
                 className="mt-8 bg-red-600 hover:bg-red-700 transition-all duration-300 px-6 sm:px-7 py-3 text-xs sm:text-sm font-semibold uppercase tracking-wider rounded-sm text-white"
               >
-                GET TICKETS →
+                KNOW MORE →
               </button>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
@@ -347,7 +347,7 @@ export default function HomePage() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                   </div>
                   <div className="absolute bottom-0 left-0 w-full p-4 text-center z-10">
-                    <h3 className="font-bold text-sm tracking-wide uppercase text-white">{f.name}</h3>
+                    <h3 className="text-sm tracking-wide uppercase text-white">{f.name}</h3>
                     <p className="text-red-600 text-[11px] uppercase mt-1">{f.tag1}</p>
                     <p className="text-red-600 text-[11px] uppercase">{f.tag2}</p>
                     <button
@@ -372,7 +372,7 @@ export default function HomePage() {
               </div>
               <div className="text-center md:text-left order-3 md:order-2">
                 <p className="text-red-600 text-[10px] sm:text-xs md:text-sm uppercase tracking-widest">Upcoming Event</p>
-                <h2 className="mt-2 sm:mt-3 uppercase font-bold leading-tight text-base sm:text-lg md:text-xl lg:text-2xl text-white">GFC Global 1: Origin</h2>
+                <h2 className="mt-2 sm:mt-3 uppercase leading-tight text-base sm:text-lg md:text-xl lg:text-2xl text-white">GFC coming to Your city </h2>
                 <div className="flex flex-wrap justify-center md:justify-start gap-2 sm:gap-3 text-gray-400 text-[10px] sm:text-xs mt-2 sm:mt-3">
                   <span>📅 June 2026</span>
                   <span>📍 New Delhi</span>
@@ -464,7 +464,7 @@ export default function HomePage() {
               </div>
               
               <div className="text-center md:text-left">
-                <h3 className="text-xs sm:text-sm md:text-base font-semibold uppercase tracking-wider mb-4 sm:mb-5 text-white">Quick Links</h3>
+                <h3 className="text-xs sm:text-sm md:text-base  uppercase tracking-wider mb-4 sm:mb-5 text-white">Quick Links</h3>
                 <div className="grid grid-cols-2 gap-y-2 sm:gap-y-3 gap-x-6 text-xs sm:text-sm md:text-base text-gray-400">
                   {[
                     { name: "About", path: "/about" },
@@ -490,7 +490,7 @@ export default function HomePage() {
             
             <div className="mt-8 sm:mt-10 md:mt-12 pt-5 border-t border-[#1a1a1a] text-center">
               <p className="text-gray-600 text-[10px] sm:text-xs tracking-wide">
-                © {new Date().getFullYear()} GFC Global. All Rights Reserved.
+                © {new Date().getFullYear()} GFC GlobaX. All Rights Reserved.
               </p>
             </div>
           </div>
@@ -505,7 +505,7 @@ const features = [
   { icon: "fa-camera", title: "Story First", desc: "We build fighters" },
   { icon: "fa-users", title: "Youth Culture", desc: "For new generation" },
   { icon: "fa-play-circle-o", title: "Content Engine", desc: "Reels & action" },
-  { icon: "fa-globe", title: "Global", desc: "India to world stage" },
+  { icon: "fa-globe", title: "GlobaX", desc: "India to world stage" },
 ];
 
 const fighters = [

@@ -325,7 +325,7 @@ export default function RealTimeNotifications({ userId }) {
       addNotification({
         type: "EVENT",
         title: "📅 Event Reminder!",
-        message: `GFC Global 1: Origin is in ${daysUntil} days!`,
+        message: `GFC GlobaX : Origin is in ${daysUntil} days!`,
         extra: "Don't miss the biggest combat sports event in India.",
         action: "Book Tickets →",
         onAction: () => {

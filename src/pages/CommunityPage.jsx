@@ -76,11 +76,11 @@ export default function Page() {
       /> */}
 
             <p className="text-[10px] tracking-[4px] uppercase text-gray-400 mt-2">
-              Global Fighting Championship
+              GlobaX Fighting Championship
             </p>
 
             {/* HEADING */}
-            <h1 className="uppercase font-black leading-[1] mt-8 text-[clamp(2.5rem,6vw,5.5rem)]">
+            <h1 className="uppercase  leading-[1] mt-8 text-[clamp(2.5rem,6vw,5.5rem)]">
               India Doesn't
               <br />
               Follow Anymore.
@@ -186,7 +186,7 @@ export default function Page() {
         <div className="grid lg:grid-cols-2 max-w-7xl mx-auto items-stretch">
           {/* LEFT */}
           <div className="p-6 lg:p-10 flex flex-col justify-center">
-            <h2 className="uppercase font-black leading-none text-[clamp(2rem,5vw,4rem)]">
+            <h2 className="uppercase  leading-none text-[clamp(2rem,5vw,4rem)]">
               More Than Fans.
               <br />
               <span className="text-red-600">We're Building A Movement.</span>
@@ -194,7 +194,7 @@ export default function Page() {
 
             <div className="mt-6 space-y-5 text-gray-300 leading-relaxed text-sm lg:text-base">
               <p>
-                GFC (Global Fighting Championship) is a next-generation combat
+                GFC (GlobaX Fighting Championship) is a next-generation combat
                 sports platform focused on fighters, storytelling,
                 entertainment, and community-driven growth.
               </p>
@@ -243,7 +243,7 @@ export default function Page() {
       {/* WHY JOIN */}
       <section className="py-14 border-b border-red-900/20">
         <div className="max-w-7xl mx-auto px-4 lg:px-6">
-          <h2 className="uppercase text-center font-black text-[clamp(2rem,5vw,4rem)]">
+          <h2 className="uppercase text-center  text-[clamp(2rem,5vw,4rem)]">
             Why Join The
             <span className="text-red-600"> GFC Community?</span>
           </h2>
@@ -364,7 +364,7 @@ export default function Page() {
                 <h2
                   className="
                 uppercase
-                font-black
+                
                 leading-none
                 tracking-tight
                 text-[clamp(2rem,5vw,4rem)]
@@ -450,7 +450,7 @@ export default function Page() {
                 className="
               mt-8
               uppercase
-              font-black
+              
               leading-[1.2]
               text-red-600
               text-[18px]
@@ -475,7 +475,7 @@ export default function Page() {
               <h2
                 className="
               uppercase
-              font-black
+              
               leading-none
               tracking-tight
               text-[clamp(2rem,5vw,4rem)]
@@ -617,7 +617,7 @@ export default function Page() {
               <p
                 className="
               uppercase
-              font-black
+              
               tracking-wide
               text-[14px]
               "
@@ -630,7 +630,7 @@ export default function Page() {
               <h2
                 className="
               uppercase
-              font-black
+              
               leading-[0.95]
               mt-5
               text-[clamp(1.7rem,4vw,3.4rem)]
@@ -724,7 +724,7 @@ export default function Page() {
                   <h2
                     className="
                   uppercase
-                  font-black
+                  
                   tracking-tight
                   leading-none
                   text-white
@@ -767,7 +767,7 @@ export default function Page() {
                     <h2
                       className="
                     text-white
-                    font-black
+                    
                     text-[52px]
                     md:text-[64px]
                     leading-none
@@ -876,7 +876,7 @@ export default function Page() {
             <h2
               className="
                 uppercase
-                font-black
+                
                 leading-none
                 tracking-tight
                 text-[clamp(1.4rem,4vw,3rem)]
@@ -1175,7 +1175,7 @@ export default function Page() {
                   <h2
                     className="
                       text-white
-                      font-black
+                      
                       text-[clamp(2rem,6vw,4.8rem)]
                       "
                   >
@@ -1185,7 +1185,7 @@ export default function Page() {
                   <h2
                     className="
                       text-red-600
-                      font-black
+                      
                       text-[clamp(2rem,6vw,4.8rem)]
                       mt-5
                       "
@@ -1316,7 +1316,7 @@ export default function Page() {
                     md:text-sm
                     "
                 >
-                  #GFCGlobal
+                  #GFCGlobaX
                 </p>
               </div>
             </div>

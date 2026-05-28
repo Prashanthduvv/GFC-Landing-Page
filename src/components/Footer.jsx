@@ -84,7 +84,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="text-center mt-8 pt-6 border-t border-white/10">
-          <p className="text-gray-600 text-xs">© 2025 GFC Global. All Rights Reserved.</p>
+          <p className="text-gray-600 text-xs">© 2025 GFC GlobaX. All Rights Reserved.</p>
         </div>
       </div>
     </footer>

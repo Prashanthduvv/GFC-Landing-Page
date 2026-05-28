@@ -49,7 +49,7 @@ export default function NewsletterSubscribe() {
 
   return (
     <div className="text-center md:text-left">
-      <h3 className="text-xs sm:text-sm md:text-base font-semibold uppercase tracking-wider mb-4 sm:mb-5 text-white">
+      <h3 className="text-xs sm:text-sm md:text-base uppercase tracking-wider mb-4 sm:mb-5 text-white">
         Stay Updated
       </h3>
       <p className="text-gray-400 text-xs sm:text-sm md:text-base mb-3 sm:mb-4 leading-relaxed">

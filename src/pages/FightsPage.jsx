@@ -16,7 +16,7 @@ const fightCardsData = {
   upcoming: [
     {
       id: 1,
-      event: "GFC Global 1: Origin",
+      event: "GFC GlobaX : Origin",
       date: "2026-06-30",
       time: "6:00 PM IST",
       location: "Indira Gandhi Arena, New Delhi",
@@ -138,7 +138,7 @@ function FighterComparisonModal({ fight, onClose }) {
               <p className="text-red-500 text-sm">{fight.fighter1.record}</p>
             </div>
             <div>
-              <div className="text-4xl font-black text-red-600">VS</div>
+              <div className="text-4xl  text-red-600">VS</div>
               <p className="text-gray-400 text-sm mt-2">{fight.weightClass}</p>
             </div>
             <div>
@@ -353,9 +353,9 @@ export default function FightsPage() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black uppercase leading-tight"
+                  className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl  uppercase leading-tight"
                 >
-                  GFC Global 1: <span className="text-red-600">Origin</span>
+                  GFC GlobaX : <span className="text-red-600">Origin</span>
                 </motion.h1>
                 <motion.div 
                   initial={{ opacity: 0 }}
@@ -391,7 +391,7 @@ export default function FightsPage() {
               return (
                 <motion.div key={idx} variants={fadeInUp} whileHover={{ scale: 1.05, y: -5 }} className="text-center p-3 rounded-xl hover-glow cursor-pointer">
                   <Icon className="text-red-500 text-2xl sm:text-3xl mx-auto mb-2" />
-                  <p className="text-xl sm:text-2xl font-black text-white">{stat.value}</p>
+                  <p className="text-xl sm:text-2xl  text-white">{stat.value}</p>
                   <p className="text-gray-400 text-[10px] sm:text-xs uppercase tracking-wide">{stat.label}</p>
                 </motion.div>
               );
@@ -468,7 +468,7 @@ export default function FightsPage() {
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-10">
-              <h2 className="text-3xl sm:text-4xl font-black uppercase">Fight Card</h2>
+              <h2 className="text-3xl sm:text-4xl  uppercase">Fight Card</h2>
               <p className="text-red-500 uppercase tracking-[4px] text-sm mt-2">COMPLETE EVENT LINEUP</p>
               <p className="text-gray-400 text-sm mt-2">Showing {filteredFights.length} of {allFights.length} fights</p>
             </div>
@@ -490,7 +490,7 @@ export default function FightsPage() {
                         <p className="text-red-500 text-xs font-semibold mt-1">{fight.fighter1.record}</p>
                       </div>
                       <div className="text-center">
-                        <motion.div className="text-2xl md:text-3xl font-black text-red-600" animate={hoveredFight === fight.id ? { scale: 1.1 } : { scale: 1 }}>VS</motion.div>
+                        <motion.div className="text-2xl md:text-3xl  text-red-600" animate={hoveredFight === fight.id ? { scale: 1.1 } : { scale: 1 }}>VS</motion.div>
                         <p className="text-gray-400 text-xs mt-1">{fight.weightClass}</p>
                         <div className="flex justify-center gap-2 mt-2">
                           <button onClick={(e) => { e.stopPropagation(); setPreviewFight(fight); }} className="text-red-500 text-xs hover:text-red-400 transition flex items-center gap-1"><FaPlayCircle size={10} /> Preview</button>
@@ -530,13 +530,13 @@ export default function FightsPage() {
       {viewMode === "highlights" && (
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-10"><h2 className="text-3xl sm:text-4xl font-black uppercase">Fight Highlights</h2><p className="text-red-500 uppercase tracking-[4px] text-sm mt-2">BEST MOMENTS FROM GFC</p></div>
+            <div className="text-center mb-10"><h2 className="text-3xl sm:text-4xl  uppercase">Fight Highlights</h2><p className="text-red-500 uppercase tracking-[4px] text-sm mt-2">BEST MOMENTS FROM GFC</p></div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map((item) => (
                 <motion.div key={item} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ delay: item * 0.1 }} className="group relative overflow-hidden rounded-xl cursor-pointer" onClick={() => setPreviewFight(allFights[0])}>
                   <img src={`/images/c${item}.png`} alt="Highlight" className="w-full h-64 object-cover group-hover:scale-110 transition duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4"><p className="text-white font-bold">GFC Global {item}: Knockout of the Night</p><p className="text-gray-400 text-sm">View Count: {Math.floor(Math.random() * 100)}K</p></div>
+                  <div className="absolute bottom-0 left-0 right-0 p-4"><p className="text-white font-bold">GFC GlobaX {item}: Knockout of the Night</p><p className="text-gray-400 text-sm">View Count: {Math.floor(Math.random() * 100)}K</p></div>
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center"><FaPlayCircle className="text-white text-3xl" /></div></div>
                 </motion.div>
               ))}
@@ -549,7 +549,7 @@ export default function FightsPage() {
       {viewMode === "past" && (
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-10"><h2 className="text-3xl sm:text-4xl font-black uppercase">Past Events</h2><p className="text-red-500 uppercase tracking-[4px] text-sm mt-2">RELIVE THE MOMENTS</p></div>
+            <div className="text-center mb-10"><h2 className="text-3xl sm:text-4xl  uppercase">Past Events</h2><p className="text-red-500 uppercase tracking-[4px] text-sm mt-2">RELIVE THE MOMENTS</p></div>
             <div className="grid md:grid-cols-2 gap-6">
               {fightCardsData.past.map((event, index) => (
                 <motion.div key={event.id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }} className="bg-[#050505] border border-white/10 rounded-xl p-6 hover:border-red-600 transition">
@@ -568,7 +568,7 @@ export default function FightsPage() {
       <section className="py-16 bg-gradient-to-r from-black to-red-900/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div><h3 className="text-2xl sm:text-3xl font-black uppercase">Don't Miss Out!</h3><p className="text-gray-300 mt-2">Get notified when tickets go on sale and receive exclusive fight updates.</p></div>
+            <div><h3 className="text-2xl sm:text-3xl  uppercase">Don't Miss Out!</h3><p className="text-gray-300 mt-2">Get notified when tickets go on sale and receive exclusive fight updates.</p></div>
             <div>
               <form onSubmit={handleNotifyMe} className="flex flex-col sm:flex-row gap-3">
                 <input type="email" placeholder="Enter your email" value={emailNotify} onChange={(e) => setEmailNotify(e.target.value)} required className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-red-500 transition" />
@@ -585,7 +585,7 @@ export default function FightsPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-red-900/20 via-black to-black" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase mb-4 leading-tight">BE THERE LIVE.<br /><span className="text-red-600">WITNESS HISTORY.</span></h2>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl  uppercase mb-4 leading-tight">BE THERE LIVE.<br /><span className="text-red-600">WITNESS HISTORY.</span></h2>
             <p className="text-gray-300 text-base max-w-2xl mx-auto mb-8">Secure your seats now for the most anticipated combat sports event in India.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button onClick={handleGetTickets} className="bg-red-600 hover:bg-red-700 transition px-8 py-4 rounded-xl font-bold uppercase tracking-wide shadow-2xl shadow-red-900/50 flex items-center gap-2"><FaTicketAlt /> GET YOUR TICKETS NOW</button>

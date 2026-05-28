@@ -138,8 +138,8 @@ export default function AboutPage() {
   const milestones = [
     { year: "2024", title: "THE VISION", desc: "GFC was founded with a dream to revolutionize combat sports in India.", icon: FaBuilding },
     { year: "2025", title: "THE BUILD", desc: "Assembled elite fighters, secured venues, and built our founding community.", icon: FaUsers },
-    { year: "2026", title: "THE ORIGIN", desc: "GFC Global 1: Origin - The first event that started it all.", icon: FaStar },
-    { year: "2027", title: "THE EXPANSION", desc: "Expanding to multiple cities across India with GFC Global 2 & 3.", icon: FaGlobe },
+    { year: "2026", title: "THE ORIGIN", desc: "GFC GlobaX Origin - The first event that started it all.", icon: FaStar },
+    { year: "2027", title: "THE EXPANSION", desc: "Expanding to multiple cities across India with GFC GlobaX 2 & 3.", icon: FaGlobe },
   ];
 
   // Press mentions
@@ -198,7 +198,7 @@ export default function AboutPage() {
             ABOUT GFC
           </p>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase leading-tight">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl  uppercase leading-tight">
             We Are Building <span className="text-red-600">A Movement.</span>
           </h1>
 
@@ -240,7 +240,7 @@ export default function AboutPage() {
                     <div className="absolute inset-0 bg-red-600/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <Icon className="text-red-500 text-3xl sm:text-4xl mx-auto mb-3 relative z-10 group-hover:scale-110 transition-transform duration-300" />
                   </div>
-                  <p className="text-2xl sm:text-3xl md:text-4xl font-black text-white">
+                  <p className="text-2xl sm:text-3xl md:text-4xl  text-white">
                     {stat.number.toLocaleString()}{stat.suffix}
                   </p>
                   <p className="text-gray-400 text-[10px] sm:text-xs uppercase tracking-wide mt-1">
@@ -264,7 +264,7 @@ export default function AboutPage() {
               viewport={{ once: true }}
             >
               <p className="text-red-500 uppercase tracking-[4px] text-sm mb-4 font-semibold">OUR MISSION</p>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black uppercase leading-[1.1]" style={{ fontFamily: "'Anton', sans-serif", letterSpacing: '1px' }}>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl  uppercase leading-[1.1]" style={{ fontFamily: "'Anton', sans-serif", letterSpacing: '1px' }}>
                 To Give Fighters <br />
                 <span className="text-red-600">The Stage They Deserve.</span>
               </h2>
@@ -348,7 +348,7 @@ export default function AboutPage() {
             className="text-center mb-10 sm:mb-12"
           >
             <p className="text-red-500 uppercase tracking-[4px] text-sm mb-4 font-semibold">CORE VALUES</p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase" style={{ fontFamily: "'Anton', sans-serif", letterSpacing: '1px' }}>What We Stand For</h2>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl  uppercase" style={{ fontFamily: "'Anton', sans-serif", letterSpacing: '1px' }}>What We Stand For</h2>
             <p className="text-gray-400 mt-3 max-w-2xl mx-auto">The principles that drive everything we do at GFC</p>
           </motion.div>
           
@@ -400,7 +400,7 @@ export default function AboutPage() {
             className="text-center mb-10 sm:mb-12"
           >
             <p className="text-red-500 uppercase tracking-[4px] text-sm mb-4 font-semibold">THE LEADERSHIP</p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase" style={{ fontFamily: "'Anton', sans-serif", letterSpacing: '1px' }}>The Minds Behind <span className="text-red-600">The Movement</span></h2>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl  uppercase" style={{ fontFamily: "'Anton', sans-serif", letterSpacing: '1px' }}>The Minds Behind <span className="text-red-600">The Movement</span></h2>
           </motion.div>
           
           <motion.div 
@@ -458,7 +458,7 @@ export default function AboutPage() {
             className="text-center mb-10 sm:mb-12"
           >
             <p className="text-red-500 uppercase tracking-[4px] text-sm mb-4 font-semibold">THE JOURNEY</p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase" style={{ fontFamily: "'Anton', sans-serif", letterSpacing: '1px' }}>Our <span className="text-red-600">Milestones</span></h2>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl  uppercase" style={{ fontFamily: "'Anton', sans-serif", letterSpacing: '1px' }}>Our <span className="text-red-600">Milestones</span></h2>
           </motion.div>
           
           <div className="relative">
@@ -487,7 +487,7 @@ export default function AboutPage() {
                       onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}>
                         <div className="flex items-center gap-3 mb-3">
                           <Icon className="text-red-500 text-2xl" />
-                          <span className="text-red-600 font-black text-2xl">{milestone.year}</span>
+                          <span className="text-red-600  text-2xl">{milestone.year}</span>
                         </div>
                         <h3 className="text-xl font-bold uppercase mb-2">{milestone.title}</h3>
                         <p className="text-gray-400 text-sm">{milestone.desc}</p>
@@ -516,7 +516,7 @@ export default function AboutPage() {
             className="text-center mb-8 sm:mb-10"
           >
             <p className="text-red-500 uppercase tracking-[4px] text-sm mb-4 font-semibold">AS SEEN IN</p>
-            <h2 className="text-2xl sm:text-3xl font-black uppercase" style={{ fontFamily: "'Anton', sans-serif", letterSpacing: '1px' }}>Press & Media <span className="text-red-600">Recognition</span></h2>
+            <h2 className="text-2xl sm:text-3xl  uppercase" style={{ fontFamily: "'Anton', sans-serif", letterSpacing: '1px' }}>Press & Media <span className="text-red-600">Recognition</span></h2>
           </motion.div>
           
           <div className="grid sm:grid-cols-3 gap-6">
@@ -558,7 +558,7 @@ export default function AboutPage() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl sm:text-5xl lg:text-7xl font-black uppercase mb-4 leading-[1.1]" style={{ fontFamily: "'Anton', sans-serif", letterSpacing: '1px' }}>
+            <h2 className="text-4xl sm:text-5xl lg:text-7xl  uppercase mb-4 leading-[1.1]" style={{ fontFamily: "'Anton', sans-serif", letterSpacing: '1px' }}>
               Be Part Of <br />
               <span className="text-red-600 relative inline-block">
                 History.

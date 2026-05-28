@@ -258,7 +258,7 @@ function FighterDetailModal({ fighter, onClose }) {
               <div className="inline-block px-3 py-1 bg-red-600/20 border border-red-600 rounded-full text-xs font-semibold mb-2">
                 #{fighter.ranking} Ranked {fighter.weightClass}
               </div>
-              <h2 className="text-3xl md:text-4xl font-black uppercase">
+              <h2 className="text-3xl md:text-4xl  uppercase">
                 {fighter.name}
               </h2>
               <p className="text-red-500 text-lg">"{fighter.nickname}"</p>
@@ -554,7 +554,7 @@ export default function FightersPage() {
                 <p className="text-red-500 uppercase tracking-[4px] text-xs sm:text-sm mb-3 font-semibold">
                   THE WARRIORS
                 </p>
-                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black uppercase leading-tight">
+                <h1 className="text-4xl sm:text-5xl lg:text-7xl  uppercase leading-tight">
                   Meet The <span className="text-red-600">Fighters</span>
                 </h1>
                 <p className="text-gray-300 text-sm sm:text-base lg:text-lg mt-4 leading-relaxed">
@@ -588,7 +588,7 @@ export default function FightersPage() {
                   className="text-center cursor-pointer p-3 rounded-xl hover-glow"
                 >
                   <Icon className="text-red-500 text-2xl sm:text-3xl mx-auto mb-2" />
-                  <p className="text-2xl sm:text-3xl font-black text-white">
+                  <p className="text-2xl sm:text-3xl  text-white">
                     {animateStats ? stat.value : "0"}
                     {stat.suffix}
                   </p>
@@ -825,7 +825,7 @@ export default function FightersPage() {
       <section className="py-16 bg-gradient-to-r from-red-900/10 via-black to-black border-y border-red-900/20">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl  uppercase">
               Fighter <span className="text-red-600">Spotlight</span>
             </h2>
             <p className="text-gray-400 text-sm mt-2">
@@ -846,7 +846,7 @@ export default function FightersPage() {
               <div className="inline-block px-3 py-1 bg-red-600/20 border border-red-600 rounded-full text-xs font-semibold mb-3">
                 FEATURED ATHLETE
               </div>
-              <h3 className="text-3xl font-black uppercase">ARJUN MALIK</h3>
+              <h3 className="text-3xl  uppercase">ARJUN MALIK</h3>
               <p className="text-red-500 text-lg">"The Technician"</p>
               <p className="text-gray-300 mt-4 leading-relaxed">
                 Undefeated welterweight champion with an 8-0 record. Known for
@@ -887,7 +887,7 @@ export default function FightersPage() {
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
-              <h3 className="text-2xl sm:text-3xl font-black uppercase">
+              <h3 className="text-2xl sm:text-3xl  uppercase">
                 Never Miss a <span className="text-red-600">Fight</span>
               </h3>
               <p className="text-gray-300 mt-2">
@@ -939,7 +939,7 @@ export default function FightersPage() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-2xl sm:text-3xl lg:text-5xl font-black uppercase mb-4">
+            <h2 className="text-2xl sm:text-3xl lg:text-5xl  uppercase mb-4">
               Want to See More Fighters?
               <br />
               <span className="text-red-600">Join the GFC Community.</span>

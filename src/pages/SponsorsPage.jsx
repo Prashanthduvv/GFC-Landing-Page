@@ -1,251 +1,417 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { FaHandshake, FaCheckCircle, FaMedal, FaStar, FaArrowRight, FaHeart, FaEnvelope } from "react-icons/fa";
+import {
+  FaArrowRight,
+  FaBullhorn,
+  FaCheckCircle,
+  FaCrown,
+  FaFire,
+  FaGlobe,
+  FaHandshake,
+  FaHeart,
+  FaMedal,
+  FaPlayCircle,
+  FaRocket,
+  FaStar,
+  FaUsers,
+  FaVideo,
+} from "react-icons/fa";
+
 import { useNavigate } from "react-router-dom";
 
-// ================= SPONSOR DATA =================
+// ======================================================
+// SPONSORS DATA
+// ======================================================
+
 const sponsors = [
-  { name: "TECHNOCRAT", logo: "/images/p1.png", tier: "Platinum", description: "Leading technology partner for GFC", website: "https://example.com" },
-  { name: "NUTRIFUEL", logo: "/images/p2.png", tier: "Platinum", description: "Official nutrition partner", website: "https://example.com" },
-  { name: "ELITE APPAREL", logo: "/images/p3.png", tier: "Gold", description: "Premium fight gear and merchandise", website: "https://example.com" },
-  { name: "INNOVATECH", logo: "/images/p4.png", tier: "Gold", description: "Broadcast and streaming partner", website: "https://example.com" },
-  { name: "THIRST ZERO", logo: "/images/p5.png", tier: "Silver", description: "Official beverage partner", website: "https://example.com" },
-  { name: "IRON FITNESS", logo: "/images/p6.png", tier: "Silver", description: "Fitness equipment provider", website: "https://example.com" },
-  { name: "MEDIA ONE", logo: "/images/p1.png", tier: "Silver", description: "Media and PR partner", website: "https://example.com" },
+  {
+    name: "Monster Energy",
+    logo: "https://www.monsterenergy.com/img/home/monster-logo.png",
+    tier: "Platinum",
+    description:
+      "Official energy drink partner powering elite combat sports athletes.",
+    website: "https://www.monsterenergy.com",
+  },
+
+  {
+    name: "Venum",
+    logo: "https://www.venum.com/cdn/shop/files/LOGO-VENUM-FULL_190x@2x.png?v=1702316749",
+    tier: "Platinum",
+    description:
+      "GlobaX MMA apparel and fight gear partner for premium athletes.",
+    website: "https://venum.com",
+  },
+
+  {
+    name: "Under Armour",
+    logo:
+      "https://upload.wikimedia.org/wikipedia/commons/4/44/Under_armour_logo.svg",
+    tier: "Gold",
+    description:
+      "Performance training and sportswear partner for elite fighters.",
+    website: "https://www.underarmour.com",
+  },
+
+  {
+    name: "Red Bull",
+    logo:
+      "https://upload.wikimedia.org/wikipedia/en/f/f5/RedBullEnergyDrink.svg",
+    tier: "Gold",
+    description:
+      "Official endurance and high-performance energy partner.",
+    website: "https://www.redbull.com",
+  },
+
+  {
+    name: "RDX Sports",
+    logo:
+      "https://rdxsports.com/cdn/shop/files/RDX_Logo_black.png?v=1699883408",
+    tier: "Silver",
+    description:
+      "Professional boxing and MMA training equipment manufacturer.",
+    website: "https://rdxsports.com",
+  },
+
+  {
+    name: "MyProtein",
+    logo:
+      "https://upload.wikimedia.org/wikipedia/commons/8/80/Myprotein_logo.svg",
+    tier: "Silver",
+    description:
+      "Official nutrition and supplementation performance partner.",
+    website: "https://www.myprotein.com",
+  },
+
+  {
+    name: "ESPN",
+    logo:
+      "https://upload.wikimedia.org/wikipedia/commons/2/2f/ESPN_wordmark.svg",
+    tier: "Media",
+    description:
+      "Official international broadcasting and streaming partner.",
+    website: "https://www.espn.com",
+  },
 ];
+
+// ======================================================
+// TIERS
+// ======================================================
 
 const tiers = [
-  { name: "Platinum", icon: FaStar, color: "text-gray-300", bgColor: "bg-gray-800/20" },
-  { name: "Gold", icon: FaMedal, color: "text-yellow-500", bgColor: "bg-yellow-500/10" },
-  { name: "Silver", icon: FaHandshake, color: "text-gray-400", bgColor: "bg-gray-500/10" },
+  {
+    name: "Platinum",
+    icon: FaStar,
+    color: "text-red-500",
+    glow: "shadow-red-500/20",
+  },
+
+  {
+    name: "Gold",
+    icon: FaMedal,
+    color: "text-yellow-500",
+    glow: "shadow-yellow-500/20",
+  },
+
+  {
+    name: "Silver",
+    icon: FaHandshake,
+    color: "text-gray-300",
+    glow: "shadow-gray-500/20",
+  },
 ];
 
-// ================= BENEFITS DATA =================
+// ======================================================
+// BENEFITS
+// ======================================================
+
 const benefits = [
-  { title: "BRAND VISIBILITY", desc: "Logo placement on all event materials, broadcast, and digital platforms" },
-  { title: "VIP ACCESS", desc: "Premium seating, backstage access, and hospitality at all GFC events" },
-  { title: "DIGITAL REACH", desc: "Social media promotion, newsletter features, and website presence" },
-  { title: "NETWORKING", desc: "Connect with industry leaders, athletes, and decision makers" },
-  { title: "ACTIVATION", desc: "On-ground activation opportunities at live events" },
-  { title: "CONTENT", desc: "Custom content creation and brand integration" },
+  {
+    title: "BRAND VISIBILITY",
+    desc: "Massive exposure across live events, digital media, and broadcasts.",
+    icon: FaBullhorn,
+    gradient: "from-red-500 to-orange-500",
+  },
+
+  {
+    title: "VIP ACCESS",
+    desc: "Premium hospitality, backstage experiences, and elite networking.",
+    icon: FaCrown,
+    gradient: "from-yellow-500 to-orange-400",
+  },
+
+  {
+    title: "DIGITAL REACH",
+    desc: "Reach millions through social media and online campaigns.",
+    icon: FaGlobe,
+    gradient: "from-blue-500 to-cyan-500",
+  },
+
+  {
+    title: "LIVE ACTIVATION",
+    desc: "Create unforgettable fan engagement experiences at events.",
+    icon: FaRocket,
+    gradient: "from-pink-500 to-red-500",
+  },
+
+  {
+    title: "PREMIUM CONTENT",
+    desc: "Collaborate with athletes through exclusive branded content.",
+    icon: FaVideo,
+    gradient: "from-purple-500 to-pink-500",
+  },
+
+  {
+    title: "GLOBAX NETWORK",
+    desc: "Connect with executives, athletes, creators, and influencers.",
+    icon: FaUsers,
+    gradient: "from-green-500 to-emerald-500",
+  },
 ];
 
+// ======================================================
+// COMPONENT
+// ======================================================
 
-
-
-// ================= MAIN PAGE =================
 export default function SponsorsPage() {
+  const navigate = useNavigate();
+
   const [selectedTier, setSelectedTier] = useState(null);
-  const [showBenefits, setShowBenefits] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const handleGetTickets = () => {
-    window.dispatchEvent(new CustomEvent("openTicketModal"));
-  };
-
   const handleContactUs = () => {
-    window.location.href = "/contact";
+    navigate("/contact");
   };
 
-   const navigate = useNavigate();
-   
-    const handleJoinCommunity = () => {
+  const handleJoinCommunity = () => {
     navigate("/join-community");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-  // Animation variants
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-  };
-
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
   };
 
   return (
-    <div className="pt-16 sm:pt-20 overflow-x-hidden">
-{/* ================= HERO SECTION ================= */}
-<section className="max-w-[1400px] mx-auto relative w-full bg-black overflow-hidden">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
+      className="relative overflow-hidden bg-black text-white"
+    >
+      {/* ====================================================== */}
+      {/* BACKGROUND EFFECTS */}
+      {/* ====================================================== */}
 
-  <div className="relative w-full h-[75vh] sm:h-[30vh] lg:min-h-[470px]">
+      <div className="fixed inset-0 -z-10 overflow-hidden bg-black">
+        {/* GRID */}
 
-    {/* Background Image */}
-    <img
-      src="https://static.vecteezy.com/system/resources/previews/024/108/426/non_2x/one-single-line-drawing-of-young-energetic-man-boxer-improve-his-attack-punch-illustration-sport-combative-training-concept-modern-continuous-line-draw-design-for-boxing-championship-banner-png.png"
-      alt="Sponsors Hero"
-      className="
-        absolute inset-0
-        w-full h-full
-        object-contain
-        object-center
-      "
-    />
+        <div
+          className="
+            absolute inset-0 opacity-20
+            bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)]
+            bg-[size:50px_50px]
+          "
+        />
 
-    {/* Overlay */}
-    <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/30" />
+        {/* ORBS */}
 
-    {/* Content */}
-    <div className="relative z-10 flex items-center h-full">
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-red-500/20 blur-[140px] rounded-full animate-pulse" />
 
-        <div className="max-w-2xl">
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-orange-500/10 blur-[140px] rounded-full animate-pulse delay-1000" />
 
-          <p className="text-red-500 uppercase tracking-[4px] text-xs sm:text-sm mb-3 font-semibold">
-            OUR PARTNERS
-          </p>
-
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase leading-tight">
-            Trusted By <span className="text-red-600">Leaders.</span>
-          </h1>
-
-          <p className="text-gray-300 text-sm sm:text-base lg:text-lg mt-4 leading-relaxed">
-            World-class brands partnering with GFC to build the future of combat sports in India.
-          </p>
-
-        </div>
-
+        <div className="absolute top-1/2 left-1/3 w-[350px] h-[350px] bg-red-600/10 blur-[120px] rounded-full animate-pulse delay-500" />
       </div>
-    </div>
 
-  </div>
-</section>
+      {/* ====================================================== */}
+      {/* HERO */}
+      {/* ====================================================== */}
 
-     
+      <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-black via-[#050505] to-red-950/20">
+        {/* IMAGE */}
 
-      {/* ================= BENEFITS SECTION (Toggle) ================= */}
-      {showBenefits && (
-        <section className="py-12 bg-[#050505] border-b border-white/10">
-          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl sm:text-3xl font-black uppercase">Partnership <span className="text-red-600">Benefits</span></h2>
-              <p className="text-gray-400 text-xs sm:text-sm mt-1">What we offer our valued partners</p>
+        <img
+          src="https://static.vecteezy.com/system/resources/previews/024/108/426/non_2x/one-single-line-drawing-of-young-energetic-man-boxer-improve-his-attack-punch-illustration-sport-combative-training-concept-modern-continuous-line-draw-design-for-boxing-championship-banner-png.png"
+          alt="Hero"
+          className="absolute right-0 top-0 h-full object-contain opacity-10"
+        />
+
+        {/* OVERLAY */}
+
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent" />
+
+        {/* CONTENT */}
+
+        <div className="relative z-10 max-w-7xl px-6 lg:px-10 py-32">
+          <motion.div
+            initial={{ opacity: 0, y: 70 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+          >
+            <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-red-500/10 border border-red-500/20 backdrop-blur-xl">
+              <FaFire className="text-red-500" />
+
+              <p className="uppercase tracking-[4px] text-red-400 text-xs font-semibold">
+                Official GFC Sponsors
+              </p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {benefits.map((benefit, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="bg-black border border-white/10 hover:border-red-600 rounded-xl p-5 text-center transition-all"
-                >
-                  <div className="w-12 h-12 bg-red-600/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <FaStar className="text-red-500 text-lg" />
-                  </div>
-                  <h3 className="text-base font-bold uppercase mb-2">{benefit.title}</h3>
-                  <p className="text-gray-400 text-xs leading-relaxed">{benefit.desc}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
-      {/* ================= SPONSORS GRID ================= */}
-      <section className="py-12 sm:py-16">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          {tiers.map((tier, tierIndex) => {
-            const tierSponsors = sponsors.filter(s => s.tier === tier.name);
-            if (tierSponsors.length === 0) return null;
-            const Icon = tier.icon;
-            
-            return (
-              <motion.div 
-                key={tier.name}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ delay: tierIndex * 0.2 }}
-                viewport={{ once: true }}
-                className="mb-12 sm:mb-16"
+            <h1 className="mt-8 text-6xl sm:text-7xl lg:text-8xl  uppercase leading-[0.9] tracking-[-3px] max-w-5xl">
+              Trusted By{" "}
+              <span className="bg-gradient-to-r from-red-500 via-red-400 to-orange-500 bg-clip-text text-transparent animate-pulse">
+                Champions.
+              </span>
+            </h1>
+
+            <p className="mt-8 text-gray-300/90 text-lg leading-relaxed max-w-2xl">
+              GFC partners with world-class brands to create unforgettable
+              combat sports experiences, elite athlete collaborations, and
+              premium entertainment moments across India.
+            </p>
+
+            {/* BUTTONS */}
+
+            <div className="mt-12 flex flex-wrap gap-5">
+              <button
+                onClick={handleContactUs}
+                className="
+                  group relative overflow-hidden
+                  bg-red-600
+                  hover:bg-red-700
+                  px-10 py-5
+                  rounded-2xl
+                  font-bold uppercase tracking-wide
+                  transition-all duration-500
+                  hover:scale-105
+                  hover:shadow-[0_0_40px_rgba(239,68,68,0.45)]
+                "
               >
-                <div className="flex items-center justify-center gap-2 mb-6 sm:mb-8">
-                  <Icon className={`${tier.color} text-xl sm:text-2xl`} />
-                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-black uppercase">{tier.name} Partners</h2>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                  {tierSponsors.map((sponsor, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: index * 0.05 }}
-                      viewport={{ once: true }}
-                      whileHover={{ y: -5 }}
-                      onClick={() => window.open(sponsor.website, '_blank')}
-                      className={`${tier.bgColor} border border-white/10 hover:border-red-600 rounded-xl p-6 sm:p-8 text-center cursor-pointer transition-all duration-300`}
-                    >
-                      <img 
-                        src={sponsor.logo} 
-                        alt={sponsor.name} 
-                        className="h-12 sm:h-16 object-contain mx-auto mb-3 sm:mb-4 opacity-80 hover:opacity-100 transition" 
-                      />
-                      <h3 className="text-base sm:text-lg font-bold uppercase">{sponsor.name}</h3>
-                      <p className="text-gray-400 text-xs sm:text-sm mt-2 leading-relaxed">{sponsor.description}</p>
-                      <div className="mt-3 opacity-0 group-hover:opacity-100 transition">
-                        <span className="text-red-500 text-xs">Visit Website →</span>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            );
-          })}
+                <span className="relative z-10 flex items-center gap-3">
+                  Become Partner
+                  <FaArrowRight />
+                </span>
+
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-red-700 opacity-0 group-hover:opacity-100 transition duration-500" />
+              </button>
+
+              <button
+                onClick={handleJoinCommunity}
+                className="
+                  group border border-white/15
+                  hover:border-red-500
+                  bg-white/[0.03]
+                  backdrop-blur-xl
+                  px-10 py-5 rounded-2xl
+                  font-bold uppercase tracking-wide
+                  transition-all duration-500
+                  hover:bg-white/[0.06]
+                "
+              >
+                <span className="flex items-center gap-3">
+                  <FaPlayCircle />
+                  Join Community
+                </span>
+              </button>
+            </div>
+
+          
+          </motion.div>
         </div>
       </section>
 
-      {/* ================= SPONSORSHIP TIERS ================= */}
-      <section className="py-12 sm:py-16 bg-[#050505] border-y border-red-900/20">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 sm:mb-10">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase">Sponsorship <span className="text-red-600">Tiers</span></h2>
-            <p className="text-gray-400 text-xs sm:text-sm mt-2">Choose the right partnership level for your brand</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
-            {tiers.map((tier, index) => {
-              const Icon = tier.icon;
-              const tierSponsors = sponsors.filter(s => s.tier === tier.name);
-              const benefits_count = tier.name === "Platinum" ? 6 : tier.name === "Gold" ? 4 : 3;
-              
+      {/* ====================================================== */}
+      {/* DIVIDER */}
+      {/* ====================================================== */}
+
+      <div className="w-full h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
+
+      {/* ====================================================== */}
+      {/* BENEFITS */}
+      {/* ====================================================== */}
+
+      <section className="py-28 bg-gradient-to-b from-black to-[#050505]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+          {/* HEADER */}
+
+          <motion.div
+            initial={{ opacity: 0, y: 80 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9 }}
+            viewport={{ once: true }}
+            className="text-center mb-24"
+          >
+            <p className="uppercase tracking-[5px] text-red-500 text-sm font-semibold">
+              GFC Partnerships
+            </p>
+
+            <h2 className="mt-4 text-5xl lg:text-6xl  uppercase leading-none">
+              Partnership{" "}
+              <span className="text-red-500">Benefits</span>
+            </h2>
+
+            <div className="w-24 h-1 bg-red-500 mx-auto mt-6 rounded-full" />
+          </motion.div>
+
+          {/* CARDS */}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            {benefits.map((benefit, index) => {
+              const Icon = benefit.icon;
+
               return (
                 <motion.div
-                  key={tier.name}
-                  initial={{ opacity: 0, y: 30 }}
+                  key={index}
+                  initial={{ opacity: 0, y: 80 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{
+                    delay: index * 0.1,
+                    duration: 0.8,
+                  }}
                   viewport={{ once: true }}
-                  whileHover={{ y: -5 }}
-                  onMouseEnter={() => setSelectedTier(tier.name)}
-                  onMouseLeave={() => setSelectedTier(null)}
-                  className={`bg-black border rounded-xl p-6 text-center transition-all duration-300 ${
-                    selectedTier === tier.name ? 'border-red-600 shadow-xl shadow-red-900/20' : 'border-white/10 hover:border-red-600/50'
-                  }`}
+                  whileHover={{
+                    y: -15,
+                    scale: 1.03,
+                  }}
+                  className="
+                    group relative overflow-hidden
+                    bg-white/[0.04]
+                    backdrop-blur-2xl
+                    border border-white/10
+                    hover:border-red-500/50
+                    rounded-[32px]
+                    p-10
+                    transition-all duration-500
+                    hover:shadow-[0_0_50px_rgba(239,68,68,0.25)]
+                  "
                 >
-                  <Icon className={`${tier.color} text-3xl sm:text-4xl mx-auto mb-3`} />
-                  <h3 className="text-xl sm:text-2xl font-black uppercase">{tier.name}</h3>
-                  <p className="text-gray-400 text-xs sm:text-sm mt-2">{tierSponsors.length} Current Partners</p>
-                  <div className="mt-4 pt-4 border-t border-white/10">
-                    <p className="text-gray-300 text-sm font-semibold">Key Benefits:</p>
-                    <ul className="mt-2 space-y-1">
-                      <li className="text-gray-400 text-xs">✓ Logo placement</li>
-                      <li className="text-gray-400 text-xs">✓ VIP access</li>
-                      <li className="text-gray-400 text-xs">✓ Digital promotion</li>
-                      {benefits_count >= 4 && <li className="text-gray-400 text-xs">✓ On-ground activation</li>}
-                      {benefits_count >= 6 && <li className="text-gray-400 text-xs">✓ Title sponsorship</li>}
-                    </ul>
+                  {/* TOP BORDER */}
+
+                  <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-0 group-hover:opacity-100 transition duration-500" />
+
+                  {/* GLOW */}
+
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-gradient-to-br from-red-500/10 via-transparent to-red-700/10" />
+
+                  {/* CONTENT */}
+
+                  <div className="relative z-10">
+                    <div
+                      className={`
+                        w-20 h-20 rounded-3xl
+                        bg-gradient-to-br ${benefit.gradient}
+                        flex items-center justify-center
+                        shadow-xl shadow-black/40
+                        mb-8
+                      `}
+                    >
+                      <Icon className="text-white text-3xl" />
+                    </div>
+
+                    <h3 className="text-2xl  uppercase">
+                      {benefit.title}
+                    </h3>
+
+                    <p className="mt-5 text-gray-400 leading-relaxed">
+                      {benefit.desc}
+                    </p>
                   </div>
-                  <button 
-                    onClick={handleContactUs}
-                    className="mt-5 w-full border border-red-600 text-red-600 hover:bg-red-600 hover:text-white transition py-2 rounded-lg text-xs sm:text-sm font-bold uppercase"
-                  >
-                    INQUIRE NOW
-                  </button>
                 </motion.div>
               );
             })}
@@ -253,68 +419,301 @@ export default function SponsorsPage() {
         </div>
       </section>
 
-      {/* ================= WHY PARTNER SECTION ================= */}
-      <section className="py-12 sm:py-16">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div>
-              <p className="text-red-500 uppercase tracking-[4px] text-xs sm:text-sm mb-3 font-semibold">WHY PARTNER WITH GFC</p>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase leading-tight">
-                Reach <span className="text-red-600">Millions</span> of Passionate Fans
-              </h2>
-              <div className="mt-5 space-y-3">
-                <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
-                  GFC is India's fastest-growing combat sports platform, connecting brands with 
-                  an engaged, passionate audience across the country and globally.
-                </p>
-                <div className="flex items-start gap-3 mt-4">
-                  <FaCheckCircle className="text-red-500 mt-0.5 text-sm" />
-                  <p className="text-gray-400 text-xs sm:text-sm">Premium brand association with elite athletes</p>
-                </div>
-                <div className="flex items-start gap-3">
-                  <FaCheckCircle className="text-red-500 mt-0.5 text-sm" />
-                  <p className="text-gray-400 text-xs sm:text-sm">Multi-platform exposure across digital and live events</p>
-                </div>
-                <div className="flex items-start gap-3">
-                  <FaCheckCircle className="text-red-500 mt-0.5 text-sm" />
-                  <p className="text-gray-400 text-xs sm:text-sm">Access to exclusive VIP experiences and networking</p>
+      {/* ====================================================== */}
+      {/* SPONSORS */}
+      {/* ====================================================== */}
+
+      <section className="py-28 bg-[#040404]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+          {tiers.map((tier, tierIndex) => {
+            const Icon = tier.icon;
+
+            const tierSponsors = sponsors.filter(
+              (sponsor) => sponsor.tier === tier.name
+            );
+
+            return (
+              <div key={tier.name} className="mb-32">
+                {/* HEADER */}
+
+                <motion.div
+                  initial={{ opacity: 0, y: 80 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.9 }}
+                  viewport={{ once: true }}
+                  className="text-center mb-16"
+                >
+                  <div className="flex items-center justify-center gap-4">
+                    <Icon className={`${tier.color} text-4xl`} />
+
+                    <h2 className="text-5xl  uppercase tracking-tight">
+                      {tier.name} Sponsors
+                    </h2>
+                  </div>
+
+                  <div className="w-20 h-1 bg-red-500 mx-auto mt-6 rounded-full" />
+                </motion.div>
+
+                {/* CARDS */}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                  {tierSponsors.map((sponsor, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, y: 80 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{
+                        delay: index * 0.1,
+                        duration: 0.8,
+                      }}
+                      viewport={{ once: true }}
+                      animate={{
+                        y: [0, -10, 0],
+                      }}
+                      whileHover={{
+                        y: -15,
+                        scale: 1.03,
+                      }}
+                      onMouseEnter={() => setSelectedTier(tier.name)}
+                      onMouseLeave={() => setSelectedTier(null)}
+                      onClick={() =>
+                        window.open(sponsor.website, "_blank")
+                      }
+                      className={`
+                        group relative overflow-hidden
+                        bg-white/[0.04]
+                        backdrop-blur-2xl
+                        border rounded-[32px]
+                        p-10 cursor-pointer
+                        transition-all duration-500
+                        ${
+                          selectedTier === tier.name
+                            ? "border-red-500/60"
+                            : "border-white/10"
+                        }
+                        hover:shadow-[0_0_50px_rgba(239,68,68,0.25)]
+                      `}
+                    >
+                      {/* TOP BORDER */}
+
+                      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-0 group-hover:opacity-100 transition duration-500" />
+
+                      {/* GLOW */}
+
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-gradient-to-br from-red-500/10 via-transparent to-red-700/10" />
+
+                      {/* CONTENT */}
+
+                      <div className="relative z-10 text-center">
+                        <motion.img
+                          whileHover={{
+                            scale: 1.08,
+                            rotate: 2,
+                          }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 200,
+                          }}
+                          src={sponsor.logo}
+                          alt={sponsor.name}
+                          className="h-20 object-contain mx-auto mb-8 drop-shadow-[0_0_20px_rgba(255,255,255,0.15)]"
+                        />
+
+                        <h3 className="text-3xl  uppercase tracking-tight">
+                          {sponsor.name}
+                        </h3>
+
+                        <p className="mt-5 text-gray-400 leading-relaxed">
+                          {sponsor.description}
+                        </p>
+
+                        <div className="mt-8 inline-flex items-center gap-3 text-red-500 uppercase font-bold tracking-wide">
+                          Visit Website
+                          <FaArrowRight />
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
               </div>
-            </div>
-            
-            <div className="bg-gradient-to-br from-red-900/20 to-black border border-red-900/30 rounded-xl p-6 text-center">
-              <h3 className="text-lg sm:text-xl font-black uppercase mb-3">Ready to Partner?</h3>
-              <p className="text-gray-300 text-xs sm:text-sm mb-4">Let's discuss how GFC can elevate your brand</p>
-              <button 
-                onClick={handleContactUs}
-                className="bg-red-600 hover:bg-red-700 transition px-6 py-2 rounded-lg text-sm font-bold uppercase inline-flex items-center gap-2"
-              >
-                CONTACT US <FaArrowRight size={12} />
-              </button>
-              <p className="text-gray-500 text-[10px] sm:text-xs mt-3">Response within 24 hours</p>
-            </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ====================================================== */}
+      {/* WHY PARTNER */}
+      {/* ====================================================== */}
+
+      <section className="py-32 bg-gradient-to-r from-red-950/10 via-black to-black">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+          <div className="grid lg:grid-cols-2 gap-20 items-center">
+            {/* LEFT */}
+
+            <motion.div
+              initial={{ opacity: 0, x: -80 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.9 }}
+              viewport={{ once: true }}
+            >
+              <p className="uppercase tracking-[5px] text-red-500 text-sm font-semibold">
+                Why Brands Choose GFC
+              </p>
+
+              <h2 className="mt-6 text-5xl lg:text-6xl  uppercase leading-[0.95]">
+                Reach Millions Of{" "}
+                <span className="text-red-500">Fans.</span>
+              </h2>
+
+              <p className="mt-8 text-gray-300 leading-relaxed text-lg">
+                GFC creates premium entertainment experiences connecting globax
+                brands with passionate combat sports audiences across India.
+              </p>
+
+              {/* FEATURES */}
+
+              <div className="mt-12 space-y-6">
+                {[
+                  "Elite athlete brand positioning",
+                  "Massive live + digital event exposure",
+                  "Premium VIP networking experiences",
+                  "High-engagement fan activations",
+                ].map((item, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -40 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{
+                      delay: index * 0.1,
+                    }}
+                    viewport={{ once: true }}
+                    className="flex items-start gap-5"
+                  >
+                    <div className="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center">
+                      <FaCheckCircle className="text-red-500" />
+                    </div>
+
+                    <div>
+                      <p className="text-white font-semibold">{item}</p>
+
+                      <p className="text-gray-400 text-sm mt-1">
+                        Premium strategic partnership opportunities.
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* RIGHT */}
+
+            <motion.div
+              initial={{ opacity: 0, x: 80 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.9 }}
+              viewport={{ once: true }}
+              className="
+                relative overflow-hidden
+                bg-white/[0.04]
+                backdrop-blur-2xl
+                border border-red-500/20
+                rounded-[40px]
+                p-14
+              "
+            >
+              {/* GLOW */}
+
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-red-700/10" />
+
+              {/* CONTENT */}
+
+              <div className="relative z-10 text-center">
+                <div className="w-24 h-24 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-8">
+                  <FaHandshake className="text-red-500 text-4xl" />
+                </div>
+
+                <h3 className="text-4xl  uppercase">
+                  Ready To Partner?
+                </h3>
+
+                <p className="mt-6 text-gray-400 leading-relaxed">
+                  Let’s build unforgettable combat sports experiences together.
+                </p>
+
+                <button
+                  onClick={handleContactUs}
+                  className="
+                    group relative overflow-hidden
+                    mt-10
+                    bg-red-600
+                    hover:bg-red-700
+                    px-10 py-5
+                    rounded-2xl
+                    font-bold uppercase tracking-wide
+                    transition-all duration-500
+                    hover:scale-105
+                    hover:shadow-[0_0_40px_rgba(239,68,68,0.45)]
+                  "
+                >
+                  <span className="relative z-10 flex items-center gap-3">
+                    Contact Us
+                    <FaArrowRight />
+                  </span>
+
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-red-700 opacity-0 group-hover:opacity-100 transition duration-500" />
+                </button>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ================= CTA SECTION ================= */}
-      <section className="py-12 sm:py-16 text-center bg-gradient-to-r from-red-900/10 to-black border-y border-red-900/20">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase mb-3">
-            Support The <span className="text-red-600">Movement.</span>
-          </h2>
-          <p className="text-gray-300 text-xs sm:text-sm max-w-xl mx-auto mb-5 leading-relaxed">
-            Join the GFC Community and get exclusive access to events, content, and experiences.
-          </p>
-          <button 
-              onClick={handleJoinCommunity}
-            className="bg-red-600 hover:bg-red-700 transition px-6 sm:px-8 py-2.5 rounded-lg text-sm font-bold uppercase inline-flex items-center gap-2"
+      {/* ====================================================== */}
+      {/* CTA */}
+      {/* ====================================================== */}
+
+      <section className="py-32 text-center bg-gradient-to-br from-red-950/30 via-black to-red-900/20 border-t border-white/10">
+        <div className="max-w-5xl mx-auto px-6">
+          <motion.h2
+            initial={{ opacity: 0, y: 80 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9 }}
+            viewport={{ once: true }}
+            className="text-6xl lg:text-7xl  uppercase leading-[0.95]"
           >
-            <FaHeart size={14} /> JOIN THE MOVEMENT
+            Support The{" "}
+            <span className="text-red-500">Movement.</span>
+          </motion.h2>
+
+          <p className="mt-8 text-gray-400 text-xl leading-relaxed">
+            Join the GFC community and experience the future of combat sports
+            entertainment.
+          </p>
+
+          <button
+            onClick={handleJoinCommunity}
+            className="
+              group relative overflow-hidden
+              mt-12
+              bg-red-600
+              hover:bg-red-700
+              px-12 py-5
+              rounded-2xl
+              font-bold uppercase tracking-wide
+              transition-all duration-500
+              hover:scale-105
+              hover:shadow-[0_0_45px_rgba(239,68,68,0.5)]
+            "
+          >
+            <span className="relative z-10 flex items-center gap-4">
+              <FaHeart />
+              Join The Movement
+            </span>
+
+            <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-red-700 opacity-0 group-hover:opacity-100 transition duration-500" />
           </button>
-          <p className="text-gray-500 text-[10px] sm:text-xs mt-4">Be part of India's combat sports revolution</p>
         </div>
       </section>
-    </div>
+    </motion.div>
   );
 }

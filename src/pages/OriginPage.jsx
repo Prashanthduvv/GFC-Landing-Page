@@ -29,18 +29,18 @@ const milestones = [
   { 
     year: "2026", 
     title: "THE ORIGIN", 
-    desc: "GFC Global 1: Origin - The first event that started it all. History was made in New Delhi with a sold-out arena.",
+    desc: "GFC GlobaX : Origin - The first event that started it all. History was made in New Delhi with a sold-out arena.",
     icon: FaTrophy,
     color: "from-red-600 to-red-500",
-    achievements: ["Inaugural event sold out", "Global broadcast deal", "Launched founding community", "8 fighters debuted"]
+    achievements: ["Inaugural event sold out", "GlobaX broadcast deal", "Launched founding community", "8 fighters debuted"]
   },
   { 
     year: "2027", 
     title: "THE EXPANSION", 
-    desc: "Expanding to multiple cities across India with GFC Global 2, 3, and beyond. The movement grows stronger every day.",
+    desc: "Expanding to multiple cities across India with GFC GlobaX 2, 3, and beyond. The movement grows stronger every day.",
     icon: FaGlobe,
     color: "from-green-500 to-emerald-500",
-    achievements: ["Multiple city launches", "International partnerships", "Growing fighter roster", "Global recognition"]
+    achievements: ["Multiple city launches", "International partnerships", "Growing fighter roster", "GlobaX recognition"]
   },
 ];
 
@@ -237,7 +237,7 @@ export default function OriginPage() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
-                  className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black uppercase leading-[1.1]"
+                  className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl  uppercase leading-[1.1]"
                 >
                   The <span className="text-red-600">Origin</span>
                   <br />
@@ -340,7 +340,7 @@ export default function OriginPage() {
                   >
                     <Icon className="text-red-500 text-3xl sm:text-4xl mx-auto mb-3" />
                   </motion.div>
-                  <p className="text-3xl sm:text-4xl font-black text-white">
+                  <p className="text-3xl sm:text-4xl  text-white">
                     <CountingNumber target={stat.value} />{stat.suffix}
                   </p>
                   <p className="text-gray-400 text-[10px] sm:text-xs uppercase tracking-wide mt-1">
@@ -364,7 +364,7 @@ export default function OriginPage() {
               variants={fadeInLeft}
             >
               <p className="text-red-500 uppercase tracking-[4px] text-sm mb-4 font-semibold">HOW IT BEGAN</p>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase leading-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl  uppercase leading-tight">
                 A Movement, <span className="text-red-600">Not Just Events.</span>
               </h2>
               <div className="mt-6 space-y-4">
@@ -437,7 +437,7 @@ export default function OriginPage() {
             className="text-center mb-12"
           >
             <p className="text-red-500 uppercase tracking-[4px] text-sm mb-4 font-semibold">OUR VALUES</p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase">What Drives <span className="text-red-600">Us</span></h2>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl  uppercase">What Drives <span className="text-red-600">Us</span></h2>
             <p className="text-gray-400 mt-4 max-w-2xl mx-auto">The core principles that guide everything we do</p>
           </motion.div>
           
@@ -486,7 +486,7 @@ export default function OriginPage() {
             className="text-center mb-12"
           >
             <p className="text-red-500 uppercase tracking-[4px] text-sm mb-4 font-semibold">THE JOURNEY</p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase">Key <span className="text-red-600">Milestones</span></h2>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl  uppercase">Key <span className="text-red-600">Milestones</span></h2>
             <p className="text-gray-400 mt-4 max-w-2xl mx-auto">The journey of GFC from vision to reality</p>
           </motion.div>
           
@@ -523,7 +523,7 @@ export default function OriginPage() {
                           <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${milestone.color} flex items-center justify-center`}>
                             <Icon className="text-white text-lg" />
                           </div>
-                          <span className="text-red-600 font-black text-2xl">{milestone.year}</span>
+                          <span className="text-red-600  text-2xl">{milestone.year}</span>
                         </div>
                         <h3 className="text-xl font-bold uppercase mb-2">{milestone.title}</h3>
                         <p className="text-gray-400 text-sm leading-relaxed">{milestone.desc}</p>
@@ -594,7 +594,7 @@ export default function OriginPage() {
               viewport={{ once: true }}
             >
               <p className="text-red-500 uppercase tracking-[4px] text-sm mb-4 font-semibold">LOOKING AHEAD</p>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase leading-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl  uppercase leading-tight">
                 One Community.<br />
                 <span className="text-red-600">Many Cities.</span><br />
                 One Movement.
@@ -641,8 +641,8 @@ export default function OriginPage() {
                 <div className="text-8xl mb-4 relative z-10">🇮🇳</div>
                 <h3 className="text-2xl font-bold uppercase mb-4">Future Ready</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">
-                  GFC is committed to taking Indian combat sports to the global stage. 
-                  With plans for international events, fighter exchanges, and global partnerships.
+                  GFC is committed to taking Indian combat sports to the globax stage. 
+                  With plans for international events, fighter exchanges, and globax partnerships.
                 </p>
                 <div className="mt-6 flex justify-center gap-2">
                   {[1, 2, 3, 4, 5].map((i) => (
@@ -719,7 +719,7 @@ export default function OriginPage() {
               initial={{ scale: 0.9 }}
               whileInView={{ scale: 1 }}
               transition={{ type: "spring", delay: 0.2 }}
-              className="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-black uppercase mb-4 leading-[1.1]"
+              className="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl  uppercase mb-4 leading-[1.1]"
             >
               Be Part of <br />
               <span className="text-red-600 relative inline-block">
