@@ -386,7 +386,7 @@ export default function JoinCommunityPage() {
   uppercase
 
   leading-[0.9]
-  sm:leading-[0.88]
+  sm:leading-[0.99]
 
   tracking-[1px]
   sm:tracking-[2px]

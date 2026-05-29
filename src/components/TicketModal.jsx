@@ -10,6 +10,9 @@ import {
   FaPaypal,
   FaApplePay,
   FaGooglePay,
+  FaWhatsapp,
+  FaEnvelope,
+  FaBell,
 } from "react-icons/fa";
 
 export default function TicketModal({ isOpen, onClose }) {
@@ -26,6 +29,7 @@ export default function TicketModal({ isOpen, onClose }) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [ticketCountdown, setTicketCountdown] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("card");
+  const [notificationSent, setNotificationSent] = useState(false);
 
   const ticketPrices = {
     standard: 49,
@@ -35,6 +39,88 @@ export default function TicketModal({ isOpen, onClose }) {
 
   const calculateTotal = () => {
     return ticketPrices[formData.ticketType] * formData.quantity;
+  };
+
+  // Send email notification
+  const sendEmailNotification = async (bookingDetails) => {
+    // Store in localStorage for demo
+    const notifications = JSON.parse(localStorage.getItem("gfc_email_notifications") || "[]");
+    notifications.push({
+      to: formData.email,
+      subject: "🎟️ Ticket Confirmation - GFC GlobaX : Origin",
+      bookingId: bookingDetails.bookingId,
+      tickets: `${formData.quantity} x ${formData.ticketType.toUpperCase()} Tickets`,
+      total: `₹${calculateTotal()}`,
+      eventDate: "June 20, 2026",
+      eventTime: "6:00 PM",
+      venue: "Indira Gandhi Arena, New Delhi",
+      timestamp: new Date().toISOString(),
+    });
+    localStorage.setItem("gfc_email_notifications", JSON.stringify(notifications.slice(-20)));
+    
+    console.log(`📧 Email sent to: ${formData.email}`);
+    console.log(`📧 Subject: Ticket Confirmation - GFC GlobaX : Origin`);
+  };
+
+  // Send WhatsApp notification
+  const sendWhatsAppNotification = (bookingDetails) => {
+    const message = `🎟️ *Ticket Confirmation!*\n\nThank you ${formData.name} for booking tickets for GFC GlobaX : Origin!\n\n📅 Date: June 30, 2026\n⏰ Time: 6:00 PM\n📍 Venue: Indira Gandhi Arena, New Delhi\n🎫 Tickets: ${formData.quantity} x ${formData.ticketType.toUpperCase()}\n💰 Total: ₹${calculateTotal()}\n🆔 Booking ID: ${bookingDetails.bookingId}\n\nShow this message at the venue entrance. See you there! 🥊`;
+    
+    // Store in localStorage for demo
+    const whatsappMessages = JSON.parse(localStorage.getItem("gfc_whatsapp_notifications") || "[]");
+    whatsappMessages.push({
+      to: formData.phone,
+      message: message,
+      timestamp: new Date().toISOString(),
+    });
+    localStorage.setItem("gfc_whatsapp_notifications", JSON.stringify(whatsappMessages.slice(-20)));
+    
+    console.log(`💬 WhatsApp message sent to: ${formData.phone}`);
+    console.log(`💬 Message: ${message.substring(0, 100)}...`);
+  };
+
+  // Dispatch real-time event for notifications
+  const dispatchTicketEvent = (bookingDetails) => {
+    // Trigger real-time notification
+    const event = new CustomEvent("ticketPurchased", {
+      detail: {
+        userName: formData.name,
+        tickets: formData.quantity,
+        amount: calculateTotal(),
+        bookingId: bookingDetails.bookingId,
+      },
+    });
+    window.dispatchEvent(event);
+    
+    // Update member count (simulate new member)
+    const currentMembers = parseInt(localStorage.getItem("gfc_total_members") || "5234");
+    const newCount = currentMembers + 1;
+    localStorage.setItem("gfc_total_members", newCount.toString());
+    window.dispatchEvent(new CustomEvent("memberCountUpdate", { detail: { count: newCount } }));
+    
+    // Add points for purchase
+    const currentPoints = parseInt(localStorage.getItem("gfc_points") || "0");
+    const pointsEarned = Math.floor(calculateTotal() / 10);
+    const newPoints = currentPoints + pointsEarned;
+    localStorage.setItem("gfc_points", newPoints.toString());
+    window.dispatchEvent(new CustomEvent("pointsUpdated"));
+    
+    // Store achievement
+    const achievements = JSON.parse(localStorage.getItem("gfc_achievements") || "[]");
+    achievements.push({
+      name: "First Ticket Purchase",
+      date: new Date().toISOString(),
+      points: pointsEarned,
+    });
+    localStorage.setItem("gfc_achievements", JSON.stringify(achievements));
+    
+    // Trigger reward notification
+    window.dispatchEvent(new CustomEvent("rewardClaimed", {
+      detail: {
+        rewardName: "First Ticket Purchase",
+        points: pointsEarned,
+      },
+    }));
   };
 
   const validateForm = () => {
@@ -87,6 +173,9 @@ export default function TicketModal({ isOpen, onClose }) {
     e.preventDefault();
     
     if (!validateForm()) {
+      // Scroll to first error
+      const firstError = document.querySelector(".text-red-500");
+      if (firstError) firstError.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
     
@@ -99,13 +188,20 @@ export default function TicketModal({ isOpen, onClose }) {
       ...formData,
       totalAmount: calculateTotal(),
       bookingId: `GFC${Date.now()}`,
-      eventDate: "June 30, 2026",
+      eventDate: "June 20, 2026",
       eventTime: "6:00 PM",
       venue: "Indira Gandhi Arena, New Delhi",
     };
     
+    // Save to localStorage
     localStorage.setItem("gfc_booking", JSON.stringify(bookingDetails));
     
+    // Send notifications
+    await sendEmailNotification(bookingDetails);
+    sendWhatsAppNotification(bookingDetails);
+    dispatchTicketEvent(bookingDetails);
+    
+    setNotificationSent(true);
     setIsSubmitting(false);
     setIsSubmitted(true);
     
@@ -117,6 +213,7 @@ export default function TicketModal({ isOpen, onClose }) {
       if (countdown <= 0) {
         clearInterval(interval);
         setIsSubmitted(false);
+        setNotificationSent(false);
         onClose();
         // Reset form
         setFormData({
@@ -135,6 +232,15 @@ export default function TicketModal({ isOpen, onClose }) {
   const handleClose = () => {
     if (!isSubmitted) {
       onClose();
+    }
+  };
+
+  // Track ticket type for better UX
+  const getTicketTypeLabel = () => {
+    switch(formData.ticketType) {
+      case "vip": return "VIP Experience";
+      case "ringside": return "Ringside Premium";
+      default: return "Standard Admission";
     }
   };
 
@@ -170,8 +276,12 @@ export default function TicketModal({ isOpen, onClose }) {
                     <h2 className="text-red-500 text-2xl font-bold uppercase">Get Your Tickets</h2>
                   </div>
                   <p className="text-gray-400 text-sm">
-                    GFC GlobaX : Origin - June 30, 2026 | New Delhi
+                    GFC GlobaX : Origin - June 20, 2026 | New Delhi
                   </p>
+                  <div className="mt-2 flex items-center gap-2 text-xs text-green-500">
+                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                    <span>Limited seats available! Book now.</span>
+                  </div>
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-5">
@@ -222,6 +332,7 @@ export default function TicketModal({ isOpen, onClose }) {
                       />
                     </div>
                     {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+                    <p className="text-gray-500 text-[10px] mt-1">We'll send WhatsApp confirmation</p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -239,6 +350,7 @@ export default function TicketModal({ isOpen, onClose }) {
                         <option value="vip">VIP - ₹149</option>
                         <option value="ringside">Ringside - ₹299</option>
                       </select>
+                      <p className="text-gray-500 text-[10px] mt-1">{getTicketTypeLabel()} includes exclusive benefits</p>
                     </div>
                     <div>
                       <label className="block text-xs font-semibold uppercase mb-1 text-gray-300">
@@ -263,6 +375,7 @@ export default function TicketModal({ isOpen, onClose }) {
                       <span className="text-2xl font-bold text-red-500">₹{calculateTotal()}</span>
                     </div>
                     <p className="text-gray-400 text-xs mt-2">* Including all taxes and convenience fees</p>
+                    <p className="text-green-500 text-[10px] mt-1">✨ You'll earn {Math.floor(calculateTotal() / 10)} reward points!</p>
                   </div>
 
                   <div>
@@ -310,6 +423,11 @@ export default function TicketModal({ isOpen, onClose }) {
                       `Book Now - ₹${calculateTotal()}`
                     )}
                   </button>
+                  
+                  <p className="text-gray-500 text-[10px] text-center">
+                    <FaWhatsapp className="inline mr-1 text-green-500" /> 
+                    Confirmation will be sent via Email & WhatsApp
+                  </p>
                 </form>
               </>
             ) : (
@@ -317,20 +435,31 @@ export default function TicketModal({ isOpen, onClose }) {
                 <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <FaCheckCircle className="text-green-500 text-3xl" />
                 </div>
-                <h3 className="text-xl font-bold mb-2">Booking Confirmed!</h3>
+                <h3 className="text-xl font-bold mb-2">Booking Confirmed! 🎉</h3>
                 <p className="text-gray-300 text-sm mb-4">
-                  Your tickets have been booked successfully. A confirmation email has been sent to <span className="text-red-400">{formData.email}</span>
+                  Your tickets have been booked successfully. Confirmation sent to <span className="text-red-400">{formData.email}</span>
                 </p>
                 <div className="bg-gray-800/50 rounded-md p-4 mb-4 text-left">
                   <p className="text-xs text-gray-400 mb-1">Booking ID:</p>
                   <p className="text-sm font-mono font-semibold mb-3 text-white">GFC{Date.now()}</p>
                   <div className="flex items-center gap-2 text-xs text-gray-300 mb-2">
                     <FaCalendarAlt size={12} />
-                    <span>June 30, 2026 | 6:00 PM</span>
+                    <span>June 20, 2026 | 6:00 PM</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-gray-300">
                     <FaMapMarkerAlt size={12} />
                     <span>Indira Gandhi Arena, New Delhi</span>
+                  </div>
+                  <div className="mt-3 pt-2 border-t border-gray-700">
+                    <p className="text-green-500 text-xs flex items-center gap-1">
+                      <FaWhatsapp /> WhatsApp confirmation sent
+                    </p>
+                    <p className="text-blue-500 text-xs flex items-center gap-1 mt-1">
+                      <FaEnvelope /> Email confirmation sent
+                    </p>
+                    <p className="text-yellow-500 text-xs flex items-center gap-1 mt-1">
+                      <FaBell /> +{Math.floor(calculateTotal() / 10)} reward points added!
+                    </p>
                   </div>
                 </div>
                 <p className="text-gray-400 text-xs">Closing in {ticketCountdown} seconds...</p>

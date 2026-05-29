@@ -6,9 +6,12 @@ import {
   FaCheckCircle, FaChartLine, FaMedal, FaTrophy, FaTimes,
   FaPlayCircle, FaChartBar, FaWeightHanging, FaUserFriends,
   FaChartPie, FaPercentage, FaFistRaised, FaShieldAlt, FaWhatsapp,
-  FaTwitter, FaFacebook, FaInstagram, FaHeart, FaBookmark, FaStar
+  FaTwitter, FaFacebook, FaInstagram, FaHeart, FaBookmark, FaStar,
+  FaCrown, FaGem, FaEnvelope, FaUser, FaPhone, FaCalendarCheck
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import TicketModal from "../components/TicketModal";
+import { useTicketModal } from "../hooks/useTicketModal";
 
 // ================= DATA STRUCTURES =================
 
@@ -17,11 +20,11 @@ const fightCardsData = {
     {
       id: 1,
       event: "GFC GlobaX : Origin",
-      date: "2026-06-30",
+      date: "2026-06-20",
       time: "6:00 PM IST",
       location: "Indira Gandhi Arena, New Delhi",
       image: "/images/c1.png",
-      ticketPrice: 499,
+      ticketPrice: 299,
       availableSeats: 2500,
       fights: [
         { 
@@ -91,7 +94,7 @@ function CountdownTimer({ targetDate, onComplete }) {
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: idx * 0.1 }}
-          className="border border-gray-700 bg-black rounded-lg flex flex-col items-center justify-center min-w-[60px] sm:min-w-[75px] md:min-w-[85px] p-2 sm:p-3 md:p-4"
+          className="border border-gray-700 bg-black rounded-lg flex flex-col items-center justify-center min-w-[60px] sm:min-w-[75px] md:min-w-[85px] p-2 sm:p-3 md:p-4 hover:border-red-600 transition-all duration-300"
         >
           <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{value}</p>
           <p className="text-[8px] sm:text-[9px] md:text-[10px] text-gray-400 uppercase tracking-wider">{key}</p>
@@ -206,8 +209,19 @@ function FightPreviewModal({ fight, onClose }) {
         <div className="p-6 text-center">
           <h3 className="text-xl font-bold uppercase">{fight.fighter1.name} vs {fight.fighter2.name}</h3>
           <p className="text-gray-400 text-sm mt-1">Full fight preview and analysis</p>
-          <button onClick={() => window.dispatchEvent(new CustomEvent("openTicketModal"))} className="mt-4 bg-red-600 hover:bg-red-700 transition px-6 py-2 rounded-lg text-sm font-bold uppercase">GET TICKETS</button>
-        </div>
+<button
+  onClick={() => {
+    onClose(); // Close current modal first
+
+    // Small delay ensures smooth transition
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent("openTicketModal"));
+    }, 200);
+  }}
+  className="mt-4 bg-red-600 hover:bg-red-700 transition px-6 py-2 rounded-lg text-sm font-bold uppercase"
+>
+  GET TICKETS
+</button>        </div>
       </motion.div>
     </div>
   );
@@ -215,6 +229,10 @@ function FightPreviewModal({ fight, onClose }) {
 
 // ================= MAIN PAGE COMPONENT =================
 export default function FightsPage() {
+  // Ticket Modal Hook
+  const { isOpen: isTicketModalOpen, closeModal: closeTicketModal } = useTicketModal();
+  
+  // State Declarations
   const [selectedFight, setSelectedFight] = useState(null);
   const [previewFight, setPreviewFight] = useState(null);
   const [viewMode, setViewMode] = useState("upcoming");
@@ -227,9 +245,16 @@ export default function FightsPage() {
   const [showShareToast, setShowShareToast] = useState(false);
   const [bookmarkedFights, setBookmarkedFights] = useState([]);
   
+  // Remind Me Button States
+  const [remindEmail, setRemindEmail] = useState("");
+  const [remindSubmitted, setRemindSubmitted] = useState(false);
+  const [remindError, setRemindError] = useState("");
+  const [showRemindModal, setShowRemindModal] = useState(false);
+  
   const statsRef = useRef(null);
   const isStatsInView = useInView(statsRef, { once: true, threshold: 0.3 });
   const controls = useAnimation();
+  const navigate = useNavigate();
 
   const currentEvent = fightCardsData.upcoming[0];
   const allFights = currentEvent?.fights || [];
@@ -254,8 +279,14 @@ export default function FightsPage() {
 
   // ================= CTA HANDLERS =================
   const handleGetTickets = useCallback(() => {
+    console.log("Opening ticket modal...");
     window.dispatchEvent(new CustomEvent("openTicketModal"));
   }, []);
+
+  const handleJoinCommunity = () => {
+    navigate("/join-community");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const handleNotifyMe = (e) => {
     e.preventDefault();
@@ -269,6 +300,56 @@ export default function FightsPage() {
         localStorage.setItem("fight_notifications", JSON.stringify(subscribers));
       }
     }
+  };
+
+  // Remind Me Handler
+  const handleRemindMe = () => {
+    setShowRemindModal(true);
+  };
+
+  const handleRemindSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!remindEmail) {
+      setRemindError("Email is required");
+      return;
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(remindEmail)) {
+      setRemindError("Please enter a valid email address");
+      return;
+    }
+    
+    setRemindSubmitted(true);
+    setRemindError("");
+    
+    // Save to localStorage
+    const reminders = JSON.parse(localStorage.getItem("gfc_reminders") || "[]");
+    if (!reminders.some(r => r.email === remindEmail)) {
+      reminders.push({
+        email: remindEmail,
+        event: "GFC GlobaX : Origin",
+        date: "2026-06-20",
+        time: "6:00 PM IST",
+        createdAt: new Date().toISOString()
+      });
+      localStorage.setItem("gfc_reminders", JSON.stringify(reminders));
+    }
+    
+    // Also add to notifications
+    const subscribers = JSON.parse(localStorage.getItem("fight_notifications") || "[]");
+    if (!subscribers.includes(remindEmail)) {
+      subscribers.push(remindEmail);
+      localStorage.setItem("fight_notifications", JSON.stringify(subscribers));
+    }
+    
+    // Show success message and close modal after delay
+    setTimeout(() => {
+      setRemindSubmitted(false);
+      setShowRemindModal(false);
+      setRemindEmail("");
+    }, 2000);
   };
 
   const handleSharePage = async () => {
@@ -298,6 +379,10 @@ export default function FightsPage() {
     setSearchTerm("");
   };
 
+  const handleViewFightCard = () => {
+    document.getElementById("fight-card-section")?.scrollIntoView({ behavior: "smooth" });
+  };
+
   const stats = [
     { label: "TOTAL FIGHTS", value: "24", icon: FaTrophy },
     { label: "ACTIVE FIGHTERS", value: "18", icon: FaUserFriends },
@@ -320,60 +405,107 @@ export default function FightsPage() {
   return (
     <div className="pt-16 sm:pt-20 overflow-x-hidden">
       
-      {/* ================= HERO SECTION (FIXED PROPER) ================= */}
+      {/* ================= TICKET MODAL ================= */}
+      <TicketModal isOpen={isTicketModalOpen} onClose={closeTicketModal} />
+      
+      {/* ================= REMIND ME MODAL ================= */}
+      <AnimatePresence>
+        {showRemindModal && (
+          <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md" onClick={() => setShowRemindModal(false)}>
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative max-w-md w-full bg-gradient-to-br from-zinc-900 to-black border border-red-600/30 rounded-2xl p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button onClick={() => setShowRemindModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white">✕</button>
+              
+              {!remindSubmitted ? (
+                <>
+                  <div className="text-center mb-6">
+                    <FaBell className="text-red-500 text-4xl mx-auto mb-3" />
+                    <h3 className="text-xl font-bold uppercase">Get Reminded</h3>
+                    <p className="text-gray-400 text-sm mt-2">
+                      We'll notify you when tickets go on sale for GFC GlobaX : Origin
+                    </p>
+                  </div>
+                  
+                  <form onSubmit={handleRemindSubmit} className="space-y-4">
+                    <input
+                      type="email"
+                      value={remindEmail}
+                      onChange={(e) => {
+                        setRemindEmail(e.target.value);
+                        setRemindError("");
+                      }}
+                      placeholder="Enter your email address"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-red-500 transition"
+                      required
+                    />
+                    {remindError && <p className="text-red-500 text-xs">{remindError}</p>}
+                    
+                    <div className="flex flex-col gap-2 text-xs text-gray-500">
+                      <div className="flex items-center gap-2">
+                        <FaCalendarAlt className="text-red-500" size={12} />
+                        <span>Event: June 20, 2026 | 6:00 PM IST</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <FaMapMarkerAlt className="text-red-500" size={12} />
+                        <span>Venue: Indira Gandhi Arena, New Delhi</span>
+                      </div>
+                    </div>
+                    
+                    <button
+                      type="submit"
+                      className="w-full bg-red-600 hover:bg-red-700 transition py-3 rounded-lg font-bold uppercase text-sm"
+                    >
+                      Send Me Reminder
+                    </button>
+                  </form>
+                  
+                  <p className="text-gray-500 text-xs text-center mt-4">
+                    We'll email you when tickets are available. No spam, unsubscribe anytime.
+                  </p>
+                </>
+              ) : (
+                <div className="text-center py-6">
+                  <FaCheckCircle className="text-green-500 text-5xl mx-auto mb-4" />
+                  <h3 className="text-xl font-bold uppercase">Reminder Set!</h3>
+                  <p className="text-gray-300 mt-2">We'll notify you at <strong>{remindEmail}</strong></p>
+                  <p className="text-gray-400 text-sm mt-3">when tickets go on sale for GFC GlobaX : Origin</p>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+      
+      {/* ================= HERO SECTION ================= */}
       <section className="relative w-full bg-black overflow-hidden">
         <div className="relative w-full min-h-[500px] sm:min-h-[550px] lg:min-h-[650px]">
           
-          {/* Background Image */}
-          <img
-            src="/images/c1.png"
-            alt="Fights Hero"
-            className="absolute inset-0 w-full h-full object-cover object-center"
-          />
-          
-          {/* Dark Overlay */}
+          <img src="/images/c1.png" alt="Fights Hero" className="absolute inset-0 w-full h-full object-cover object-center" />
           <div className="absolute inset-0 bg-black/60" />
-          
-          {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent" />
           
-          {/* Content */}
           <div className="relative z-10 flex items-center h-full min-h-[500px] sm:min-h-[550px] lg:min-h-[650px]">
             <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="max-w-2xl">
-                <motion.p 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="text-red-500 uppercase tracking-[4px] text-xs sm:text-sm mb-3 font-semibold"
-                >
+                <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-red-500 uppercase tracking-[4px] text-xs sm:text-sm mb-3 font-semibold">
                   UPCOMING EVENT
                 </motion.p>
-                <motion.h1 
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl  uppercase leading-tight"
-                >
+                <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl  uppercase leading-tight">
                   GFC GlobaX : <span className="text-red-600">Origin</span>
                 </motion.h1>
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                  className="flex flex-wrap gap-4 mt-4 text-gray-300 text-sm"
-                >
-                  <div className="flex items-center gap-2"><FaCalendarAlt className="text-red-500" /><span>June 30, 2026</span></div>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="flex flex-wrap gap-4 mt-4 text-gray-300 text-sm">
+                  <div className="flex items-center gap-2"><FaCalendarAlt className="text-red-500" /><span>June 20, 2026</span></div>
                   <div className="flex items-center gap-2"><FaClock className="text-red-500" /><span>6:00 PM IST</span></div>
                   <div className="flex items-center gap-2"><FaMapMarkerAlt className="text-red-500" /><span>New Delhi</span></div>
                 </motion.div>
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                  className="flex flex-wrap gap-3 mt-6"
-                >
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="flex flex-wrap gap-3 mt-6">
                   <button onClick={handleGetTickets} className="bg-red-600 hover:bg-red-700 transition px-6 py-3 rounded-lg text-sm font-bold uppercase flex items-center gap-2"><FaTicketAlt /> BOOK YOUR SEATS</button>
+                  <button onClick={handleViewFightCard} className="border border-white/30 hover:border-red-600 hover:bg-red-600/10 transition px-6 py-3 rounded-lg text-sm font-bold uppercase flex items-center gap-2"><FaEye /> VIEW FIGHT CARD</button>
                   <button onClick={handleSharePage} className="border border-white/30 hover:border-red-600 hover:bg-red-600/10 transition px-6 py-3 rounded-lg text-sm font-bold uppercase flex items-center gap-2"><FaShare /> SHARE</button>
                 </motion.div>
               </div>
@@ -389,7 +521,7 @@ export default function FightsPage() {
             {stats.map((stat, idx) => {
               const Icon = stat.icon;
               return (
-                <motion.div key={idx} variants={fadeInUp} whileHover={{ scale: 1.05, y: -5 }} className="text-center p-3 rounded-xl hover-glow cursor-pointer">
+                <motion.div key={idx} variants={fadeInUp} whileHover={{ scale: 1.05, y: -5 }} className="text-center p-3 rounded-xl hover-glow cursor-pointer" onClick={stat.label === "TICKETS SOLD" ? handleGetTickets : undefined}>
                   <Icon className="text-red-500 text-2xl sm:text-3xl mx-auto mb-2" />
                   <p className="text-xl sm:text-2xl  text-white">{stat.value}</p>
                   <p className="text-gray-400 text-[10px] sm:text-xs uppercase tracking-wide">{stat.label}</p>
@@ -403,13 +535,20 @@ export default function FightsPage() {
       {/* ================= COUNTDOWN TIMER ================= */}
       <section className="py-12 bg-gradient-to-r from-black via-red-900/10 to-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-red-500 uppercase tracking-[4px] text-sm mb-4 font-semibold">THE COUNTDOWN BEGINS</p>
+          <p className="text-red-500 uppercase tracking-[4px] text-sm mb-4 font-semibold animate-pulse">THE COUNTDOWN BEGINS</p>
           <CountdownTimer targetDate={`${currentEvent?.date}T18:00:00`} />
           <div className="flex flex-wrap gap-4 justify-center mt-8">
-            <button onClick={handleGetTickets} className="border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white transition-all duration-300 px-8 py-3 rounded-lg text-sm font-bold uppercase hover-glow">SECURE YOUR TICKETS NOW - ₹{currentEvent?.ticketPrice}</button>
-            <button onClick={handleNotifyMe} className="border-2 border-white/30 hover:border-red-600 hover:bg-red-600/10 transition-all duration-300 px-8 py-3 rounded-lg text-sm font-bold uppercase flex items-center gap-2"><FaBell /> REMIND ME</button>
+            <button onClick={handleGetTickets} className="border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white transition-all duration-300 px-6 sm:px-8 py-3 rounded-lg text-sm font-bold uppercase hover-glow">
+              <FaTicketAlt className="inline mr-2" /> SECURE YOUR TICKETS NOW - ₹{currentEvent?.ticketPrice}
+            </button>
+            <button onClick={handleRemindMe} className="border-2 border-white/30 hover:border-red-600 hover:bg-red-600/10 transition-all duration-300 px-6 sm:px-8 py-3 rounded-lg text-sm font-bold uppercase flex items-center gap-2">
+              <FaBell className="text-yellow-500" /> REMIND ME
+            </button>
           </div>
-          <p className="mt-4 text-gray-500 text-xs">Limited seats remaining: {currentEvent?.availableSeats.toLocaleString()} tickets left</p>
+          <p className="mt-4 text-gray-500 text-xs">
+            <FaShieldAlt className="inline mr-1 text-green-500" /> 
+            Limited seats remaining: {currentEvent?.availableSeats.toLocaleString()} tickets left
+          </p>
         </div>
       </section>
 
@@ -465,7 +604,7 @@ export default function FightsPage() {
 
       {/* ================= UPCOMING FIGHTS GRID ================= */}
       {viewMode === "upcoming" && (
-        <section className="py-16">
+        <section id="fight-card-section" className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-10">
               <h2 className="text-3xl sm:text-4xl  uppercase">Fight Card</h2>
@@ -521,7 +660,9 @@ export default function FightsPage() {
                 ))}
               </div>
             )}
-            <div className="mt-10 text-center"><button onClick={handleGetTickets} className="bg-red-600 hover:bg-red-700 transition px-8 py-3 rounded-lg font-bold uppercase tracking-wide"><FaTicketAlt className="inline mr-2" /> BUY TICKETS FOR ALL FIGHTS</button></div>
+            <div className="mt-10 text-center">
+              <button onClick={handleGetTickets} className="bg-red-600 hover:bg-red-700 transition px-8 py-3 rounded-lg font-bold uppercase tracking-wide"><FaTicketAlt className="inline mr-2" /> BUY TICKETS FOR ALL FIGHTS</button>
+            </div>
           </div>
         </section>
       )}
@@ -568,13 +709,39 @@ export default function FightsPage() {
       <section className="py-16 bg-gradient-to-r from-black to-red-900/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div><h3 className="text-2xl sm:text-3xl  uppercase">Don't Miss Out!</h3><p className="text-gray-300 mt-2">Get notified when tickets go on sale and receive exclusive fight updates.</p></div>
+            <div>
+              <h3 className="text-2xl sm:text-3xl  uppercase">Don't Miss Out!</h3>
+              <p className="text-gray-300 mt-2">Get notified when tickets go on sale and receive exclusive fight updates, fighter announcements, and pre-sale access.</p>
+              <div className="mt-4 flex items-center gap-4 text-sm text-gray-400">
+                <span className="flex items-center gap-1"><FaCheckCircle className="text-green-500" /> Early access</span>
+                <span className="flex items-center gap-1"><FaCheckCircle className="text-green-500" /> Exclusive offers</span>
+                <span className="flex items-center gap-1"><FaCheckCircle className="text-green-500" /> Fight updates</span>
+              </div>
+            </div>
             <div>
               <form onSubmit={handleNotifyMe} className="flex flex-col sm:flex-row gap-3">
-                <input type="email" placeholder="Enter your email" value={emailNotify} onChange={(e) => setEmailNotify(e.target.value)} required className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-red-500 transition" />
-                <button type="submit" className="bg-red-600 hover:bg-red-700 transition px-6 py-3 rounded-lg font-bold uppercase flex items-center justify-center gap-2"><FaBell /> NOTIFY ME</button>
+                <input 
+                  type="email" 
+                  placeholder="Enter your email" 
+                  value={emailNotify}
+                  onChange={(e) => setEmailNotify(e.target.value)}
+                  required
+                  className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-red-500 transition"
+                />
+                <button 
+                  type="submit" 
+                  className="bg-red-600 hover:bg-red-700 transition px-6 py-3 rounded-lg font-bold uppercase flex items-center justify-center gap-2"
+                >
+                  <FaBell /> GET NOTIFIED
+                </button>
               </form>
-              <AnimatePresence>{notifySubmitted && (<motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-green-500 text-sm mt-2">✓ Added to notification list!</motion.p>)}</AnimatePresence>
+              <AnimatePresence>
+                {notifySubmitted && (
+                  <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-green-500 text-sm mt-2 flex items-center gap-2">
+                    <FaCheckCircle /> Successfully subscribed! We'll keep you updated.
+                  </motion.p>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </div>
@@ -583,15 +750,23 @@ export default function FightsPage() {
       {/* ================= FINAL CTA ================= */}
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-red-900/20 via-black to-black" />
+        <div className="absolute inset-0 bg-cover bg-center opacity-10" style={{ backgroundImage: "url('/images/c1.png')" }} />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl  uppercase mb-4 leading-tight">BE THERE LIVE.<br /><span className="text-red-600">WITNESS HISTORY.</span></h2>
-            <p className="text-gray-300 text-base max-w-2xl mx-auto mb-8">Secure your seats now for the most anticipated combat sports event in India.</p>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl  uppercase mb-4 leading-tight">BE THERE LIVE.<br /><span className="text-red-600">WITNESS HISTORY.</span></h2>
+            <p className="text-gray-300 text-base max-w-2xl mx-auto mb-8">Secure your seats now for the most anticipated combat sports event in India. Experience world-class production, elite fighters, and an unforgettable atmosphere.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button onClick={handleGetTickets} className="bg-red-600 hover:bg-red-700 transition px-8 py-4 rounded-xl font-bold uppercase tracking-wide shadow-2xl shadow-red-900/50 flex items-center gap-2"><FaTicketAlt /> GET YOUR TICKETS NOW</button>
+              <button onClick={handleJoinCommunity} className="border-2 border-white/30 hover:border-red-600 hover:bg-red-600/10 transition px-8 py-4 rounded-xl font-bold uppercase flex items-center gap-2"><FaHeart /> JOIN COMMUNITY</button>
               <button onClick={handleSharePage} className="border-2 border-white/30 hover:border-red-600 hover:bg-red-600/10 transition px-8 py-4 rounded-xl font-bold uppercase flex items-center gap-2"><FaShare /> SHARE EVENT</button>
             </div>
             <p className="mt-6 text-gray-500 text-xs">Limited seats remaining: {currentEvent?.availableSeats.toLocaleString()} tickets left</p>
+            <div className="flex justify-center gap-4 mt-6">
+              <FaShieldAlt className="text-gray-500 text-sm" />
+              <span className="text-gray-500 text-xs">Secure Checkout</span>
+              <FaCheckCircle className="text-gray-500 text-sm ml-2" />
+              <span className="text-gray-500 text-xs">Instant Confirmation</span>
+            </div>
           </motion.div>
         </div>
       </section>

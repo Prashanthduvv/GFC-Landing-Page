@@ -319,6 +319,7 @@ export default function SponsorsPage() {
       {/* ====================================================== */}
       {/* DIVIDER */}
       {/* ====================================================== */}
+      
 
       <div className="w-full h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
 
